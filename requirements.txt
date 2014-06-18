@@ -7,7 +7,7 @@ argparse==1.2.1
 coverage==3.7.1
 docutils==0.11
 pep8==1.5.7
-pyflakes==0.8.1
+pyflakes
 python-coveralls==2.4.2
 requests==2.3.0
 sh==1.09
