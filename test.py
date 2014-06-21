@@ -14,4 +14,9 @@ class BaseTest(unittest.TestCase):
 class ArchiveTest(BaseTest):
 
     def test_nothing(self):
-        pass
+        html = storytracker.get("http://www.latimes.com")
+        print len(html)
+
+
+if __name__ == '__main__':
+    unittest.main()
