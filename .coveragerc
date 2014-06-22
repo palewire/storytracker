@@ -1,0 +1,3 @@
+[run]
+include =
+    storytracker/__init__.py

@@ -15,7 +15,7 @@ class ArchiveTest(BaseTest):
 
     def test_nothing(self):
         html = storytracker.get("http://www.latimes.com")
-        print len(html)
+        path = storytracker.archive(html)
 
 
 if __name__ == '__main__':

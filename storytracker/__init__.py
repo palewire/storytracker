@@ -2,16 +2,28 @@ import htmlmin
 import requests
 
 
-
-def get(url):
+def get(url, verify=True):
     """
-    Archive the HTML page at the provided URL.
+    Get the HTML at the provided URL
     """
     # Request the URL
     response = requests.get(url)
-    return htmlmin.minify(response.text)
+    html = response.text
     # Verify that the response is in fact HTML (but option to skip test)
+    if verify and 'html' not in response.headers['content-type']:
+        raise ValueError("Response does not have an HTML content-type")
+    return html
+
+
+def archive(html, minify=True):
+    """
+    Archive the provided HTML
+    """
     # Minify the html (but option to skip)
+    if minify:
+        html = htmlmin.minify(html)
+    # Replace all relative URLs with absolute URLs
+    # If opt-in download all third-party assets
     # Compress the data somehow to zlib or gzip or whatever
     # Pass it back
 
@@ -23,4 +35,4 @@ def get(url):
     ## And when you pull it out Python it would return some kind of object
     ##   rather than just raw HTML (But do we want that?)
     ## What should be the default way to save the upload? url + timestamp?
-    return False
+    return html
