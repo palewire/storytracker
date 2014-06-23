@@ -15,7 +15,6 @@ COMMON_HYPERLINK_LOCATIONS = (
     # css
     {
         "tag": ("link", {
-            "rel": "alternate stylesheet",
             "type": "text/css"
         }),
         "attr": "href"
