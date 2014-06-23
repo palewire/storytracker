@@ -1,7 +1,30 @@
+import gzip
 import htmlmin
+import StringIO
 import requests
 from urlparse import urljoin
 from bs4 import BeautifulSoup
+
+# A list of all the other resources in the page we need to pull out
+# in a format the BeautifulSoup is ready to work with.
+COMMON_HYPERLINK_LOCATIONS = (
+    # images
+    {"tag": ("img", {"src": True}), "attr": "src"},
+    # css
+    {"tag": ("link", {"rel": "stylesheet"}), "attr": "href"},
+    # css
+    {
+        "tag": ("link", {
+            "rel": "alternate stylesheet",
+            "type": "text/css"
+        }),
+        "attr": "href"
+    },
+    # javascript
+    {"tag": ("script", {"src": True}), "attr": "src"},
+    # hyperlinks
+    {"tag": ("a", {"href": True}), "attr": "href"},
+)
 
 
 def get(url, verify=True):
@@ -17,7 +40,7 @@ def get(url, verify=True):
     return html
 
 
-def archive(url, verify=True, minify=True, extend_urls=True):
+def archive(url, verify=True, minify=True, extend_urls=True, compress=True):
     """
     Archive the provided HTML
     """
@@ -28,43 +51,19 @@ def archive(url, verify=True, minify=True, extend_urls=True):
         html = htmlmin.minify(html)
     # Replace all relative URLs with absolute URLs, if called for
     if extend_urls:
-        # A list of all the other resources in the page we need to pull out
-        target_list = (
-            # images
-            {"tag": ("img", {"src": True}), "attr": "src"},
-            # css
-            {"tag": ("link", {"rel": "stylesheet"}), "attr": "href"},
-            # css
-            {
-                "tag": ("link", {
-                    "rel": "alternate stylesheet",
-                    "type": "text/css"
-                }),
-                "attr": "href"
-            },
-            # javascript
-            {"tag": ("script", {"src": True}), "attr": "src"},
-            # hyperlinks
-            {"tag": ("a", {"href": True}), "attr": "href"},
-        )
         soup = BeautifulSoup(html)
-        for target in target_list:
+        for target in COMMON_HYPERLINK_LOCATIONS:
             for hit in soup.findAll(*target['tag']):
                 link = hit.get(target['attr'])
                 # Here's where they actually get replaced
                 archive_link = urljoin(url, link)
                 if link != archive_link:
-                    html.replace(str(link), str(archive_link))
-    # If opt-in download all third-party assets
+                    html.replace(str(link), archive_link)
     # Compress the data somehow to zlib or gzip or whatever
-    # Pass it back
-
-    # Save it via Django storages?
-    # (But not if you're using the CLI)
-    # (And maybe this should be a custom Django field? models.HTMLArchiveField())
-    ## It would save the contents of an URL as a media upload to your storage
-    ## Before it wrote the file it would verify that it is in fact HTML
-    ## And when you pull it out Python it would return some kind of object
-    ##   rather than just raw HTML (But do we want that?)
-    ## What should be the default way to save the upload? url + timestamp?
+    if compress:
+        out = StringIO.StringIO()
+        with gzip.GzipFile(fileobj=out, mode="w") as f:
+          f.write(html.encode("utf-8"))
+        html = out.getvalue()
+    # Pass it out
     return html
