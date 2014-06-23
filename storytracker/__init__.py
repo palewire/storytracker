@@ -1,5 +1,7 @@
 import htmlmin
 import requests
+from urlparse import urljoin
+from bs4 import BeautifulSoup
 
 
 def get(url, verify=True):
@@ -15,14 +17,40 @@ def get(url, verify=True):
     return html
 
 
-def archive(html, minify=True):
+def archive(url, verify=True, minify=True, extend_urls=True):
     """
     Archive the provided HTML
     """
+    # Get the html
+    html = get(url, verify=verify)
     # Minify the html (but option to skip)
     if minify:
         html = htmlmin.minify(html)
     # Replace all relative URLs with absolute URLs
+    if extend_urls:
+        # A list of all the other resources in the page we need to pull out
+        target_list = (
+            # images
+            {"tag": ("img", {"src": True}), "attr": "src"},
+            # css
+            {"tag": ("link", {"rel": "stylesheet"}), "attr": "href"},
+            # css
+            {
+                "tag": ("link", {
+                    "rel": "alternate stylesheet",
+                    "type": "text/css"
+                }),
+                "attr": "href"
+            },
+            # javascript
+            {"tag": ("script", {"src": True}), "attr": "src"},
+        )
+        soup = BeautifulSoup(html)
+        for target in target_list:
+            for hit in soup.findAll(*target['tag']):
+                link = hit.get(target['attr'])
+                if link.startswith("/") or link.startswith(".."):
+                    link = urljoin(url, link)
     # If opt-in download all third-party assets
     # Compress the data somehow to zlib or gzip or whatever
     # Pass it back

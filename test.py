@@ -11,8 +11,9 @@ class BaseTest(unittest.TestCase):
 class ArchiveTest(BaseTest):
 
     def test_nothing(self):
-        html = storytracker.get("http://www.latimes.com")
-        storytracker.archive(html)
+        url = "http://www.latimes.com"
+        html = storytracker.get(url)
+        storytracker.archive(url)
         try:
             storytracker.get("http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9")
