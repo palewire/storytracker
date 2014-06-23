@@ -26,7 +26,7 @@ def archive(url, verify=True, minify=True, extend_urls=True):
     # Minify the html (but option to skip)
     if minify:
         html = htmlmin.minify(html)
-    # Replace all relative URLs with absolute URLs
+    # Replace all relative URLs with absolute URLs, if called for
     if extend_urls:
         # A list of all the other resources in the page we need to pull out
         target_list = (
@@ -44,13 +44,17 @@ def archive(url, verify=True, minify=True, extend_urls=True):
             },
             # javascript
             {"tag": ("script", {"src": True}), "attr": "src"},
+            # hyperlinks
+            {"tag": ("a", {"href": True}), "attr": "href"},
         )
         soup = BeautifulSoup(html)
         for target in target_list:
             for hit in soup.findAll(*target['tag']):
                 link = hit.get(target['attr'])
-                if link.startswith("/") or link.startswith(".."):
-                    link = urljoin(url, link)
+                # Here's where they actually get replaced
+                archive_link = urljoin(url, link)
+                if link != archive_link:
+                    html.replace(str(link), str(archive_link))
     # If opt-in download all third-party assets
     # Compress the data somehow to zlib or gzip or whatever
     # Pass it back
