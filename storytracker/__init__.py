@@ -13,12 +13,7 @@ COMMON_HYPERLINK_LOCATIONS = (
     # css
     {"tag": ("link", {"rel": "stylesheet"}), "attr": "href"},
     # css
-    {
-        "tag": ("link", {
-            "type": "text/css"
-        }),
-        "attr": "href"
-    },
+    {"tag": ("link", {"type": "text/css"}), "attr": "href"},
     # javascript
     {"tag": ("script", {"src": True}), "attr": "src"},
     # hyperlinks
