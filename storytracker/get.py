@@ -16,7 +16,6 @@ def get(url, verify=True):
     return html
 
 
-
 def main():
     """
     A command-line interface to this method.
