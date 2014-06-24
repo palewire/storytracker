@@ -2,7 +2,6 @@
 import six
 import gzip
 import htmlmin
-import optparse
 import storytracker
 from six import BytesIO
 from bs4 import BeautifulSoup
