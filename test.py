@@ -1,4 +1,5 @@
 import os
+import six
 import unittest
 import storytracker
 
@@ -35,4 +36,7 @@ class ArchiveTest(BaseTest):
 
 
 if __name__ == '__main__':
-    unittest.main()  
+    if six.PY3:
+        unittest.main(warnings='ignore')
+    else:
+        unittest.main()

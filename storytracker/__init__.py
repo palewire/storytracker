@@ -1,9 +1,10 @@
+import six
 import gzip
 import htmlmin
-import StringIO
 import requests
-from urlparse import urljoin
 from bs4 import BeautifulSoup
+from six import BytesIO
+from six.moves.urllib_parse import urljoin
 
 # A list of all the other resources in the page we need to pull out
 # in a format the BeautifulSoup is ready to work with.
@@ -55,7 +56,7 @@ def archive(
                 # Here's where they actually get replaced
                 archive_link = urljoin(url, link)
                 if link != archive_link:
-                    html.replace(str(link), archive_link)
+                    html.replace(six.text_type(link), archive_link)
     # Compress the data somehow to zlib or gzip or whatever
     if compress:
         if output_path:
@@ -63,13 +64,13 @@ def archive(
                 f.write(html.encode("utf-8"))
         else:
             # If no output path then pass out gzipped raw data
-            out = StringIO.StringIO()
-            with gzip.GzipFile(fileobj=out, mode="w") as f:
+            out = BytesIO()
+            with gzip.GzipFile(fileobj=out, mode="wb") as f:
                 f.write(html.encode("utf-8"))
             return out.getvalue()
     else:
         if output_path:
-            with open(output_path, 'w') as f:
+            with open(output_path, 'wb') as f:
                 f.write(html.encode("utf-8"))
         else:
             return html
