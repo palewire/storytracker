@@ -34,7 +34,10 @@ def get(url, verify=True):
     return html
 
 
-def archive(url, verify=True, minify=True, extend_urls=True, compress=True):
+def archive(
+    url, verify=True, minify=True, extend_urls=True, compress=True,
+    output_path=None
+        ):
     """
     Archive the provided HTML
     """
@@ -55,9 +58,18 @@ def archive(url, verify=True, minify=True, extend_urls=True, compress=True):
                     html.replace(str(link), archive_link)
     # Compress the data somehow to zlib or gzip or whatever
     if compress:
-        out = StringIO.StringIO()
-        with gzip.GzipFile(fileobj=out, mode="w") as f:
-          f.write(html.encode("utf-8"))
-        html = out.getvalue()
-    # Pass it out
-    return html
+        if output_path:
+            with gzip.GzipFile(fileobj=open(output_path, 'wb'), mode="w") as f:
+                f.write(html.encode("utf-8"))
+        else:
+            # If no output path then pass out gzipped raw data
+            out = StringIO.StringIO()
+            with gzip.GzipFile(fileobj=out, mode="w") as f:
+                f.write(html.encode("utf-8"))
+            return out.getvalue()
+    else:
+        if output_path:
+            with open(output_path, 'w') as f:
+                f.write(html.encode("utf-8"))
+        else:
+            return html
