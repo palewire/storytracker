@@ -4,7 +4,7 @@ import htmlmin
 import requests
 from bs4 import BeautifulSoup
 from six import BytesIO
-from six.moves.urllib_parse import urljoin
+from six.moves.urllib_parse import urljoin, urlparse
 
 # A list of all the other resources in the page we need to pull out
 # in a format the BeautifulSoup is ready to work with.
@@ -52,11 +52,8 @@ def archive(
         soup = BeautifulSoup(html)
         for target in COMMON_HYPERLINK_LOCATIONS:
             for hit in soup.findAll(*target['tag']):
-                link = hit.get(target['attr'])
-                # Here's where they actually get replaced
-                archive_link = urljoin(url, link)
-                if link != archive_link:
-                    html.replace(six.text_type(link), archive_link)
+                hit[target['attr']] = urljoin(url, hit[target['attr']])
+        html = six.text_type(soup)
     # Compress the data somehow to zlib or gzip or whatever
     if compress:
         if output_path:
