@@ -44,20 +44,19 @@ class ArchiveTest(BaseTest):
 
     def test_archive(self):
         from storytracker.archive import main
+        now = datetime.now()
+        filename = storytracker.create_archive_filename(self.url, now)
+        url, then = storytracker.reverse_archive_filename(filename)
+        self.assertEqual(self.url, url)
+        self.assertEqual(now, then)
         for f in [storytracker.archive, main]:
             f(self.url)
             f(self.url, minify=False)
             f(self.url, extend_urls=False)
             f(self.url, compress=False)
             f(self.url, output_dir="./")
-            for fn in glob.glob("./http-www.cnn.com-@*.gz"):
-                os.remove(fn)
-            f(
-                self.url,
-                compress=False,
-                output_dir="./"
-            )
-            for fn in glob.glob("./http-www.cnn.com-@*.html"):
+            f(self.url, compress=False, output_dir="./")
+            for fn in glob.glob("./http-www.cnn.com---*"):
                 os.remove(fn)
 
 

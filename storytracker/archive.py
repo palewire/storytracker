@@ -6,11 +6,11 @@ import gzip
 import htmlmin
 import optparse
 import storytracker
+import dateutil.parser
 from six import BytesIO
 from datetime import datetime
 from bs4 import BeautifulSoup
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib_parse import urljoin
+from six.moves.urllib.parse import urlparse, urlunparse, urljoin
 
 # A list of all the other resources in the page we need to pull out
 # in a format the BeautifulSoup is ready to work with.
@@ -26,20 +26,6 @@ COMMON_HYPERLINK_LOCATIONS = (
     # hyperlinks
     {"tag": ("a", {"href": True}), "attr": "href"},
 )
-
-
-def create_archive_filename(url, timestamp):
-    """
-    Returns a string that combines a URL and the timestamp of when it was
-    harvested for use when naming archives that are saved to disk.
-    """
-    urlparts = urlparse(url)
-    return "%s-%s-%s@%s" % (
-        urlparts.scheme,
-        urlparts.netloc,
-        urlparts.path,
-        timestamp.isoformat()
-    )
 
 
 def archive(
@@ -84,6 +70,31 @@ def archive(
             return out.getvalue()
         else:
             return html.encode("utf-8")
+
+
+def create_archive_filename(url, timestamp):
+    """
+    Returns a string that combines a URL and the timestamp of when it was
+    harvested for use when naming archives that are saved to disk.
+    """
+    urlparts = "-".join(urlparse(url))
+    return "%s@%s" % (
+        urlparts,
+        timestamp.isoformat()
+    )
+
+
+def reverse_archive_filename(filename):
+    """
+    Accepts a filename created using the rules of ``create_archive_filename``
+    and converts it back to Python. Returns a tuple: The URL string and a
+    timestamp. Do not include the file extension when providing a string.
+    """
+    url_string, timestamp_string = filename.split("@")
+    return (
+        urlunparse(url_string.split("-")),
+        dateutil.parser.parse(timestamp_string)
+    )
 
 
 def main(*args, **kwargs):
