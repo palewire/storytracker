@@ -1,7 +1,16 @@
 import os
+import sys
 import six
 import unittest
 import storytracker
+
+
+class NullDevice():
+    """
+    A nothingburger to replace stdout with while running tests.
+    """
+    def write(self, s):
+        pass
 
 
 class BaseTest(unittest.TestCase):
@@ -10,17 +19,23 @@ class BaseTest(unittest.TestCase):
         self.url = "http://www.latimes.com"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
+        # Turning off stdout temporarily
+        original_stdout = sys.stdout
+        sys.stdout = NullDevice()
 
 
 class ArchiveTest(BaseTest):
 
     def test_get(self):
-        html = storytracker.get(self.url)
+        from storytracker.get import main
+        storytracker.get(self.url)
+        main(self.url)
         try:
             storytracker.get(self.img)
         except ValueError:
             pass
         storytracker.get(self.img, verify=False)
+        main(self.img, verify=False)
 
     def test_archive(self):
         storytracker.archive(self.url)

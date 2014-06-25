@@ -16,10 +16,16 @@ def get(url, verify=True):
     return html
 
 
-def main():
+def main(*args, **kwargs):
     """
     A command-line interface to this method.
     """
+    for a in args:
+        html = get(a, verify=kwargs.get('verify'))
+        sys.stdout.write(html.encode("utf-8"))
+
+
+if __name__ == '__main__':
     p = optparse.OptionParser(
         description="Retrieves HTML from the provided URL.",
         usage="storytracker-get [URL]... [OPTIONS]",
@@ -33,11 +39,5 @@ def main():
         help="Skip verification that HTML is in the response's \
 content-type header"
     )
-    options, arguments = p.parse_args()
-    for a in arguments:
-        html = get(a, verify=options.verify)
-        sys.stdout.write(html.encode("utf-8"))
-
-
-if __name__ == '__main__':
-    main()
+    kwargs, args = p.parse_args()
+    main(*args, **kwargs.__dict__)
