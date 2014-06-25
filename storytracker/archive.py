@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 import six
 import gzip
@@ -6,7 +7,9 @@ import htmlmin
 import optparse
 import storytracker
 from six import BytesIO
+from datetime import datetime
 from bs4 import BeautifulSoup
+from six.moves.urllib.parse import urlparse
 from six.moves.urllib_parse import urljoin
 
 # A list of all the other resources in the page we need to pull out
@@ -25,14 +28,29 @@ COMMON_HYPERLINK_LOCATIONS = (
 )
 
 
+def create_archive_filename(url, timestamp):
+    """
+    Returns a string that combines a URL and the timestamp of when it was
+    harvested for use when naming archives that are saved to disk.
+    """
+    urlparts = urlparse(url)
+    return "%s-%s-%s@%s" % (
+        urlparts.scheme,
+        urlparts.netloc,
+        urlparts.path,
+        timestamp.isoformat()
+    )
+
+
 def archive(
     url, verify=True, minify=True, extend_urls=True, compress=True,
-    output_path=None
+    output_dir=None
         ):
     """
     Archive the HTML from the provided URL
     """
     # Get the html
+    now = datetime.now()
     html = storytracker.get(url, verify=verify)
     # Minify the html (but option to skip)
     if minify:
@@ -45,22 +63,25 @@ def archive(
                 hit[target['attr']] = urljoin(url, hit[target['attr']])
         html = six.text_type(soup)
     # Compress the data somehow to zlib or gzip or whatever
-    if compress:
-        if output_path:
-            with gzip.GzipFile(fileobj=open(output_path, 'wb'), mode="w") as f:
+    if output_dir:
+        output_filename = create_archive_filename(url, now)
+        output_path = os.path.join(output_dir, output_filename)
+        if compress:
+            fileobj = open("%s.gz" % output_path, 'wb')
+            with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
                 f.write(html.encode("utf-8"))
             return
         else:
+            with open("%s.html" % output_path, 'wb') as f:
+                f.write(html.encode("utf-8"))
+            return
+    else:
+        if compress:
             # If no output path then pass out gzipped raw data
             out = BytesIO()
             with gzip.GzipFile(fileobj=out, mode="wb") as f:
                 f.write(html.encode("utf-8"))
             return out.getvalue()
-    else:
-        if output_path:
-            with open(output_path, 'wb') as f:
-                f.write(html.encode("utf-8"))
-            return
         else:
             return html.encode("utf-8")
 
@@ -114,13 +135,13 @@ content-type header"
         help="Skip compression of the HTML response"
     )
     p.add_option(
-        "--output",
-        "-o",
+        "--output-dir",
+        "-d",
         action="store",
         type="string",
-        dest="output_path",
+        dest="output_dir",
         default=None,
-        help="Provide a path for the archived data to be stored"
+        help="Provide a directory for the archived data to be stored"
     )
     kwargs, args = p.parse_args()
     main(*args, **kwargs.__dict__)

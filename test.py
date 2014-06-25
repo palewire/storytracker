@@ -1,8 +1,10 @@
 import os
 import sys
 import six
+import glob
 import unittest
 import storytracker
+from datetime import datetime
 
 
 class NullDevice():
@@ -12,11 +14,14 @@ class NullDevice():
     def write(self, s):
         pass
 
+    def flush(self, *args, **kwargs):
+        pass
+
 
 class BaseTest(unittest.TestCase):
 
     def setUp(self):
-        self.url = "http://www.latimes.com"
+        self.url = "http://www.cnn.com"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         # Turning off stdout temporarily
@@ -44,14 +49,16 @@ class ArchiveTest(BaseTest):
             f(self.url, minify=False)
             f(self.url, extend_urls=False)
             f(self.url, compress=False)
-            f(self.url, output_path="./foo.gz")
-            os.remove("./foo.gz")
+            f(self.url, output_dir="./")
+            for fn in glob.glob("./http-www.cnn.com-@*.gz"):
+                os.remove(fn)
             f(
                 self.url,
                 compress=False,
-                output_path="./foo.html"
+                output_dir="./"
             )
-            os.remove("./foo.html")
+            for fn in glob.glob("./http-www.cnn.com-@*.html"):
+                os.remove(fn)
 
 
 if __name__ == '__main__':
