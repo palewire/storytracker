@@ -38,16 +38,20 @@ class ArchiveTest(BaseTest):
         main(self.img, verify=False)
 
     def test_archive(self):
-        storytracker.archive(self.url)
-        storytracker.archive(self.url, compress=False)
-        storytracker.archive(self.url, output_path="./foo.gz")
-        os.remove("./foo.gz")
-        storytracker.archive(
-            self.url,
-            compress=False,
-            output_path="./foo.html"
-        )
-        os.remove("./foo.html")
+        from storytracker.archive import main
+        for f in [storytracker.archive, main]:
+            f(self.url)
+            f(self.url, minify=False)
+            f(self.url, extend_urls=False)
+            f(self.url, compress=False)
+            f(self.url, output_path="./foo.gz")
+            os.remove("./foo.gz")
+            f(
+                self.url,
+                compress=False,
+                output_path="./foo.html"
+            )
+            os.remove("./foo.html")
 
 
 if __name__ == '__main__':
