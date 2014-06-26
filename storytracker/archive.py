@@ -48,7 +48,7 @@ def archive(
             for hit in soup.findAll(*target['tag']):
                 hit[target['attr']] = urljoin(url, hit[target['attr']])
         html = six.text_type(soup)
-    # Compress the data somehow to zlib or gzip or whatever
+    # If a custom output dir is provided put everything in there
     if output_dir:
         output_filename = create_archive_filename(url, now)
         output_path = os.path.join(output_dir, output_filename)
@@ -61,6 +61,7 @@ def archive(
             with open("%s.html" % output_path, 'wb') as f:
                 f.write(html.encode("utf-8"))
             return
+    # If not, return the data so it can be passed on
     else:
         if compress:
             # If no output path then pass out gzipped raw data
