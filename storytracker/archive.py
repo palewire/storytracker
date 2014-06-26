@@ -64,7 +64,6 @@ def archive(
     # If not, return the data so it can be passed on
     else:
         if compress:
-            # If no output path then pass out gzipped raw data
             out = BytesIO()
             with gzip.GzipFile(fileobj=out, mode="wb") as f:
                 f.write(html.encode("utf-8"))
