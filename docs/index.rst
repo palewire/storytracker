@@ -1,22 +1,21 @@
-.. storytracker documentation master file, created by
-   sphinx-quickstart on Tue Jun 17 21:35:22 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+storytracker
+============
 
-Welcome to storytracker's documentation!
-========================================
+Tools for tracking stories on news homepages
 
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
+   archivaltools
+   changelog
+   credits
 
+Contributing
+------------
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+* Code repository: `https://github.com/pastpages/storytracker <https://github.com/dpastpages/storytracker>`_
+* Issues: `https://github.com/pastpages/storytracker/issues <https://github.com/pastpages/storytracker/issues>`_
+* Packaging: `https://pypi.python.org/pypi/storytracker <https://pypi.python.org/pypi/storytracker>`_
+* Testing: `https://travis-ci.org/pastpages/storytracker <https://travis-ci.org/pastpages/storytracker>`_
