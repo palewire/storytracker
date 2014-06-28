@@ -32,24 +32,20 @@ la-me-lafd-budget-20140415-001/750/16x9"
 class ArchiveTest(BaseTest):
 
     def test_get(self):
-        from storytracker.get import main
         storytracker.get(self.url)
-        main(self.url)
         try:
             storytracker.get(self.img)
         except ValueError:
             pass
         storytracker.get(self.img, verify=False)
-        main(self.img, verify=False)
 
     def test_archive(self):
-        from storytracker.archive import main
         now = datetime.now()
         filename = storytracker.create_archive_filename(self.url, now)
         url, then = storytracker.reverse_archive_filename(filename)
         self.assertEqual(self.url, url)
         self.assertEqual(now, then)
-        for f in [storytracker.archive, main]:
+        for f in [storytracker.archive,]:
             f(self.url)
             f(self.url, minify=False)
             f(self.url, extend_urls=False)

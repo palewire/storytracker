@@ -1,3 +1,5 @@
 [run]
 include =
     storytracker/__init__.py
+    storytracker/archive.py
+    storytracker/get.py

@@ -9,3 +9,6 @@ __all__ = [
     'get',
     'reverse_archive_filename',
 ]
+
+if __name__ == "__main__" and __package__ is None:
+    __package__ = "storytracker"
