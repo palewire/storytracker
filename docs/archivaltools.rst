@@ -144,7 +144,9 @@ Python interface
 reverse_archive_filename
 ------------------------
 
-Returns a string that combines a URL and a timestamp of for naming archives saved to the filesystem.
+Accepts a filename created using the rules of :py:func:`storytracker.create_archive_filename`
+and converts it back to Python. Returns a tuple: The URL string and a
+timestamp. Do not include the file extension when providing a string.
 
 .. py:function:: storytracker.reverse_archive_filename(filename)
 
