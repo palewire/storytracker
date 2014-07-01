@@ -54,7 +54,7 @@ Python interface
    :param str url: The URL of the page to archive
    :param bool verify: Verify that HTML is in the response's content-type header
    :param bool minify: Minify the HTML response to reduce its size
-   :param bool extend_urls: Extend relative URLs discovered in the HTML response to be absolute3
+   :param bool extend_urls: Extend relative URLs discovered in the HTML response to be absolute
    :param bool compress: Compress the HTML response using gzip
    :param output_dir: Provide a directory for the archived data to be stored
    :type output_dir: str or None
