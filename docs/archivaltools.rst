@@ -77,6 +77,28 @@ Example usage:
     >>> # If you'd prefer to have the HTML without compression
     >>> data = storytracker.archive("http://www.latimes.com", compress=False)
 
+
+create_archive_filename
+-----------------------
+
+Returns a string that combines a URL and a timestamp of for naming archives saved to the filesystem.
+
+.. py:function:: storytracker.create_archive_filename(url, timestamp)
+
+    :param str url: The URL of the page that is being archived
+    :param datetime timestamp: A timestamp recording approximately when the URL was archive
+    :return: A string that combines the two arguments into a structure can be reversed back into Python
+    :rtype: str
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> from datetime import datetime
+    >>> storytracker.create_archive_filename("http://www.latimes.com", datetime.now())
+    'http-www.latimes.com----@2014-06-30T21:43:15.775071'
+
 get
 ---
 
@@ -117,3 +139,23 @@ Python interface
    :return: The content of the HTML response
    :rtype: str
    :raises ValueError: If the response is not verified as HTML
+
+
+reverse_archive_filename
+------------------------
+
+Returns a string that combines a URL and a timestamp of for naming archives saved to the filesystem.
+
+.. py:function:: storytracker.reverse_archive_filename(filename)
+
+    :param str filename: A filename structured using the style of the :py:func:`storytracker.create_archive_filename` function
+    :return: A tuple containing the URL of the archived page as a string and a datetime object of the archive's timestamp 
+    :rtype: tuple
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> storytracker.reverse_archive_filename('http-www.latimes.com----@2014-06-30T21:43:15.775071')
+    ('http://www.latimes.com', datetime.datetime(2014, 6, 30, 21, 43, 15, 775071))
