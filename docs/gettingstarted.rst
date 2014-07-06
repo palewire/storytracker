@@ -1,7 +1,6 @@
 Getting started
 ===============
 
-
 You can install storytracker from the `Python Package Index <https://github.com/pastpages/storytracker>`_ using the command-line tool pip. If you don't have
 pip installed follow `these instructions <https://pip.pypa.io/en/latest/installing.html>`_. Here is all it takes.
 
@@ -41,3 +40,55 @@ Run that and you'll see the file right away in your current directory.
 
     # Try opening the file you spot here with your browser
     $ ls | grep .html
+
+
+Scheduling archives with cron
+-----------------------------
+
+UNIX-like systems typically come equipped with a built in method for scheduling tasks known as `cron <http://en.wikipedia.org/wiki/Cron>`_.
+To utilize it with storytracker, one approach is to write a Python script that retrieves a series of sites each time it is run.
+
+.. code-block:: python
+
+    import storytracker
+
+    SITE_LIST = [
+        # A list of the sites to archive
+        'http://www.latimes.com',
+        'http://www.nytimes.com',
+        'http://www.kansascity.com',
+        'http://www.knoxnews.com',
+        'http://www.indiatimes.com',
+    ]
+    # The place on the filesystem where you want to save the files
+    OUTPUT_DIR = "/path/to/my/directory/"
+
+    # Runs when the script is called with the python interpreter
+    # ala "$ python cron.py"
+    if __name__ == "__main__":
+        # Loop through the site list
+        for s in SITE_LIST:
+            # Spit out what you're doing
+            print "Archiving %s" % s
+            try:
+                # Attempt to archive each site at the output directory
+                # defined above
+                storytracker.archive(s, output_dir=OUTPUT_DIR)
+            except Exception as e:
+                # And just move along and keep rolling if it fails.
+                print e
+
+Then edit the cron file from the command line.
+
+.. code-block:: bash
+
+    $ crontab -e
+
+And use `cron's custom expressions <http://en.wikipedia.org/wiki/Cron#Examples>`_ to schedule the job however you'd like.
+This example would schedule the script to run a file like the one above at the top of every hour. Though it assumes
+that ``storytracker`` is available to your global Python installation at ``/usr/bin/python``. If you are using a virtualenv or different Python
+configuration, you should begin the line with a path leading to that particular ``python`` executable.
+
+.. code-block:: cron
+
+    0 * * * *  /usr/bin/python /path/to/my/script/cron.py
