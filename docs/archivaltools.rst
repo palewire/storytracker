@@ -97,7 +97,7 @@ Example usage:
     >>> import storytracker
     >>> from datetime import datetime
     >>> storytracker.create_archive_filename("http://www.latimes.com", datetime.now())
-    'http-www.latimes.com----@2014-06-30T21:43:15.775071'
+    'http!www.latimes.com!!!!@2014-07-06T16:31:57.697250'
 
 get
 ---
@@ -159,5 +159,5 @@ Example usage:
 .. code-block:: python
 
     >>> import storytracker
-    >>> storytracker.reverse_archive_filename('http-www.latimes.com----@2014-06-30T21:43:15.775071')
-    ('http://www.latimes.com', datetime.datetime(2014, 6, 30, 21, 43, 15, 775071))
+    >>> storytracker.reverse_archive_filename('http!www.latimes.com!!!!@2014-07-06T16:31:57.697250')
+    ('http://www.latimes.com', datetime.datetime(2014, 7, 6, 16, 31, 57, 697250))
