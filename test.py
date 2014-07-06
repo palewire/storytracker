@@ -62,7 +62,6 @@ class ArchiveTest(BaseTest):
         url, then = storytracker.reverse_archive_filename(filename)
         storytracker.archive(self.long_url, output_dir="./")
         for fn in glob.glob("./http!www.washingtonpost.com*"):
-            print fn
             os.remove(fn)
 
 if __name__ == '__main__':
