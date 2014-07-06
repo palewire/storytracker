@@ -2,6 +2,7 @@
 import os
 import six
 import gzip
+import logging
 import htmlmin
 import storytracker
 import dateutil.parser
@@ -9,6 +10,7 @@ from six import BytesIO
 from datetime import datetime
 from bs4 import BeautifulSoup
 from six.moves.urllib.parse import urlparse, urlunparse, urljoin
+logger = logging.getLogger(__name__)
 
 
 # A list of all the other resources in the page we need to pull out
@@ -34,6 +36,7 @@ def archive(
     """
     Archive the HTML from the provided URL
     """
+    logger.debug("Archiving URL: %s" % url)
     # Get the html
     now = datetime.now()
     html = storytracker.get(url, verify=verify)
@@ -49,6 +52,7 @@ def archive(
         html = six.text_type(soup)
     # If a custom output dir is provided put everything in there
     if output_dir:
+        logger.debug("Writing file to %s" % output_dir)
         output_filename = create_archive_filename(url, now)
         output_path = os.path.join(output_dir, output_filename)
         if compress:
