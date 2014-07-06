@@ -76,7 +76,13 @@ def create_archive_filename(url, timestamp):
     Returns a string that combines a URL and the timestamp of when it was
     harvested for use when naming archives that are saved to disk.
     """
-    urlparts = "-".join(urlparse(url))
+    # Pull apart the URL into parts
+    urlparts = urlparse(url)
+    # Replace any slashes with a rare character like the "|" pipe.
+    urlparts = [p.replace("/", "|") for p in urlparts]
+    # Join the parts together into one string with a bang "!" as the seperator
+    urlparts = "!".join(urlparts)
+    # Now join it with the timestamp with an at "@" sign seperator
     return "%s@%s" % (
         urlparts,
         timestamp.isoformat()
@@ -90,7 +96,9 @@ def reverse_archive_filename(filename):
     timestamp. Do not include the file extension when providing a string.
     """
     url_string, timestamp_string = filename.split("@")
+    urlparts = url_string.split("!")
+    urlparts = [p.replace("|", "/") for p in urlparts]
     return (
-        urlunparse(url_string.split("-")),
+        urlunparse(urlparts),
         dateutil.parser.parse(timestamp_string)
     )

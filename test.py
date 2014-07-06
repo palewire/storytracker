@@ -53,7 +53,7 @@ class ArchiveTest(BaseTest):
             f(self.url, compress=False)
             f(self.url, output_dir="./")
             f(self.url, compress=False, output_dir="./")
-            for fn in glob.glob("./http-www.cnn.com---*"):
+            for fn in glob.glob("./http!www.cnn.com!!!*"):
                 os.remove(fn)
 
     def test_long_url(self):
@@ -61,8 +61,8 @@ class ArchiveTest(BaseTest):
         filename = storytracker.create_archive_filename(self.long_url, now)
         url, then = storytracker.reverse_archive_filename(filename)
         storytracker.archive(self.long_url, output_dir="./")
-        for fn in glob.glob("./http-www.washingtonpost.com*"):
-            url, then = storytracker.reverse_archive_filename(fn)
+        for fn in glob.glob("./http!www.washingtonpost.com*"):
+            print fn
             os.remove(fn)
 
 if __name__ == '__main__':
