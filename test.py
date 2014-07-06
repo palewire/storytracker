@@ -22,6 +22,7 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.url = "http://www.cnn.com"
+        self.long_url = "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         # Turning off stdout temporarily
@@ -55,6 +56,14 @@ class ArchiveTest(BaseTest):
             for fn in glob.glob("./http-www.cnn.com---*"):
                 os.remove(fn)
 
+    def test_long_url(self):
+        now = datetime.now()
+        filename = storytracker.create_archive_filename(self.long_url, now)
+        url, then = storytracker.reverse_archive_filename(filename)
+        storytracker.archive(self.long_url, output_dir="./")
+        for fn in glob.glob("./http-www.washingtonpost.com*"):
+            url, then = storytracker.reverse_archive_filename(fn)
+            os.remove(fn)
 
 if __name__ == '__main__':
     if six.PY3:
