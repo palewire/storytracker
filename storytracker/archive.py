@@ -9,7 +9,10 @@ import dateutil.parser
 from six import BytesIO
 from datetime import datetime
 from bs4 import BeautifulSoup
-from six.moves.urllib.parse import urlparse, urlunparse, urljoin
+try:
+    from urlparse import urlunparse, urlparse, urljoin
+except ImportError:
+    from six.moves.urllib.parse import urlparse, urlunparse, urljoin
 logger = logging.getLogger(__name__)
 
 
