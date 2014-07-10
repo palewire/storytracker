@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='storytracker',
-    version='0.0.3',
+    version='0.0.4',
     description='Tools for tracking stories for news homepages',
     author='Ben Welsh',
     author_email='ben.welsh@gmail.com',
@@ -19,5 +19,6 @@ setup(
         'requests==2.3.0',
         'htmlmin==0.1.5',
         'six==1.7.2',
+        'pytz>=2014.4',
     ),
 )

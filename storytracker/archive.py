@@ -2,6 +2,7 @@
 import os
 import six
 import gzip
+import pytz
 import logging
 import htmlmin
 import storytracker
@@ -41,7 +42,8 @@ def archive(
     """
     logger.debug("Archiving URL: %s" % url)
     # Get the html
-    now = datetime.now()
+    now = datetime.utcnow()
+    now = now.replace(tzinfo=pytz.utc)
     html = storytracker.get(url, verify=verify)
     # Minify the html (but option to skip)
     if minify:
@@ -62,12 +64,12 @@ def archive(
             fileobj = open("%s.gz" % output_path, 'wb')
             with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
                 f.write(html.encode("utf-8"))
-            return
+            return output_path
         else:
             with open("%s.html" % output_path, 'wb') as f:
                 f.write(html.encode("utf-8"))
-            return
-    # If not, return the data so it can be passed on
+            return output_path
+    # If not, return the  data so it can be passed on
     else:
         if compress:
             out = BytesIO()
