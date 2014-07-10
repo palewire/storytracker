@@ -58,7 +58,7 @@ Python interface
    :param bool compress: Compress the HTML response using gzip
    :param output_dir: Provide a directory for the archived data to be stored
    :type output_dir: str or None
-   :return: The content of the HTML response, unless an output directory is provided.
+   :return: The content of the HTML response, unless an output directory is provided when it will return the path to the created file.
    :rtype: str or None
    :raises ValueError: If the response is not verified as HTML
 
@@ -72,7 +72,7 @@ Example usage:
     >>> data = storytracker.archive("http://www.latimes.com")
 
     >>> # You can save it to an automatically named file a directory you provide
-    >>> storytracker.archive(http://www.latimes.com, output_dir="./")
+    >>> path = storytracker.archive(http://www.latimes.com, output_dir="./")
 
     >>> # If you'd prefer to have the HTML without compression
     >>> data = storytracker.archive("http://www.latimes.com", compress=False)
