@@ -84,6 +84,10 @@ class AnalysisTest(BaseTest):
         url_obj = storytracker.open_archive_filepath(path)
         self.assertTrue(isinstance(url_obj, URL))
 
+    def test_url_creation(self):
+        html = storytracker.archive(self.url, compress=False)
+        url_obj = URL(self.url, datetime.now(), html)
+
 
 if __name__ == '__main__':
     if six.PY3:
