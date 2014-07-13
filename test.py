@@ -6,6 +6,7 @@ import tempfile
 import unittest
 import storytracker
 from datetime import datetime
+from bs4 import BeautifulSoup
 from storytracker.analysis import URL
 
 
@@ -91,6 +92,7 @@ class AnalysisTest(BaseTest):
         self.assertEqual(self.url, obj.url)
         self.assertEqual(timestamp, obj.timestamp)
         self.assertEqual(html, obj.html)
+        self.assertEqual(BeautifulSoup(html), obj.soup)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 import os
 import gzip
 import storytracker
+from bs4 import BeautifulSoup
 
 
 def open_archive_filepath(path):
@@ -29,3 +30,4 @@ class URL(object):
         self.url = url
         self.timestamp = timestamp
         self.html = html
+        self.soup = BeautifulSoup(html)
