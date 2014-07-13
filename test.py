@@ -2,6 +2,7 @@ import os
 import sys
 import six
 import glob
+import tempfile
 import unittest
 import storytracker
 from datetime import datetime
@@ -27,6 +28,7 @@ intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-\
 program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
+        self.tmpdir = tempfile.mkdtemp()
         # Turning off stdout temporarily
         original_stdout = sys.stdout
         sys.stdout = NullDevice()
@@ -52,8 +54,8 @@ class ArchiveTest(BaseTest):
         storytracker.archive(self.url, minify=False)
         storytracker.archive(self.url, extend_urls=False)
         storytracker.archive(self.url, compress=False)
-        storytracker.archive(self.url, output_dir="./")
-        storytracker.archive(self.url, compress=False, output_dir="./")
+        storytracker.archive(self.url, output_dir=self.tmpdir)
+        storytracker.archive(self.url, compress=False, output_dir=self.tmpdir)
         for fn in glob.glob("./http!www.cnn.com!!!*"):
             os.remove(fn)
 
@@ -61,9 +63,23 @@ class ArchiveTest(BaseTest):
         now = datetime.now()
         filename = storytracker.create_archive_filename(self.long_url, now)
         url, then = storytracker.reverse_archive_filename(filename)
-        storytracker.archive(self.long_url, output_dir="./")
-        for fn in glob.glob("./http!www.washingtonpost.com*"):
-            os.remove(fn)
+        path = storytracker.archive(self.long_url, output_dir=self.tmpdir)
+        os.remove(path)
+
+
+class AnalysisTest(BaseTest):
+
+    def test_open_archive_gzip(self):
+        path = storytracker.archive(self.url, output_dir=self.tmpdir)
+        storytracker.open_archive_filepath(path)
+
+    def test_open_archive_html(self):
+        path = storytracker.archive(
+            self.url,
+            output_dir=self.tmpdir,
+            compress=False
+        )
+        storytracker.open_archive_filepath(path)
 
 
 if __name__ == '__main__':

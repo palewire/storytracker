@@ -64,11 +64,11 @@ def archive(
             fileobj = open("%s.gz" % output_path, 'wb')
             with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
                 f.write(html.encode("utf-8"))
-            return output_path
+            return "%s.gz" % output_path
         else:
             with open("%s.html" % output_path, 'wb') as f:
                 f.write(html.encode("utf-8"))
-            return output_path
+            return "%s.html" % output_path
     # If not, return the  data so it can be passed on
     else:
         if compress:
