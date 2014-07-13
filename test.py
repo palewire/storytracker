@@ -72,8 +72,8 @@ class AnalysisTest(BaseTest):
 
     def test_open_archive_gzip(self):
         path = storytracker.archive(self.url, output_dir=self.tmpdir)
-        url_obj = storytracker.open_archive_filepath(path)
-        self.assertTrue(isinstance(url_obj, URL))
+        obj = storytracker.open_archive_filepath(path)
+        self.assertTrue(isinstance(obj, URL))
 
     def test_open_archive_html(self):
         path = storytracker.archive(
@@ -81,12 +81,16 @@ class AnalysisTest(BaseTest):
             output_dir=self.tmpdir,
             compress=False
         )
-        url_obj = storytracker.open_archive_filepath(path)
-        self.assertTrue(isinstance(url_obj, URL))
+        obj = storytracker.open_archive_filepath(path)
+        self.assertTrue(isinstance(obj, URL))
 
     def test_url_creation(self):
         html = storytracker.archive(self.url, compress=False)
-        url_obj = URL(self.url, datetime.now(), html)
+        timestamp = datetime.now()
+        obj = URL(self.url, timestamp, html)
+        self.assertEqual(self.url, obj.url)
+        self.assertEqual(timestamp, obj.timestamp)
+        self.assertEqual(html, obj.html)
 
 
 if __name__ == '__main__':
