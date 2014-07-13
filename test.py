@@ -7,7 +7,7 @@ import unittest
 import storytracker
 from datetime import datetime
 from bs4 import BeautifulSoup
-from storytracker.analysis import URL
+from storytracker.analysis import ArchivedURL
 
 
 class NullDevice():
@@ -74,7 +74,7 @@ class AnalysisTest(BaseTest):
     def test_open_archive_gzip(self):
         path = storytracker.archive(self.url, output_dir=self.tmpdir)
         obj = storytracker.open_archive_filepath(path)
-        self.assertTrue(isinstance(obj, URL))
+        self.assertTrue(isinstance(obj, ArchivedURL))
 
     def test_open_archive_html(self):
         path = storytracker.archive(
@@ -83,16 +83,21 @@ class AnalysisTest(BaseTest):
             compress=False
         )
         obj = storytracker.open_archive_filepath(path)
-        self.assertTrue(isinstance(obj, URL))
+        self.assertTrue(isinstance(obj, ArchivedURL))
 
     def test_url_creation(self):
         html = storytracker.archive(self.url, compress=False)
         timestamp = datetime.now()
-        obj = URL(self.url, timestamp, html)
+        obj = ArchivedURL(self.url, timestamp, html)
         self.assertEqual(self.url, obj.url)
         self.assertEqual(timestamp, obj.timestamp)
         self.assertEqual(html, obj.html)
         self.assertEqual(BeautifulSoup(html), obj.soup)
+
+    def test_url_hyperlinks(self):
+        path = storytracker.archive(self.url, output_dir=self.tmpdir)
+        obj = storytracker.open_archive_filepath(path)
+        self.assertTrue(isinstance(obj.hyperlinks, list))
 
 
 if __name__ == '__main__':

@@ -19,10 +19,10 @@ def open_archive_filepath(path):
     # Otherwise handle it normally
     else:
         obj = open(path, "rb")
-    return URL(url, timestamp, obj.read())
+    return ArchivedURL(url, timestamp, obj.read())
 
 
-class URL(object):
+class ArchivedURL(object):
     """
     An URL's archived HTML response with tools for analysis
     """
@@ -31,3 +31,13 @@ class URL(object):
         self.timestamp = timestamp
         self.html = html
         self.soup = BeautifulSoup(html)
+
+    @property
+    def hyperlinks(self):
+        """
+        Parse all of the hyperlinks from the HTML
+        """
+        return [a["href"] for a in self.soup.findAll("a", {"href": True})]
+
+
+
