@@ -6,6 +6,7 @@ import tempfile
 import unittest
 import storytracker
 from datetime import datetime
+from storytracker.analysis import URL
 
 
 class NullDevice():
@@ -71,7 +72,8 @@ class AnalysisTest(BaseTest):
 
     def test_open_archive_gzip(self):
         path = storytracker.archive(self.url, output_dir=self.tmpdir)
-        storytracker.open_archive_filepath(path)
+        url_obj = storytracker.open_archive_filepath(path)
+        self.assertTrue(isinstance(url_obj, URL))
 
     def test_open_archive_html(self):
         path = storytracker.archive(
@@ -79,7 +81,8 @@ class AnalysisTest(BaseTest):
             output_dir=self.tmpdir,
             compress=False
         )
-        storytracker.open_archive_filepath(path)
+        url_obj = storytracker.open_archive_filepath(path)
+        self.assertTrue(isinstance(url_obj, URL))
 
 
 if __name__ == '__main__':
