@@ -37,7 +37,16 @@ class ArchivedURL(object):
         """
         Parse all of the hyperlinks from the HTML
         """
-        return [a["href"] for a in self.soup.findAll("a", {"href": True})]
+        link_list = []
+        for a in self.soup.findAll("a", {"href": True}):
+            obj = Hyperlink(a["href"])
+            link_list.append(obj)
+        return link_list
 
 
-
+class Hyperlink(object):
+    """
+    A hyperlink extracted from an archived URL with tools for analysis
+    """
+    def __init__(self, href):
+        self.href = href
