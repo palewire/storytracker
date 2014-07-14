@@ -9,7 +9,9 @@ Contents:
    :maxdepth: 3
 
    gettingstarted
-   archivaltools
+   archiving
+   analysis
+   filehandling
    changelog
    credits
 

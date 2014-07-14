@@ -9,6 +9,7 @@ import storytracker
 from six import BytesIO
 from datetime import datetime
 from bs4 import BeautifulSoup
+from .analysis import ArchivedURL
 try:
     from urlparse import urljoin
 except ImportError:
