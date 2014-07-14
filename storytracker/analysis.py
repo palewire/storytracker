@@ -50,6 +50,7 @@ class ArchivedURLSet(list):
     A list of archived URLs sorted by their timestamp
     """
     def __init__(self, obj_list):
+        # Create a list to put objects after we've checked them out
         safe_list = []
         for obj in obj_list:
 
