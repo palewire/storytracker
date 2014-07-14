@@ -117,6 +117,8 @@ class AnalysisTest(BaseTest):
         self.assertEqual(len(urlset), 3)
         with self.assertRaises(TypeError):
             ArchivedURLSet([1,2, obj])
+        with self.assertRaises(ValueError):
+            ArchivedURLSet([obj, obj])
 
 
 if __name__ == '__main__':

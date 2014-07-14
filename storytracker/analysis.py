@@ -50,10 +50,21 @@ class ArchivedURLSet(list):
     A list of archived URLs sorted by their timestamp
     """
     def __init__(self, obj_list):
-        # Verify that the user is trying to add an ArchivedURL object
+        safe_list = []
         for obj in obj_list:
+
+            # Verify that the user is trying to add an ArchivedURL object
             if not isinstance(obj, ArchivedURL):
                 raise TypeError("Only ArchivedURL objects can be added")
+
+            # Check if the object is already in the list
+            if obj in safe_list:
+                raise ValueError("This object is already in the list")
+
+            # Add to safe list
+            safe_list.append(obj)
+
+        # Do the normal list start up
         super(ArchivedURLSet, self).__init__(obj_list)
 
     def append(self, obj):
