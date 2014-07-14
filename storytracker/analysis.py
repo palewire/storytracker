@@ -1,46 +1,5 @@
-import os
-import gzip
 import copy
-import storytracker
 from bs4 import BeautifulSoup
-
-
-def open_archive_filepath(path):
-    """
-    Accepts a file path and returns an ArchivedURL object ready for analysis
-    """
-    # Split the file extension from the name
-    name = os.path.basename(path)
-    name, ext = os.path.splitext(name)
-    # Extract the URL and timestamp from the file name
-    url, timestamp = storytracker.reverse_archive_filename(name)
-    # If it is gzipped, then open it that way
-    if ext == '.gz':
-        obj = gzip.open(path)
-    # Otherwise handle it normally
-    else:
-        obj = open(path, "rb")
-    return ArchivedURL(url, timestamp, obj.read())
-
-
-def open_archive_directory(path):
-    """
-    Accepts a directory path and returns an ArchivedURLSet ready for analysis
-    """
-    # Make sure it's a directory
-    if not os.path.isdir(path):
-        raise ValueError("Path must be a directory")
-
-    # Loop through the directory and pull the data
-    urlset = ArchivedURLSet([])
-    for root, dirs, files in os.walk(path):
-        for name in files:
-            path = os.path.join(root, name)
-            obj = open_archive_filepath(path)
-            urlset.append(obj)
-
-    # Pass it back out
-    return urlset
 
 
 class ArchivedURL(object):

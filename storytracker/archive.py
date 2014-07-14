@@ -6,14 +6,13 @@ import pytz
 import logging
 import htmlmin
 import storytracker
-import dateutil.parser
 from six import BytesIO
 from datetime import datetime
 from bs4 import BeautifulSoup
 try:
-    from urlparse import urlunparse, urlparse, urljoin
+    from urlparse import urljoin
 except ImportError:
-    from six.moves.urllib.parse import urlparse, urlunparse, urljoin
+    from six.moves.urllib.parse import urljoin
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +57,7 @@ def archive(
     # If a custom output dir is provided put everything in there
     if output_dir:
         logger.debug("Writing file to %s" % output_dir)
-        output_filename = create_archive_filename(url, now)
+        output_filename = storytracker.create_archive_filename(url, now)
         output_path = os.path.join(output_dir, output_filename)
         if compress:
             fileobj = open("%s.gz" % output_path, 'wb')
@@ -78,36 +77,3 @@ def archive(
             return out.getvalue()
         else:
             return html.encode("utf-8")
-
-
-def create_archive_filename(url, timestamp):
-    """
-    Returns a string that combines a URL and the timestamp of when it was
-    harvested for use when naming archives that are saved to disk.
-    """
-    # Pull apart the URL into parts
-    urlparts = urlparse(url)
-    # Replace any slashes with a rare character like the "|" pipe.
-    urlparts = [p.replace("/", "|") for p in urlparts]
-    # Join the parts together into one string with a bang "!" as the seperator
-    urlparts = "!".join(urlparts)
-    # Now join it with the timestamp with an at "@" sign seperator
-    return "%s@%s" % (
-        urlparts,
-        timestamp.isoformat()
-    )
-
-
-def reverse_archive_filename(filename):
-    """
-    Accepts a filename created using the rules of ``create_archive_filename``
-    and converts it back to Python. Returns a tuple: The URL string and a
-    timestamp. Do not include the file extension when providing a string.
-    """
-    url_string, timestamp_string = filename.split("@")
-    urlparts = url_string.split("!")
-    urlparts = [p.replace("|", "/") for p in urlparts]
-    return (
-        urlunparse(urlparts),
-        dateutil.parser.parse(timestamp_string)
-    )
