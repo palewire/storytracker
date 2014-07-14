@@ -18,6 +18,9 @@ class ArchivedURL(object):
         self.archive_path = None
 
     def __eq__(self, other):
+        """
+        Tests whether this object is equal to something else.
+        """
         if not isinstance(other, ArchivedURL):
             return NotImplemented
         if self.url == other.url:
@@ -27,6 +30,9 @@ class ArchivedURL(object):
         return False
 
     def __ne__(self, other):
+        """
+        Tests whether this object is unequal to something else.
+        """
         result = self.__eq__(other)
         if result is NotImplemented:
             return result
