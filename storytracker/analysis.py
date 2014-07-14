@@ -1,5 +1,6 @@
 import os
 import gzip
+import copy
 import storytracker
 from bs4 import BeautifulSoup
 
@@ -42,6 +43,23 @@ class ArchivedURL(object):
             obj = Hyperlink(a["href"])
             link_list.append(obj)
         return link_list
+
+
+class ArchivedURLSet(list):
+    """
+    A list of archived URLs sorted by their timestamp
+    """
+    def append(self, obj):
+        # Verify that the user is trying to add an ArchivedURL object
+        if not isinstance(obj, ArchivedURL):
+            raise TypeError("Only ArchivedURL objects can be added")
+
+        # Check if the object is already in the list
+        if obj in [o for o in list(self.__iter__())]:
+            raise ValueError("This object is already in the list")
+
+        # If it's all true, append it.
+        super(ArchivedURLSet, self).append(copy.copy(obj))
 
 
 class Hyperlink(object):

@@ -7,7 +7,9 @@ import unittest
 import storytracker
 from datetime import datetime
 from bs4 import BeautifulSoup
-from storytracker.analysis import ArchivedURL, Hyperlink
+from storytracker.analysis import ArchivedURL
+from storytracker.analysis import ArchivedURLSet
+from storytracker.analysis import Hyperlink
 
 
 class NullDevice():
@@ -99,6 +101,20 @@ class AnalysisTest(BaseTest):
         obj = storytracker.open_archive_filepath(path)
         self.assertTrue(isinstance(obj.hyperlinks, list))
         [self.assertTrue(isinstance(a, Hyperlink)) for a in obj.hyperlinks]
+
+    def test_urlset_creation(self):
+        obj = ArchivedURL(self.url, datetime.now(), "foobar")
+        obj2 = ArchivedURL(self.url, datetime.now(), "foobar")
+        obj3 = ArchivedURL(self.url, datetime.now(), "foobar")
+        urlset = ArchivedURLSet([obj, obj2])
+        self.assertEqual(len(urlset), 2)
+        with self.assertRaises(TypeError):
+            urlset.append(1)
+            urlset.append([1,2,3])
+        with self.assertRaises(ValueError):
+            urlset.append(obj)
+        urlset.append(obj3)
+        self.assertEqual(len(urlset), 3)
 
 
 if __name__ == '__main__':
