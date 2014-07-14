@@ -1,4 +1,5 @@
 from .archive import archive
+from .exceptions import ArchiveFileNameError
 from .files import create_archive_filename
 from .files import open_archive_directory
 from .files import open_archive_filepath
@@ -7,6 +8,7 @@ from .get import get
 
 __all__ = [
     'archive',
+    'ArchiveFileNameError',
     'create_archive_filename',
     'get',
     'open_archive_directory',

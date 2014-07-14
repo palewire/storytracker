@@ -41,7 +41,10 @@ def open_archive_directory(path):
     for root, dirs, files in os.walk(path):
         for name in files:
             path = os.path.join(root, name)
-            obj = open_archive_filepath(path)
+            try:
+                obj = open_archive_filepath(path)
+            except storytracker.ArchiveFileNameError:
+                continue
             urlset.append(obj)
 
     # Pass it back out
@@ -72,10 +75,15 @@ def reverse_archive_filename(filename):
     and converts it back to Python. Returns a tuple: The URL string and a
     timestamp. Do not include the file extension when providing a string.
     """
-    url_string, timestamp_string = filename.split("@")
-    urlparts = url_string.split("!")
-    urlparts = [p.replace("|", "/") for p in urlparts]
-    return (
-        urlunparse(urlparts),
-        dateutil.parser.parse(timestamp_string)
-    )
+    try:
+        url_string, timestamp_string = filename.split("@")
+        urlparts = url_string.split("!")
+        urlparts = [p.replace("|", "/") for p in urlparts]
+        return (
+            urlunparse(urlparts),
+            dateutil.parser.parse(timestamp_string)
+        )
+    except:
+        raise storytracker.ArchiveFileNameError(
+            "Archive file name could not be parsed from %s:" % filename
+        )

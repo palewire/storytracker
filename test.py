@@ -52,6 +52,8 @@ class ArchiveTest(BaseTest):
         url, then = storytracker.reverse_archive_filename(filename)
         self.assertEqual(self.url, url)
         self.assertEqual(now, then)
+        with self.assertRaises(storytracker.ArchiveFileNameError):
+            storytracker.reverse_archive_filename("foo.bar")
 
     def test_archive(self):
         storytracker.archive(self.url)
