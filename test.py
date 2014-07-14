@@ -33,9 +33,9 @@ program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         self.tmpdir = tempfile.mkdtemp()
-        # Turning off stdout temporarily
-        original_stdout = sys.stdout
-        sys.stdout = NullDevice()
+#        # Turning off stdout temporarily
+#        original_stdout = sys.stdout
+#        sys.stdout = NullDevice()
 
 
 class ArchiveTest(BaseTest):
@@ -119,6 +119,23 @@ class AnalysisTest(BaseTest):
             ArchivedURLSet([1,2, obj])
         with self.assertRaises(ValueError):
             ArchivedURLSet([obj, obj])
+
+    def test_open_archive_directory(self):
+        with self.assertRaises(ValueError):
+            storytracker.open_archive_directory("./foo.bar")
+        storytracker.archive(
+            self.url,
+            compress=False,
+            output_dir=self.tmpdir
+        )
+        storytracker.archive(
+            self.url,
+            compress=False,
+            output_dir=self.tmpdir
+        )
+        urlset = storytracker.open_archive_directory(self.tmpdir)
+        self.assertTrue(len(urlset), 2)
+        [self.assertTrue(isinstance(o, ArchivedURL)) for o in urlset]
 
 
 if __name__ == '__main__':

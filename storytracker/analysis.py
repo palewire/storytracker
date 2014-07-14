@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 def open_archive_filepath(path):
     """
-    Accepts a file path and returns a file object ready for analysis
+    Accepts a file path and returns an ArchivedURL object ready for analysis
     """
     # Split the file extension from the name
     name = os.path.basename(path)
@@ -21,6 +21,26 @@ def open_archive_filepath(path):
     else:
         obj = open(path, "rb")
     return ArchivedURL(url, timestamp, obj.read())
+
+
+def open_archive_directory(path):
+    """
+    Accepts a directory path and returns an ArchivedURLSet ready for analysis
+    """
+    # Make sure it's a directory
+    if not os.path.isdir(path):
+        raise ValueError("Path must be a directory")
+
+    # Loop through the directory and pull the data
+    urlset = ArchivedURLSet([])
+    for root, dirs, files in os.walk(path):
+        for name in files:
+            path = os.path.join(root, name)
+            obj = open_archive_filepath(path)
+            urlset.append(obj)
+
+    # Pass it back out
+    return urlset
 
 
 class ArchivedURL(object):
