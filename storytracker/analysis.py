@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 class ArchivedURL(object):
     """
-    An URL's archived HTML response with tools for analysis
+    An URL's archived HTML with tools for analysis
     """
     def __init__(self, url, timestamp, html):
         self.url = url
@@ -26,7 +26,7 @@ class ArchivedURL(object):
 
 class ArchivedURLSet(list):
     """
-    A list of archived URLs sorted by their timestamp
+    A list of archived URLs
     """
     def __init__(self, obj_list):
         # Create a list to put objects after we've checked them out

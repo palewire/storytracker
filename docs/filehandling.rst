@@ -1,9 +1,10 @@
 File handling
 =============
 
+Functions for naming, saving and retrieving archived URLs.
 
 create_archive_filename
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Returns a string that combines a URL and a timestamp of for naming archives saved to the filesystem.
 
@@ -25,17 +26,17 @@ Example usage:
 
 
 open_archive_directory
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
-Accepts a directory path and returns an ``ArchivedURLSet`` list filled with an ``ArchivedURL``
+Accepts a directory path and returns an :py:class:`ArchivedURLSet` list filled with an :py:class:`ArchivedURL`
 object that corresponds to every archived file it finds.
 
 
 .. py:function:: storytracker.open_archive_directory(path)
 
     :param str path: The path to directory containing archived files.
-    :return: An ``ArchivedURLSet`` list
-    :rtype: ``ArchivedURLSet``
+    :return: An  :py:class:`ArchivedURLSet` list
+    :rtype:  :py:class:`ArchivedURLSet`
 
 Example usage:
 
@@ -46,15 +47,15 @@ Example usage:
 
 
 open_archive_filepath
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 Accepts a file path and returns an ``ArchivedURL`` object
 
 .. py:function:: storytracker.open_archive_filepath(path)
 
     :param str path: The path to the archived file. Its file name must conform to the conventions of :py:func:`storytracker.create_archive_filename`.
-    :return: An ``ArchivedURL`` object
-    :rtype: ``ArchivedURL``
+    :return: An :py:class:`ArchivedURL` object
+    :rtype: :py:class:`ArchivedURL`
 
 Example usage:
 
@@ -65,7 +66,7 @@ Example usage:
 
 
 reverse_archive_filename
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Accepts a filename created using the rules of :py:func:`storytracker.create_archive_filename`
 and converts it back to Python. Returns a tuple: The URL string and a
