@@ -12,7 +12,7 @@ Returns a string that combines a URL and a timestamp of for naming archives save
     :param str url: The URL of the page that is being archived
     :param datetime timestamp: A timestamp recording approximately when the URL was archive
     :return: A string that combines the two arguments into a structure can be reversed back into Python
-    :rtype: str
+    :rtype: ``str``
 
 Example usage:
 
@@ -24,16 +24,37 @@ Example usage:
     'http!www.latimes.com!!!!@2014-07-06T16:31:57.697250'
 
 
+open_archive_directory
+----------------------
+
+Accepts a directory path and returns an ``ArchivedURLSet`` list filled with an ``ArchivedURL``
+object that corresponds to every archived file it finds.
+
+
+.. py:function:: storytracker.open_archive_directory(path)
+
+    :param str path: The path to directory containing archived files.
+    :return: An ``ArchivedURLSet`` list
+    :rtype: ``ArchivedURLSet``
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> obj_list = storytracker.open_archive_directory('/home/ben/archive/')
+
+
 open_archive_filepath
 ---------------------
 
-Accepts a file path and returns an ArchivedURL object
+Accepts a file path and returns an ``ArchivedURL`` object
 
 .. py:function:: storytracker.open_archive_filepath(path)
 
     :param str path: The path to the archived file. Its file name must conform to the conventions of :py:func:`storytracker.create_archive_filename`.
-    :return: An ArchivedURL object
-    :rtype: ArchivedURL
+    :return: An ``ArchivedURL`` object
+    :rtype: ``ArchivedURL``
 
 Example usage:
 
@@ -54,7 +75,7 @@ timestamp. Do not include the file extension when providing a string.
 
     :param str filename: A filename structured using the style of the :py:func:`storytracker.create_archive_filename` function
     :return: A tuple containing the URL of the archived page as a string and a datetime object of the archive's timestamp 
-    :rtype: tuple
+    :rtype: ``tuple``
 
 Example usage:
 

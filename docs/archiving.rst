@@ -18,7 +18,7 @@ Archive the HTML from the provided URLs
    :param output_dir: Provide a directory for the archived data to be stored
    :type output_dir: str or None
    :return: The content of the HTML response, unless an output directory is provided when it will return the path to the created file
-   :rtype: str
+   :rtype: ``str``
    :raises ValueError: If the response is not verified as HTML
 
 Example usage:
@@ -85,7 +85,7 @@ Retrieves HTML from the provided URLs
    :param str url: The URL of the page to archive
    :param bool verify: Verify that HTML is in the response's content-type header
    :return: The content of the HTML response
-   :rtype: str
+   :rtype: ``str``
    :raises ValueError: If the response is not verified as HTML
 
 Command-line interface
