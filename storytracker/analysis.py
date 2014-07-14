@@ -18,13 +18,13 @@ class ArchivedURL(object):
         self.archive_path = None
 
     def __eq__(self, other):
-        if isinstance(other, ArchivedURL):
-            if self.url == other.url:
-                if self.timestamp == other.timestamp:
-                    if self.html == other.html:
-                        return True
-            return False
-        return NotImplemented
+        if not isinstance(other, ArchivedURL):
+            return NotImplemented
+        if self.url == other.url:
+            if self.timestamp == other.timestamp:
+                if self.html == other.html:
+                    return True
+        return False
 
     def __ne__(self, other):
         result = self.__eq__(other)
