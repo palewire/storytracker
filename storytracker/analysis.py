@@ -49,6 +49,13 @@ class ArchivedURLSet(list):
     """
     A list of archived URLs sorted by their timestamp
     """
+    def __init__(self, obj_list):
+        # Verify that the user is trying to add an ArchivedURL object
+        for obj in obj_list:
+            if not isinstance(obj, ArchivedURL):
+                raise TypeError("Only ArchivedURL objects can be added")
+        super(ArchivedURLSet, self).__init__(obj_list)
+
     def append(self, obj):
         # Verify that the user is trying to add an ArchivedURL object
         if not isinstance(obj, ArchivedURL):
