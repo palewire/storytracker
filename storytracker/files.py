@@ -30,7 +30,7 @@ def create_archive_filename(url, timestamp):
 
 def open_archive_filepath(path):
     """
-    Accepts a file path and returns an ArchivedURL object ready for analysis
+    Accepts a file path and returns an ArchivedURL object
     """
     # Split the file extension from the name
     name = os.path.basename(path)
@@ -48,7 +48,7 @@ def open_archive_filepath(path):
 
 def open_archive_directory(path):
     """
-    Accepts a directory path and returns an ArchivedURLSet ready for analysis
+    Accepts a directory path and returns an ArchivedURLSet object
     """
     # Make sure it's a directory
     if not os.path.isdir(path):

@@ -24,6 +24,24 @@ Example usage:
     'http!www.latimes.com!!!!@2014-07-06T16:31:57.697250'
 
 
+open_archive_filepath
+---------------------
+
+Accepts a file path and returns an ArchivedURL object
+
+.. py:function:: storytracker.open_archive_filepath(path)
+
+    :param str path: The path to the archived file. Its file name must conform to the conventions of :py:func:`storytracker.create_archive_filename`.
+    :return: An ArchivedURL object
+    :rtype: ArchivedURL
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> obj = storytracker.open_archive_filepath('/home/ben/archive/http!www.latimes.com!!!!@2014-07-06T16:31:57.697250.gz')
+
 
 reverse_archive_filename
 ------------------------
