@@ -66,7 +66,7 @@ def open_archive_filepath(path):
     # Otherwise handle it normally
     else:
         obj = open(path, "rb")
-    return ArchivedURL(url, timestamp, obj.read())
+    return ArchivedURL(url, timestamp, obj.read().decode("utf-8"))
 
 
 def reverse_archive_filename(filename):

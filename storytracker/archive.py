@@ -1,12 +1,9 @@
 #!/usr/bin/env python
-import os
 import six
-import gzip
 import pytz
 import logging
 import htmlmin
 import storytracker
-from six import BytesIO
 from datetime import datetime
 from bs4 import BeautifulSoup
 try:
@@ -40,13 +37,16 @@ def archive(
     Archive the HTML from the provided URL
     """
     logger.debug("Archiving URL: %s" % url)
+
     # Get the html
     now = datetime.utcnow()
     now = now.replace(tzinfo=pytz.utc)
     html = storytracker.get(url, verify=verify)
+
     # Minify the html (but option to skip)
     if minify:
         html = htmlmin.minify(html)
+
     # Replace all relative URLs with absolute URLs, if called for
     if extend_urls:
         soup = BeautifulSoup(html)
@@ -54,26 +54,17 @@ def archive(
             for hit in soup.findAll(*target['tag']):
                 hit[target['attr']] = urljoin(url, hit[target['attr']])
         html = six.text_type(soup)
+
+    # Create an URLArchive object
+    obj = storytracker.ArchivedURL(url, now, html)
+
     # If a custom output dir is provided put everything in there
     if output_dir:
         logger.debug("Writing file to %s" % output_dir)
-        output_filename = storytracker.create_archive_filename(url, now)
-        output_path = os.path.join(output_dir, output_filename)
         if compress:
-            fileobj = open("%s.gz" % output_path, 'wb')
-            with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
-                f.write(html.encode("utf-8"))
-            return "%s.gz" % output_path
+            obj.write_gzip_to_directory(output_dir)
         else:
-            with open("%s.html" % output_path, 'wb') as f:
-                f.write(html.encode("utf-8"))
-            return "%s.html" % output_path
-    # If not, return the  data so it can be passed on
-    else:
-        if compress:
-            out = BytesIO()
-            with gzip.GzipFile(fileobj=out, mode="wb") as f:
-                f.write(html.encode("utf-8"))
-            return out.getvalue()
-        else:
-            return html.encode("utf-8")
+            obj.write_html_to_directory(output_dir)
+
+    # Return ArchivedURL object
+    return obj

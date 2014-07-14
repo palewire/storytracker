@@ -1,4 +1,8 @@
+import os
 import copy
+import gzip
+import storytracker
+from six import BytesIO
 from bs4 import BeautifulSoup
 
 
@@ -11,6 +15,65 @@ class ArchivedURL(object):
         self.timestamp = timestamp
         self.html = html
         self.soup = BeautifulSoup(html)
+        self.archive_path = None
+
+    def __eq__(self, other):
+        if isinstance(other, ArchivedURL):
+            if self.url == other.url:
+                if self.timestamp == other.timestamp:
+                    if self.html == other.html:
+                        return True
+            return False
+        return NotImplemented
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+
+    @property
+    def archive_filename(self):
+        """
+        Returns a file name for this archive using storytracker's naming scheme
+        """
+        return storytracker.create_archive_filename(self.url, self.timestamp)
+
+    @property
+    def gzip(self):
+        """
+        Returns HTML as a stream of gzipped data
+        """
+        out = BytesIO()
+        with gzip.GzipFile(fileobj=out, mode="wb") as f:
+            f.write(self.html.encode("utf-8"))
+        return out.getvalue()
+
+    def write_gzip_to_directory(self, path):
+        """
+        Writes gzipped HTML data to a file in the provided directory path
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        self.archive_path = os.path.join(path, "%s.gz" % self.archive_filename)
+        fileobj = open(self.archive_path, 'wb')
+        with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
+            f.write(self.html.encode("utf-8"))
+        return self.archive_path
+
+    def write_html_to_directory(self, path):
+        """
+        Writes HTML data to a file in the provided directory path
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        self.archive_path = os.path.join(
+            path,
+            "%s.html" % self.archive_filename
+        )
+        with open(self.archive_path, 'wb') as f:
+            f.write(self.html.encode("utf-8"))
+        return self.archive_path
 
     @property
     def hyperlinks(self):
