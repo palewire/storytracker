@@ -14,11 +14,11 @@ Archive the HTML from the provided URLs
    :param bool verify: Verify that HTML is in the response's content-type header
    :param bool minify: Minify the HTML response to reduce its size
    :param bool extend_urls: Extend relative URLs discovered in the HTML response to be absolute
-   :param bool compress: Compress the HTML response using gzip
+   :param bool compress: Compress the HTML response using gzip if an ``output_dir`` is provided
    :param output_dir: Provide a directory for the archived data to be stored
    :type output_dir: str or None
-   :return: The content of the HTML response, unless an output directory is provided when it will return the path to the created file
-   :rtype: ``str``
+   :return: An :py:class:`ArchivedURL` object 
+   :rtype: :py:class:`ArchivedURL`
    :raises ValueError: If the response is not verified as HTML
 
 Example usage:
@@ -28,13 +28,13 @@ Example usage:
     >>> import storytracker
 
     >>> # This will return gzipped content of the page to the variable
-    >>> data = storytracker.archive("http://www.latimes.com")
+    >>> obj = storytracker.archive("http://www.latimes.com")
 
     >>> # You can save it to an automatically named file a directory you provide
-    >>> path = storytracker.archive(http://www.latimes.com, output_dir="./")
+    >>> obj = storytracker.archive(http://www.latimes.com, output_dir="./")
 
     >>> # If you'd prefer to have the HTML without compression
-    >>> data = storytracker.archive("http://www.latimes.com", compress=False)
+    >>> obj = storytracker.archive("http://www.latimes.com", compress=False)
 
 Command-line interface
 ~~~~~~~~~~~~~~~~~~~~~~

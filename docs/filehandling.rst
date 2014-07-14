@@ -56,6 +56,7 @@ Accepts a file path and returns an ``ArchivedURL`` object
     :param str path: The path to the archived file. Its file name must conform to the conventions of :py:func:`storytracker.create_archive_filename`.
     :return: An :py:class:`ArchivedURL` object
     :rtype: :py:class:`ArchivedURL`
+    :raises ArchiveFileNameError: If the file's name cannot not be parsed using the conventions of :py:func:`storytracker.create_archive_filename`.
 
 Example usage:
 

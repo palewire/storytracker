@@ -21,6 +21,14 @@ An URL's archived HTML with tools for analysis.
 
         The HTML archived
 
+    .. py:attribute:: gzip
+
+        Returns the archived HTML as a stream of gzipped data
+
+    .. py:attribute:: archive_filename
+
+        Returns a file name for this archive using the conventions of :py:func:`storytracker.create_archive_filename`.
+
     .. py:attribute:: soup
 
         The archived HTML passed into a `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/bs4/doc/#>`_ parser
@@ -28,6 +36,14 @@ An URL's archived HTML with tools for analysis.
     .. py:attribute:: hyperlinks
 
         A list of all the hyperlinks extracted from the HTML
+
+    .. py:method:: write_gzip_to_directory(path)
+
+        Writes gzipped HTML data to a file in the provided directory path
+
+    .. py:method:: write_html_to_directory(path)
+
+        Writes HTML data to a file in the provided directory path
 
 Example usage:
 
