@@ -15,7 +15,9 @@ class ArchivedURL(object):
         self.timestamp = timestamp
         self.html = html
         self.soup = BeautifulSoup(html)
+        # Attributes that come in handy below
         self.archive_path = None
+        self._hyperlinks = []
 
     def __eq__(self, other):
         """
@@ -81,16 +83,30 @@ class ArchivedURL(object):
             f.write(self.html.encode("utf-8"))
         return self.archive_path
 
-    @property
-    def hyperlinks(self):
+    def get_hyperlinks(self, force=False):
         """
-        Parse all of the hyperlinks from the HTML
+        Parses all of the hyperlinks from the HTML and returns a list of
+        Hyperlink objects.
+
+        The list is cached after it is first accessed.
+
+        Set the `force` kwargs to True to regenerate it from scratch.
         """
+        # If we already have the list, return it
+        if self._hyperlinks and not force:
+            return self._hyperlinks
+
+        # Loop through all <a> tags with href attributes
+        # and convert them to Hyperlink objects
         link_list = []
         for a in self.soup.findAll("a", {"href": True}):
             obj = Hyperlink(a["href"])
             link_list.append(obj)
+
+        # Stuff that list in our cache and then pass it out
+        self._hyperlinks = link_list
         return link_list
+    hyperlinks = property(get_hyperlinks)
 
 
 class ArchivedURLSet(list):
