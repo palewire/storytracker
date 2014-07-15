@@ -108,10 +108,11 @@ class AnalysisTest(BaseTest):
         obj.write_gzip_to_directory(self.tmpdir)
 
     def test_url_hyperlinks(self):
-        obj1 = storytracker.archive(self.url, output_dir=self.tmpdir)
-        obj2 = storytracker.open_archive_filepath(obj1.archive_path)
-        self.assertTrue(isinstance(obj2.hyperlinks, list))
-        [self.assertTrue(isinstance(a, Hyperlink)) for a in obj2.hyperlinks]
+        obj = storytracker.archive(self.url, output_dir=self.tmpdir)
+        self.assertEqual(obj._hyperlinks, [])
+        self.assertTrue(isinstance(obj.hyperlinks, list))
+        self.assertEqual(obj._hyperlinks, obj.hyperlinks)
+        [self.assertTrue(isinstance(a, Hyperlink)) for a in obj.hyperlinks]
 
     def test_urlset_creation(self):
         obj = ArchivedURL(self.url, datetime.now(), "foobar")
