@@ -6,6 +6,10 @@ import storytracker
 from six import BytesIO
 from bs4 import BeautifulSoup
 from .toolbox import UnicodeMixin
+try:
+    from urlparse import urlparse
+except ImportError:
+    from six.moves.urllib.parse import urlparse
 
 
 class ArchivedURL(UnicodeMixin):
@@ -160,6 +164,7 @@ class Hyperlink(UnicodeMixin):
     def __init__(self, href, contents):
         self.href = href
         self.contents = contents
+        self.domain = urlparse(href).netloc
 
     def __unicode__(self):
         return six.text_type(self.href)

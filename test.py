@@ -119,6 +119,7 @@ class AnalysisTest(BaseTest):
         a = obj.hyperlinks[0]
         a.href
         a.contents
+        a.domain
         a.__unicode__()
         a.__str__()
         a.__repr__()
