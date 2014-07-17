@@ -89,6 +89,6 @@ This example would schedule the script to run a file like the one above at the t
 that ``storytracker`` is available to your global Python installation at ``/usr/bin/python``. If you are using a virtualenv or different Python
 configuration, you should begin the line with a path leading to that particular ``python`` executable.
 
-.. code-block:: cron
+.. code-block:: bash
 
     0 * * * *  /usr/bin/python /path/to/my/script/cron.py

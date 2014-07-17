@@ -29,12 +29,12 @@ Example usage:
 
     >>> # This will return gzipped content of the page to the variable
     >>> obj = storytracker.archive("http://www.latimes.com")
+    <ArchivedURL: http://www.latimes.com@2014-07-17 04:08:32.169810+00:00>
 
     >>> # You can save it to an automatically named file a directory you provide
-    >>> obj = storytracker.archive(http://www.latimes.com, output_dir="./")
-
-    >>> # If you'd prefer to have the HTML without compression
-    >>> obj = storytracker.archive("http://www.latimes.com", compress=False)
+    >>> obj = storytracker.archive("http://www.latimes.com", output_dir="./")
+    >>> obj.archive_path
+    './http!www.latimes.com!!!!@2014-07-17T04:09:21.835271+00:00.gz'
 
 Command-line interface
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -87,6 +87,14 @@ Retrieves HTML from the provided URLs
    :return: The content of the HTML response
    :rtype: ``str``
    :raises ValueError: If the response is not verified as HTML
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+
+    >>> html = storytracker.get("http://www.latimes.com")
 
 Command-line interface
 ~~~~~~~~~~~~~~~~~~~~~~

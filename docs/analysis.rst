@@ -50,9 +50,11 @@ Example usage:
 .. code-block:: python
 
     >>> import storytracker
+
     >>> obj = storytracker.open_archive_filepath('/home/ben/archive/http!www.latimes.com!!!!@2014-07-06T16:31:57.697250.gz')
     >>> obj.url
     'http://www.latimes.com'
+
     >>> obj.timestamp
     datetime.datetime(2014, 7, 6, 16, 31, 57, 697250)
 
@@ -71,9 +73,12 @@ Example usage:
 .. code-block:: python
 
     >>> import storytracker
+
     >>> obj_list = storytracker.open_archive_directory('/home/ben/archive/')
+
     >>> obj_list[0].url
     'http://www.latimes.com'
+
     >>> obj_list[1].timestamp
     datetime.datetime(2014, 7, 6, 16, 31, 57, 697250)
 
@@ -84,6 +89,14 @@ Hyperlink
 A hyperlink extracted from an :py:class:`ArchivedURL` object.
 
 .. py:class:: Hyperlink
+
+    .. py:attribute:: contents
+
+        The contents of the anchor tag
+
+    .. py:attribute:: domain
+
+        The domain of the href
 
     .. py:attribute:: href
 
