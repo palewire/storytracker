@@ -1,12 +1,14 @@
 import os
+import six
 import copy
 import gzip
 import storytracker
 from six import BytesIO
 from bs4 import BeautifulSoup
+from .toolbox import UnicodeMixin
 
 
-class ArchivedURL(object):
+class ArchivedURL(UnicodeMixin):
     """
     An URL's archived HTML with tools for analysis
     """
@@ -39,6 +41,9 @@ class ArchivedURL(object):
         if result is NotImplemented:
             return result
         return not result
+
+    def __unicode__(self):
+        return six.text_type("%s@%s" % (self.url, self.timestamp))
 
     @property
     def archive_filename(self):
@@ -100,7 +105,10 @@ class ArchivedURL(object):
         # and convert them to Hyperlink objects
         link_list = []
         for a in self.soup.findAll("a", {"href": True}):
-            obj = Hyperlink(a["href"])
+            obj = Hyperlink(
+                a["href"],
+                a.contents
+            )
             link_list.append(obj)
 
         # Stuff that list in our cache and then pass it out
@@ -145,9 +153,13 @@ class ArchivedURLSet(list):
         super(ArchivedURLSet, self).append(copy.copy(obj))
 
 
-class Hyperlink(object):
+class Hyperlink(UnicodeMixin):
     """
     A hyperlink extracted from an archived URL with tools for analysis
     """
-    def __init__(self, href):
+    def __init__(self, href, contents):
         self.href = href
+        self.contents = contents
+
+    def __unicode__(self):
+        return six.text_type(self.href)

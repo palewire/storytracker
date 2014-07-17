@@ -104,6 +104,9 @@ class AnalysisTest(BaseTest):
         obj.html
         obj.soup
         obj.gzip
+        obj.__unicode__()
+        obj.__str__()
+        obj.__repr__()
         self.assertEqual(obj.archive_path, None)
         obj.write_gzip_to_directory(self.tmpdir)
 
@@ -113,6 +116,12 @@ class AnalysisTest(BaseTest):
         self.assertTrue(isinstance(obj.hyperlinks, list))
         self.assertEqual(obj._hyperlinks, obj.hyperlinks)
         [self.assertTrue(isinstance(a, Hyperlink)) for a in obj.hyperlinks]
+        a = obj.hyperlinks[0]
+        a.href
+        a.contents
+        a.__unicode__()
+        a.__str__()
+        a.__repr__()
 
     def test_urlset_creation(self):
         obj = ArchivedURL(self.url, datetime.now(), "foobar")
