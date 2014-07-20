@@ -146,8 +146,8 @@ class ArchivedURL(UnicodeMixin):
         Set the `force` kwargs to True to regenerate it from scratch.
         """
         # If we already have the list, return it
-        if self._hyperlinks and not force:
-            return self._hyperlinks
+        if self._images and not force:
+            return self._images
 
         # Target the <body> tag if it exists since
         # we don't care what's in the <head>
