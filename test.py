@@ -9,7 +9,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from storytracker.analysis import ArchivedURL
 from storytracker.analysis import ArchivedURLSet
-from storytracker.analysis import Hyperlink
+from storytracker.analysis import Hyperlink, Image
 
 
 class NullDevice():
@@ -111,18 +111,36 @@ class AnalysisTest(BaseTest):
         obj.write_gzip_to_directory(self.tmpdir)
 
     def test_url_hyperlinks(self):
-        obj = storytracker.archive(self.url, output_dir=self.tmpdir)
+        obj = storytracker.archive(self.url)
         self.assertEqual(obj._hyperlinks, [])
         self.assertTrue(isinstance(obj.hyperlinks, list))
         self.assertEqual(obj._hyperlinks, obj.hyperlinks)
         [self.assertTrue(isinstance(a, Hyperlink)) for a in obj.hyperlinks]
         a = obj.hyperlinks[0]
         a.href
-        a.contents
+        a.string
         a.domain
+        if a.images:
+            for i in a.images:
+                self.assertTrue(isinstance(i, Image))
+                i.src
+                i.__unicode__()
         a.__unicode__()
         a.__str__()
         a.__repr__()
+
+    def test_url_images(self):
+        obj = storytracker.archive(self.url)
+        self.assertEqual(obj._images, [])
+        self.assertTrue(len(obj.images) > 0)
+        self.assertTrue(isinstance(obj.images, list))
+        self.assertEqual(obj._images, obj.images)
+        [self.assertTrue(isinstance(i, Image)) for i in obj.images]
+        img = obj.images[0]
+        img.src
+        img.__unicode__()
+        img.__str__()
+        img.__repr__()
 
     def test_urlset_creation(self):
         obj = ArchivedURL(self.url, datetime.now(), "foobar")

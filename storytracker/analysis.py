@@ -24,6 +24,7 @@ class ArchivedURL(UnicodeMixin):
         # Attributes that come in handy below
         self.archive_path = None
         self._hyperlinks = []
+        self._images = []
 
     def __eq__(self, other):
         """
@@ -105,7 +106,7 @@ class ArchivedURL(UnicodeMixin):
         if self._hyperlinks and not force:
             return self._hyperlinks
 
-        # Target the <body> tag if it exists since 
+        # Target the <body> tag if it exists since
         # we don't care what's in the <head>
         target = self.soup
         if hasattr(target, 'body'):
@@ -134,6 +135,40 @@ class ArchivedURL(UnicodeMixin):
         self._hyperlinks = link_list
         return link_list
     hyperlinks = property(get_hyperlinks)
+
+    def get_images(self, force=False):
+        """
+        Parse the archived HTML for images and returns them as a list
+        of Image objects.
+
+        The list is cached after it is first accessed.
+
+        Set the `force` kwargs to True to regenerate it from scratch.
+        """
+        # If we already have the list, return it
+        if self._hyperlinks and not force:
+            return self._hyperlinks
+
+        # Target the <body> tag if it exists since
+        # we don't care what's in the <head>
+        target = self.soup
+        if hasattr(target, 'body'):
+            target = target.body
+
+        # Loop through all <img> tags with src attributes
+        # and convert them to Image objects
+        image_list = []
+        for img in target.findAll("img", {"src": True}):
+            # Create the Image object
+            image_obj = Image(img["src"])
+
+            # Add to the image list
+            image_list.append(image_obj)
+
+        # Stuff that list in our cache and then pass it out
+        self._images = image_list
+        return image_list
+    images = property(get_images)
 
 
 class ArchivedURLSet(list):
@@ -182,9 +217,28 @@ class Hyperlink(UnicodeMixin):
         self.domain = urlparse(href).netloc
         self.images = images
 
+    def __eq__(self, other):
+        """
+        Tests whether this object is equal to something else.
+        """
+        if not isinstance(other, Image):
+            return NotImplemented
+        if self.href == other.href:
+            return True
+        return False
+
+    def __ne__(self, other):
+        """
+        Tests whether this object is unequal to something else.
+        """
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+
     def __unicode__(self):
         if len(self.href) > 40:
-            return six.text_type(self.href[:40] + "...")
+            return six.text_type("%s..." % self.href[:40])
         else:
             return six.text_type(self.href)
 
@@ -196,8 +250,27 @@ class Image(UnicodeMixin):
     def __init__(self, src):
         self.src = src
 
+    def __eq__(self, other):
+        """
+        Tests whether this object is equal to something else.
+        """
+        if not isinstance(other, Image):
+            return NotImplemented
+        if self.src == other.src:
+            return True
+        return False
+
+    def __ne__(self, other):
+        """
+        Tests whether this object is unequal to something else.
+        """
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+
     def __unicode__(self):
         if len(self.src) > 40:
-            return six.text_type(self.src[:40] + "...")
+            return six.text_type("%s..." % self.src[:40])
         else:
             return six.text_type(self.src)
