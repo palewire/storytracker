@@ -109,11 +109,20 @@ class ArchivedURL(UnicodeMixin):
         # and convert them to Hyperlink objects
         link_list = []
         for a in self.soup.findAll("a", {"href": True}):
-            obj = Hyperlink(
-                a["href"],
-                a.contents
-            )
-            link_list.append(obj)
+            # Search out any images
+            images = []
+            for img in a.findAll("img", {"src": True}):
+                image_obj = Image(img["src"])
+                try:
+                    images.append(image_obj)
+                except ValueError:
+                    pass
+
+            # Create the Hyperlink object
+            hyperlink_obj = Hyperlink(a["href"], a.string, images)
+
+            # Add to the link list
+            link_list.append(hyperlink_obj)
 
         # Stuff that list in our cache and then pass it out
         self._hyperlinks = link_list
@@ -159,12 +168,30 @@ class ArchivedURLSet(list):
 
 class Hyperlink(UnicodeMixin):
     """
-    A hyperlink extracted from an archived URL with tools for analysis
+    A hyperlink extracted from an archived URL.
     """
-    def __init__(self, href, contents):
+    def __init__(self, href, string, images=[]):
         self.href = href
-        self.contents = contents
+        self.string = string
         self.domain = urlparse(href).netloc
+        self.images = images
 
     def __unicode__(self):
-        return six.text_type(self.href)
+        if len(self.href) > 40:
+            return six.text_type(self.href[:40] + "...")
+        else:
+            return six.text_type(self.href)
+
+
+class Image(UnicodeMixin):
+    """
+    An image extracted from an archived URL.
+    """
+    def __init__(self, src):
+        self.src = src
+
+    def __unicode__(self):
+        if len(self.src) > 40:
+            return six.text_type(self.src[:40] + "...")
+        else:
+            return six.text_type(self.src)
