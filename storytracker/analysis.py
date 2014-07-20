@@ -108,7 +108,7 @@ class ArchivedURL(UnicodeMixin):
         # Loop through all <a> tags with href attributes
         # and convert them to Hyperlink objects
         link_list = []
-        for a in self.soup.findAll("a", {"href": True}):
+        for a in self.soup.body.findAll("a", {"href": True}):
             # Search out any images
             images = []
             for img in a.findAll("img", {"src": True}):
