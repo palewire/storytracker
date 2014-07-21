@@ -263,6 +263,11 @@ if six.PY2:
             self.assertTrue(os.path.exists(path2))
             os.remove(path2)
 
+        def test_links2csv_filepath(self):
+            path = os.path.join(self.this_dir, "bin/storytracker-links2csv")
+            obj = storytracker.archive(self.url, output_dir=self.tmpdir)
+            cmd = "%s %s" % (path, obj.archive_path)
+            code, out, err = Command(cmd).run(timeout=3)
 
 if __name__ == '__main__':
     if six.PY3:

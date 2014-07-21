@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+import sys
+import csv
+import six
+import optparse
+import storytracker
+
+
+p = optparse.OptionParser(
+    description="Extracts hyperlinks from archived files or streams and \
+outputs them as comma-delimited values",
+    usage="storytracker-links2csv [ARCHIVE PATH]...",
+)
+
+kwargs, args = p.parse_args()
+
+def prep(val):
+    if not val:
+        return None
+    else:
+        return six.text_type(val).encode("utf-8")
+
+for a in args:
+    obj = storytracker.open_archive_filepath(a)
+    f = six.BytesIO()
+    writer = csv.writer(f)
+    for h in obj.hyperlinks:
+        writer.writerow(map(prep, [
+            obj.url,
+            obj.timestamp,
+            h.string,
+            h.domain,
+            h.href,
+        ]))
+    sys.stdout.write(f.getvalue())
+
+# Allow directory input?
+# Allow stream input?

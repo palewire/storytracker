@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+import sys
+import optparse
+import storytracker
+
+
+p = optparse.OptionParser(
+    description="Retrieves HTML from the provided URLs",
+    usage="storytracker-get [URL]... [OPTIONS]",
+)
+
+p.add_option(
+    "--do-not-verify",
+    "-v",
+    action="store_false",
+    dest="verify",
+    default=True,
+    help="Skip verification that HTML is in the response's content-type header"
+)
+
+kwargs, args = p.parse_args()
+
+for a in args:
+    html = storytracker.get(a, verify=kwargs.verify)
+    sys.stdout.write(html.encode("utf-8"))
