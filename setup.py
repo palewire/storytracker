@@ -20,5 +20,6 @@ setup(
         'htmlmin==0.1.5',
         'six==1.7.2',
         'pytz>=2014.4',
+        'unicodecsv==0.9.4',
     ),
 )

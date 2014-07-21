@@ -136,6 +136,7 @@ class AnalysisTest(MutedTest):
         a.href
         a.string
         a.domain
+        a.index
         if a.images:
             for i in a.images:
                 self.assertTrue(isinstance(i, Image))
@@ -144,6 +145,7 @@ class AnalysisTest(MutedTest):
         a.__unicode__()
         a.__str__()
         a.__repr__()
+        a.__csv__()
 
     def test_url_images(self):
         obj = storytracker.archive(self.url)

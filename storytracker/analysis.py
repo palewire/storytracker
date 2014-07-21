@@ -1,6 +1,5 @@
 import os
 import six
-import csv
 import copy
 import gzip
 import unicodecsv
@@ -117,7 +116,7 @@ class ArchivedURL(UnicodeMixin):
         # Loop through all <a> tags with href attributes
         # and convert them to Hyperlink objects
         link_list = []
-        for a in target.findAll("a", {"href": True}):
+        for i, a in enumerate(target.findAll("a", {"href": True})):
             # Search out any images
             images = []
             for img in a.findAll("img", {"src": True}):
@@ -127,7 +126,7 @@ class ArchivedURL(UnicodeMixin):
                 except ValueError:
                     pass
             # Create the Hyperlink object
-            hyperlink_obj = Hyperlink(a["href"], a.string, images)
+            hyperlink_obj = Hyperlink(a["href"], a.string, i, images)
             # Add to the link list
             link_list.append(hyperlink_obj)
 
@@ -138,7 +137,7 @@ class ArchivedURL(UnicodeMixin):
 
     def write_hyperlinks_csv_to_file(self, file, encoding="utf-8"):
         """
-        Returns the provided file object with a ready-to-serve CSV list of 
+        Returns the provided file object with a ready-to-serve CSV list of
         all hyperlinks extracted from the HTML.
         """
         writer = unicodecsv.writer(file, encoding=encoding)
@@ -148,6 +147,7 @@ class ArchivedURL(UnicodeMixin):
             "url_href",
             "url_domain",
             "url_string",
+            "url_index",
         ])
         for h in self.hyperlinks:
             row = map(six.text_type, [self.url, self.timestamp]) + h.__csv__()
@@ -228,9 +228,10 @@ class Hyperlink(UnicodeMixin):
     """
     A hyperlink extracted from an archived URL.
     """
-    def __init__(self, href, string, images=[]):
+    def __init__(self, href, string, index, images=[]):
         self.href = href
         self.string = string
+        self.index = index
         self.domain = urlparse(href).netloc
         self.images = images
 
@@ -267,6 +268,7 @@ class Hyperlink(UnicodeMixin):
             self.href,
             self.domain,
             self.string or '',
+            self.index,
         ]
         return map(six.text_type, row)
 
