@@ -242,19 +242,26 @@ if six.PY2:
             self.assertEqual(type(out), type(python))
             self.assertEqual(out, python)
 
-#        def test_archive_output_dir(self):
-#            obj4 = storytracker.archive(self.url, output_dir=self.tmpdir)
-#            obj5 = storytracker.archive(
-#                self.url,
-#                compress=False,
-#                output_dir=self.tmpdir
-#            )
-#            for obj in [obj1, obj2, obj3, obj4, obj5]:
-#                self.assertTrue(isinstance(obj, storytracker.ArchivedURL))
-#            self.assertTrue(os.path.exists(obj4.archive_path))
-#            self.assertTrue(os.path.exists(obj5.archive_path))
-#            os.remove(obj4.archive_path)
-#            os.remove(obj5.archive_path)
+        def test_archive_output_dir(self):
+            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+            cmd1 = "%s %s --output-dir=%s" % (
+                path, self.simple_url, self.tmpdir
+            )
+            code1, path1, err1 = Command(cmd1).run(timeout=3)
+            obj1 = storytracker.open_archive_filepath(path1)
+            self.assertTrue(isinstance(obj1, storytracker.ArchivedURL))
+            self.assertTrue(os.path.exists(path1))
+            os.remove(path1)
+
+        def test_archive_output_dir_html(self):
+            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+            cmd2 = "%s %s --do-not-compress --output-dir=%s" % (
+                path, self.simple_url, self.tmpdir
+            )
+            code2, path2, err2 = Command(cmd2).run(timeout=3)
+            obj2 = storytracker.open_archive_filepath(path2)
+            self.assertTrue(os.path.exists(path2))
+            os.remove(path2)
 
 
 if __name__ == '__main__':
