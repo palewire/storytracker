@@ -2,6 +2,8 @@
 import sys
 import optparse
 import storytracker
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
 
 
 p = optparse.OptionParser(

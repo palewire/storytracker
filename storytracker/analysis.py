@@ -1,7 +1,9 @@
 import os
 import six
+import csv
 import copy
 import gzip
+import unicodecsv
 import storytracker
 from six import BytesIO
 from bs4 import BeautifulSoup
@@ -124,10 +126,8 @@ class ArchivedURL(UnicodeMixin):
                     images.append(image_obj)
                 except ValueError:
                     pass
-
             # Create the Hyperlink object
             hyperlink_obj = Hyperlink(a["href"], a.string, images)
-
             # Add to the link list
             link_list.append(hyperlink_obj)
 
@@ -135,6 +135,24 @@ class ArchivedURL(UnicodeMixin):
         self._hyperlinks = link_list
         return link_list
     hyperlinks = property(get_hyperlinks)
+
+    def write_hyperlinks_csv_to_file(self, file, encoding="utf-8"):
+        """
+        Returns the provided file object with a ready-to-serve CSV list of 
+        all hyperlinks extracted from the HTML.
+        """
+        writer = unicodecsv.writer(file, encoding=encoding)
+        writer.writerow([
+            "archive_url",
+            "archive_timestamp",
+            "url_href",
+            "url_domain",
+            "url_string",
+        ])
+        for h in self.hyperlinks:
+            row = map(six.text_type, [self.url, self.timestamp]) + h.__csv__()
+            writer.writerow(row)
+        return file
 
     def get_images(self, force=False):
         """
@@ -161,7 +179,6 @@ class ArchivedURL(UnicodeMixin):
         for img in target.findAll("img", {"src": True}):
             # Create the Image object
             image_obj = Image(img["src"])
-
             # Add to the image list
             image_list.append(image_obj)
 
@@ -241,6 +258,17 @@ class Hyperlink(UnicodeMixin):
             return six.text_type("%s..." % self.href[:40])
         else:
             return six.text_type(self.href)
+
+    def __csv__(self):
+        """
+        Returns a list of values ready to be written to a CSV file object
+        """
+        row = [
+            self.href,
+            self.domain,
+            self.string or '',
+        ]
+        return map(six.text_type, row)
 
 
 class Image(UnicodeMixin):

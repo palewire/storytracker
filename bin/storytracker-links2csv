@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 import csv
 import six
@@ -14,25 +15,23 @@ outputs them as comma-delimited values",
 
 kwargs, args = p.parse_args()
 
-def prep(val):
-    if not val:
-        return None
-    else:
-        return six.text_type(val).encode("utf-8")
-
-for a in args:
-    obj = storytracker.open_archive_filepath(a)
+if sys.stdin:
+    o = storytracker.ArchivedURL(None, None, sys.stdin.read())
     f = six.BytesIO()
-    writer = csv.writer(f)
-    for h in obj.hyperlinks:
-        writer.writerow(map(prep, [
-            obj.url,
-            obj.timestamp,
-            h.string,
-            h.domain,
-            h.href,
-        ]))
+    f = o.write_hyperlinks_csv_to_file(f)
     sys.stdout.write(f.getvalue())
+else:
+    for a in args:
+        if os.path.isdir(a):
+            l = storytracker.open_archive_directory(a)
+            for o in l:
+                f = six.BytesIO()
+                f = o.write_hyperlinks_csv_to_file(f)
+                sys.stdout.write(f.getvalue())
+        else:
+            o = storytracker.open_archive_filepath(a)
+            f = six.BytesIO()
+            f = o.write_hyperlinks_csv_to_file(f)
+            sys.stdout.write(f.getvalue())
 
-# Allow directory input?
 # Allow stream input?

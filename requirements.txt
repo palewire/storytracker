@@ -21,7 +21,9 @@ pytz==2014.4
 requests==2.3.0
 sh==1.09
 six==1.7.2
+storytracker==0.0.4
 tornado==3.1.1
 tox==1.7.1
+unicodecsv==0.9.4
 virtualenv==1.11.6
 watchdog==0.6.0
