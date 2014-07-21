@@ -233,6 +233,29 @@ if six.PY2:
             self.assertEqual(type(out), type(python))
             self.assertEqual(out, python)
 
+        def test_archive_gzipped(self):
+            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+            cmd = '%s %s' % (path, self.simple_url)
+            process = Command(cmd)
+            code, out, err = process.run(timeout=3)
+            python = storytracker.archive(self.simple_url).gzip
+            self.assertEqual(type(out), type(python))
+            self.assertEqual(out, python)
+
+#        def test_archive_output_dir(self):
+#            obj4 = storytracker.archive(self.url, output_dir=self.tmpdir)
+#            obj5 = storytracker.archive(
+#                self.url,
+#                compress=False,
+#                output_dir=self.tmpdir
+#            )
+#            for obj in [obj1, obj2, obj3, obj4, obj5]:
+#                self.assertTrue(isinstance(obj, storytracker.ArchivedURL))
+#            self.assertTrue(os.path.exists(obj4.archive_path))
+#            self.assertTrue(os.path.exists(obj5.archive_path))
+#            os.remove(obj4.archive_path)
+#            os.remove(obj5.archive_path)
+
 
 if __name__ == '__main__':
     if six.PY3:
