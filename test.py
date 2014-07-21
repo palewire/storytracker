@@ -1,16 +1,22 @@
 import os
 import sys
 import six
+import site
 import glob
 import tempfile
 import unittest
+import subprocess
 import storytracker
+from command import Command
 from datetime import datetime
 from bs4 import BeautifulSoup
 from storytracker.analysis import ArchivedURL
 from storytracker.analysis import ArchivedURLSet
 from storytracker.analysis import Hyperlink, Image
 
+#
+# Base tests
+#
 
 class NullDevice():
     """
@@ -33,12 +39,22 @@ program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         self.tmpdir = tempfile.mkdtemp()
+
+
+class MutedTest(BaseTest):
+
+    def setUp(self):
+        super(MutedTest, self).setUp()
         # Turning off stdout temporarily
         original_stdout = sys.stdout
         sys.stdout = NullDevice()
 
 
-class ArchiveTest(BaseTest):
+#
+# Python tests
+#
+
+class ArchiveTest(MutedTest):
 
     def test_get(self):
         storytracker.get(self.url)
@@ -81,7 +97,7 @@ class ArchiveTest(BaseTest):
         os.remove(obj.archive_path)
 
 
-class AnalysisTest(BaseTest):
+class AnalysisTest(MutedTest):
 
     def test_open_archive_gzip(self):
         obj1 = storytracker.archive(self.url, output_dir=self.tmpdir)
@@ -150,13 +166,13 @@ class AnalysisTest(BaseTest):
         self.assertEqual(len(urlset), 2)
         with self.assertRaises(TypeError):
             urlset.append(1)
-            urlset.append([1,2,3])
+            urlset.append([1, 2, 3])
         with self.assertRaises(ValueError):
             urlset.append(obj)
         urlset.append(obj3)
         self.assertEqual(len(urlset), 3)
         with self.assertRaises(TypeError):
-            ArchivedURLSet([1,2, obj])
+            ArchivedURLSet([1, 2, obj])
         with self.assertRaises(ValueError):
             ArchivedURLSet([obj, obj])
 
@@ -176,6 +192,45 @@ class AnalysisTest(BaseTest):
         urlset = storytracker.open_archive_directory(self.tmpdir)
         self.assertTrue(len(urlset), 2)
         [self.assertTrue(isinstance(o, ArchivedURL)) for o in urlset]
+
+#
+# CLI tests
+#
+
+class CLITest(BaseTest):
+
+    def setUp(self):
+        super(CLITest, self).setUp()
+        self.this_dir = os.path.dirname(os.path.abspath(__file__))
+        sys.path.append(self.this_dir)
+        self.simple_url = "http://www.example.com"
+
+    def test_get(self):
+        path = os.path.join(self.this_dir, "bin/storytracker-get")
+        cmd = '%s %s' % (path, self.simple_url)
+        process = Command(cmd)
+        code, out, err = process.run(timeout=3)
+        python = storytracker.get(self.simple_url).encode("utf-8")
+        self.assertEqual(type(out), type(python))
+        self.assertEqual(out, python)
+
+    def test_get_no_verify(self):
+        path = os.path.join(self.this_dir, "bin/storytracker-get")
+        cmd = '%s %s --do-not-verify' % (path, self.simple_url)
+        process = Command(cmd)
+        code, out, err = process.run(timeout=3)
+        python = storytracker.get(self.simple_url).encode("utf-8")
+        self.assertEqual(type(out), type(python))
+        self.assertEqual(out, python)
+
+    def test_archive(self):
+        path = os.path.join(self.this_dir, "bin/storytracker-archive")
+        cmd = '%s %s --do-not-compress' % (path, self.simple_url)
+        process = Command(cmd)
+        code, out, err = process.run(timeout=3)
+        python = storytracker.archive(self.simple_url).html.encode("utf-8")
+        self.assertEqual(type(out), type(python))
+        self.assertEqual(out, python)
 
 
 if __name__ == '__main__':
