@@ -10,29 +10,20 @@ import storytracker
 p = optparse.OptionParser(
     description="Extracts hyperlinks from archived files or streams and \
 outputs them as comma-delimited values",
-    usage="storytracker-links2csv [ARCHIVE PATH]...",
+    usage="storytracker-links2csv [ARCHIVE PATHS OR DIRECTORIES]...",
 )
 
 kwargs, args = p.parse_args()
 
-if sys.stdin:
-    o = storytracker.ArchivedURL(None, None, sys.stdin.read())
-    print o
-    f = six.BytesIO()
-    f = o.write_hyperlinks_csv_to_file(f)
-    sys.stdout.write(f.getvalue())
-else:
-    for a in args:
-        if os.path.isdir(a):
-            l = storytracker.open_archive_directory(a)
-            for o in l:
-                f = six.BytesIO()
-                f = o.write_hyperlinks_csv_to_file(f)
-                sys.stdout.write(f.getvalue())
-        else:
-            o = storytracker.open_archive_filepath(a)
+for a in args:
+    if os.path.isdir(a):
+        l = storytracker.open_archive_directory(a)
+        for o in l:
             f = six.BytesIO()
             f = o.write_hyperlinks_csv_to_file(f)
             sys.stdout.write(f.getvalue())
-
-# Allow stream input?
+    else:
+        o = storytracker.open_archive_filepath(a)
+        f = six.BytesIO()
+        f = o.write_hyperlinks_csv_to_file(f)
+        sys.stdout.write(f.getvalue())

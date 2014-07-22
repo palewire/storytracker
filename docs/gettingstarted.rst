@@ -120,5 +120,19 @@ objects.
 
 Those hyperlinks and all their attributes can be quickly printed out in comma-delimited format.
 
+.. code-block:: python
+
     >>> f = open("./hyperlinks.csv", "wb")
     >>> f = url.write_hyperlinks_csv_to_file(f)
+
+The same thing can be done with our command line tool ``storytracker-links2csv``.
+
+.. code-block:: bash
+
+    $ storytracker-links2csv /path/to/my/directory/http!www.cnn.com!!!!@2014-07-22T04:18:21.751802+00:00.html
+
+Which also accepts a directory.
+
+.. code-block:: bash
+
+    $ storytracker-links2csv /path/to/my/directory/
