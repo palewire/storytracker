@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.0.5
+-----
+
+* ``Hyperlink`` and ``Image`` classes
+* ``hyperlink`` and ``images`` methods that extract them from ``ArchivedURL``
+* ``write_hyperlinks_csv_to_file`` method on ``ArchivedURL for outputs
+* ``storytracker-links2csv`` command-line interface
+
 0.0.4
 -----
 

@@ -12,6 +12,7 @@ Contents:
    archiving
    analysis
    filehandling
+   commandlineinterfaces
    changelog
    credits
 

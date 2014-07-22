@@ -110,6 +110,9 @@ can be accessed for analysis using tools like :py:func:`storytracker.open_archiv
     >>> # This returns a list of all the objects found in the directory
     >>> url_list = storytracker.open_archive_directory("/path/to/my/directory/")
 
+    >>> # And remember you can still always do it on the fly
+    >>> url = storytracker.archive("http://www.cnn.com")
+
 Once you have an url archive imported you can loop through all the hyperlinks found in its ``body`` tag which are returned as :py:class:`ArchivedURL`
 objects.
 
