@@ -42,8 +42,8 @@ Run that and you'll see the file right away in your current directory.
     $ ls | grep .html
 
 
-Scheduling archives with cron
------------------------------
+Scheduling archives with Python and cron
+----------------------------------------
 
 UNIX-like systems typically come equipped with a built in method for scheduling tasks known as `cron <http://en.wikipedia.org/wiki/Cron>`_.
 To utilize it with storytracker, one approach is to write a Python script that retrieves a series of sites each time it is run.
@@ -92,3 +92,33 @@ configuration, you should begin the line with a path leading to that particular 
 .. code-block:: bash
 
     0 * * * *  /usr/bin/python /path/to/my/script/cron.py
+
+Extracting hyperlinks from archived files
+-----------------------------------------
+
+The cron task above is regularly saving archived files to the ``OUTPUT_DIR``. Those files
+can be accessed for analysis using tools like :py:func:`storytracker.open_archive_filepath` and
+:py:func:`storytracker.open_archive_directory`.
+
+.. code-block:: python
+
+    >>> import storytracker
+
+    >>> # This would import a single file and return a object we can play with
+    >>> url = storytracker.open_archive_filepath("/path/to/my/directory/http!www.cnn.com!!!!@2014-07-22T04:18:21.751802+00:00.html")
+
+    >>> # This returns a list of all the objects found in the directory
+    >>> url_list = storytracker.open_archive_directory("/path/to/my/directory/")
+
+Once you have an url archive imported you can loop through all the hyperlinks found in its ``body`` tag which are returned as :py:class:`ArchivedURL`
+objects.
+
+.. code-block:: python
+
+    >>> url.hyperlinks
+    [<Hyperlink: http://www.cnn.com/>, <Hyperlink: http://edition.cnn.com/?hpt=ed_Intl>, <Hyperlink: http://mexico.cnn.com/?hpt=ed_Mexico>, <Hyperlink: http://arabic.cnn.com/?hpt=ed_Arabic>, <Hyperlink: http://www.cnn.com/CNN/Programs>, <Hyperlink: http://www.cnn.com/cnn/programs/>, <Hyperlink: http://www.cnn.com/cnni/>, <Hyperlink: http://cnnespanol.cnn.com/>, <Hyperlink: http://www.hlntv.com>, <Hyperlink: javascript:void(0);>, <Hyperlink: javascript:void(0);>, <Hyperlink: http://www.cnn.com/>, <Hyperlink: http://www.cnn.com/video/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/US/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/WORLD/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/POLITICS/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/JUSTICE/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/SHOWBIZ/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/TECH/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/HEALTH/?hpt=sitenav> ... ]
+
+Those hyperlinks and all their attributes can be quickly printed out in comma-delimited format.
+
+    >>> f = open("./hyperlinks.csv", "wb")
+    >>> f = url.write_hyperlinks_csv_to_file(f)
