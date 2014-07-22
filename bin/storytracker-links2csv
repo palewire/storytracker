@@ -17,6 +17,7 @@ kwargs, args = p.parse_args()
 
 if sys.stdin:
     o = storytracker.ArchivedURL(None, None, sys.stdin.read())
+    print o
     f = six.BytesIO()
     f = o.write_hyperlinks_csv_to_file(f)
     sys.stdout.write(f.getvalue())

@@ -74,7 +74,6 @@ Example usage:
     # Which of course can be piped into other commands like anything else
     $ storytracker-archive http://www.latimes.com -cm | grep lakers
 
-
 get
 ---
 

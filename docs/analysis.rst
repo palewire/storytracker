@@ -1,13 +1,14 @@
 Analysis
 ========
 
-
 ArchivedURL
 -----------
 
 An URL's archived HTML with tools for analysis.
 
 .. py:class:: ArchivedURL(url, timestamp, html)
+
+    **Initialization arguments**
 
     .. py:attribute:: url
 
@@ -20,6 +21,8 @@ An URL's archived HTML with tools for analysis.
     .. py:attribute:: html
 
         The HTML archived
+
+    **Other attributes**
 
     .. py:attribute:: gzip
 
@@ -36,6 +39,17 @@ An URL's archived HTML with tools for analysis.
     .. py:attribute:: hyperlinks
 
         A list of all the hyperlinks extracted from the HTML
+
+    .. py:attribute:: images
+
+        A list of all the images extracts from the HTML
+
+    **Output methods**
+
+    .. py:attribute:: write_hyperlinks_csv_to_file(file, encoding="utf-8")
+
+        Returns the provided file object with a ready-to-serve CSV list of
+        all hyperlinks extracted from the HTML.
 
     .. py:method:: write_gzip_to_directory(path)
 
@@ -57,7 +71,6 @@ Example usage:
 
     >>> obj.timestamp
     datetime.datetime(2014, 7, 6, 16, 31, 57, 697250)
-
 
 ArchivedURLSet
 --------------
@@ -82,22 +95,50 @@ Example usage:
     >>> obj_list[1].timestamp
     datetime.datetime(2014, 7, 6, 16, 31, 57, 697250)
 
-
 Hyperlink
 ---------
 
 A hyperlink extracted from an :py:class:`ArchivedURL` object.
 
-.. py:class:: Hyperlink
+.. py:class:: Hyperlink(href, string, index, images=[])
 
-    .. py:attribute:: contents
+    **Initialization arguments**
 
-        The contents of the anchor tag
+    .. py:attribute:: href
+
+        The URL the hyperlink references
+
+    .. py:attribute:: string
+
+        The strings contents of the anchor tag
+
+    .. py:attribute:: index
+
+        The index value of the links order within its source HTML. Starts counting at zero.
+
+    .. py:attribute:: images
+
+        A list of the :py:class:`Image` objects extracted from the HTML
+
+    **Other attributes**
+
+    .. py:attribute:: __csv__
+
+        Returns a list of values ready to be written to a CSV file object
 
     .. py:attribute:: domain
 
         The domain of the href
 
-    .. py:attribute:: href
+Image
+-----
 
-        The URL the hyperlink references
+.. py:class:: Image(src)
+
+    An image extracted from an archived URL.
+
+    **Initialization arguments**
+
+    .. py:attribute:: src
+
+        The ``src`` attribute of the image tag
