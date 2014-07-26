@@ -2,7 +2,10 @@ import os
 import six
 import copy
 import gzip
-import unicodecsv
+if six.PY2:
+    import unicodecsv as csv
+else:
+    import csv
 import storytracker
 from six import BytesIO
 from bs4 import BeautifulSoup
@@ -135,12 +138,12 @@ class ArchivedURL(UnicodeMixin):
         return link_list
     hyperlinks = property(get_hyperlinks)
 
-    def write_hyperlinks_csv_to_file(self, file, encoding="utf-8"):
+    def write_hyperlinks_csv_to_file(self, file):
         """
         Returns the provided file object with a ready-to-serve CSV list of
         all hyperlinks extracted from the HTML.
         """
-        writer = unicodecsv.writer(file, encoding=encoding)
+        writer = csv.writer(file)
         writer.writerow([
             "archive_url",
             "archive_timestamp",

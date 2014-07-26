@@ -1,4 +1,17 @@
+import sys
 from distutils.core import setup
+
+install_requires = [
+    'python-dateutil==2.2',
+    'requests==2.3.0',
+    'htmlmin==0.1.5',
+    'six==1.7.2',
+    'pytz>=2014.4',
+    'beautifulsoup4==4.3.2',
+]
+
+if sys.version_info < (3,):
+    install_requires.append('unicodecsv==0.9.4')
 
 setup(
     name='storytracker',
@@ -12,14 +25,7 @@ setup(
     scripts=(
         'bin/storytracker-archive',
         'bin/storytracker-get',
+        'bin/storytracker-links2csv',
     ),
-    install_requires=(
-        'beautifulsoup4==4.3.2',
-        'python-dateutil==2.2',
-        'requests==2.3.0',
-        'htmlmin==0.1.5',
-        'six==1.7.2',
-        'pytz>=2014.4',
-        'unicodecsv==0.9.4',
-    ),
+    install_requires=install_requires,
 )

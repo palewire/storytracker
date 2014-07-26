@@ -278,13 +278,6 @@ if six.PY2:
             cmd = "%s %s" % (path, self.tmpdir)
             code, out, err = Command(cmd).run(timeout=3)
 
-#        def test_links2csv_stdin(self):
-#            path1 = os.path.join(self.this_dir, "bin/storytracker-get")
-#            path2 = os.path.join(self.this_dir, "bin/storytracker-links2csv")
-#            cmd = "%s %s | %s" % (path1, self.simple_url, path2)
-#            code, out, err = Command(cmd).run(timeout=3)
-#            print out, err
-
 
 if __name__ == '__main__':
     if six.PY3:
