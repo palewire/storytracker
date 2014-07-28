@@ -71,32 +71,6 @@ class ArchivedURL(UnicodeMixin):
             f.write(self.html.encode("utf-8"))
         return out.getvalue()
 
-    def write_gzip_to_directory(self, path):
-        """
-        Writes gzipped HTML data to a file in the provided directory path
-        """
-        if not os.path.isdir(path):
-            raise ValueError("Path must be a directory")
-        self.archive_path = os.path.join(path, "%s.gz" % self.archive_filename)
-        fileobj = open(self.archive_path, 'wb')
-        with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
-            f.write(self.html.encode("utf-8"))
-        return self.archive_path
-
-    def write_html_to_directory(self, path):
-        """
-        Writes HTML data to a file in the provided directory path
-        """
-        if not os.path.isdir(path):
-            raise ValueError("Path must be a directory")
-        self.archive_path = os.path.join(
-            path,
-            "%s.html" % self.archive_filename
-        )
-        with open(self.archive_path, 'wb') as f:
-            f.write(self.html.encode("utf-8"))
-        return self.archive_path
-
     def get_hyperlinks(self, force=False):
         """
         Parses all of the hyperlinks from the HTML and returns a list of
@@ -138,29 +112,6 @@ class ArchivedURL(UnicodeMixin):
         return link_list
     hyperlinks = property(get_hyperlinks)
 
-    def write_hyperlinks_csv_to_file(self, file):
-        """
-        Returns the provided file object with a ready-to-serve CSV list of
-        all hyperlinks extracted from the HTML.
-        """
-        writer = csv.writer(file)
-        headers = [
-            "archive_url",
-            "archive_timestamp",
-            "url_href",
-            "url_domain",
-            "url_string",
-            "url_index",
-        ]
-        writer.writerow(headers)
-        for h in self.hyperlinks:
-            row = list(
-                map(six.text_type, [self.url, self.timestamp])
-            ) + h.__csv__()
-            writer.writerow(row)
-        file.seek(0)
-        return file
-
     def get_images(self, force=False):
         """
         Parse the archived HTML for images and returns them as a list
@@ -193,6 +144,70 @@ class ArchivedURL(UnicodeMixin):
         self._images = image_list
         return image_list
     images = property(get_images)
+
+    def write_hyperlinks_csv_to_file(self, file):
+        """
+        Returns the provided file object with a ready-to-serve CSV list of
+        all hyperlinks extracted from the HTML.
+        """
+        # Create a CSV writer object out of the file
+        writer = csv.writer(file)
+
+        # Load up all the row
+        row_list = []
+        for h in self.hyperlinks:
+            row = list(
+                map(six.text_type, [self.url, self.timestamp])
+            ) + h.__csv__()
+            row_list.append(row)
+
+        # Create the headers, which will change depending on how many
+        # images are found in the urls
+        headers = [
+            "archive_url",
+            "archive_timestamp",
+            "url_href",
+            "url_domain",
+            "url_string",
+            "url_index",
+        ]
+        longest_row = max([len(r) for r in row_list])
+        for i in range(longest_row - len(headers)):
+            headers.append("image_%s_src" % (i + 1))
+        
+        # Write it out to the file
+        writer.writerow(headers)
+        writer.writerows(row_list)
+
+        # Reboot the file and pass it back out
+        file.seek(0)
+        return file
+
+    def write_gzip_to_directory(self, path):
+        """
+        Writes gzipped HTML data to a file in the provided directory path
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        self.archive_path = os.path.join(path, "%s.gz" % self.archive_filename)
+        fileobj = open(self.archive_path, 'wb')
+        with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
+            f.write(self.html.encode("utf-8"))
+        return self.archive_path
+
+    def write_html_to_directory(self, path):
+        """
+        Writes HTML data to a file in the provided directory path
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        self.archive_path = os.path.join(
+            path,
+            "%s.html" % self.archive_filename
+        )
+        with open(self.archive_path, 'wb') as f:
+            f.write(self.html.encode("utf-8"))
+        return self.archive_path
 
 
 class ArchivedURLSet(list):
@@ -277,6 +292,8 @@ class Hyperlink(UnicodeMixin):
             self.string or '',
             self.index,
         ]
+        for img in self.images:
+            row.append(img.src)
         return list(map(six.text_type, row))
 
 
