@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.0.6
+-----
+
+* ``is_story`` estimate added to each ``Hyperlink`` object as an attribute
+
 0.0.5
 -----
 
