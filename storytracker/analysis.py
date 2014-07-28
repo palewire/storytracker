@@ -174,7 +174,7 @@ class ArchivedURL(UnicodeMixin):
         longest_row = max([len(r) for r in row_list])
         for i in range(longest_row - len(headers)):
             headers.append("image_%s_src" % (i + 1))
-        
+
         # Write it out to the file
         writer.writerow(headers)
         writer.writerows(row_list)
