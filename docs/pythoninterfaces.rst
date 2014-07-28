@@ -196,7 +196,7 @@ A hyperlink extracted from an :py:class:`ArchivedURL` object.
     .. py:attribute:: is_story
 
         Returns a boolean estimate of whether the object's ``href`` attribute links to a
-        news story. Guess provided by ``storysniffer <https://github.com/pastpages/storysniffer>`_,
+        news story. Guess provided by `storysniffer <https://github.com/pastpages/storysniffer>`_,
         a library developed as a companion to this project.
 
 Image
