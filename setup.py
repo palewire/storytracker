@@ -15,7 +15,7 @@ if sys.version_info < (3,):
 
 setup(
     name='storytracker',
-    version='0.0.4',
+    version='0.0.5',
     description='Tools for tracking stories for news homepages',
     author='Ben Welsh',
     author_email='ben.welsh@gmail.com',
