@@ -124,7 +124,14 @@ objects.
     >>> url.hyperlinks
     [<Hyperlink: http://www.cnn.com/>, <Hyperlink: http://edition.cnn.com/?hpt=ed_Intl>, <Hyperlink: http://mexico.cnn.com/?hpt=ed_Mexico>, <Hyperlink: http://arabic.cnn.com/?hpt=ed_Arabic>, <Hyperlink: http://www.cnn.com/CNN/Programs>, <Hyperlink: http://www.cnn.com/cnn/programs/>, <Hyperlink: http://www.cnn.com/cnni/>, <Hyperlink: http://cnnespanol.cnn.com/>, <Hyperlink: http://www.hlntv.com>, <Hyperlink: javascript:void(0);>, <Hyperlink: javascript:void(0);>, <Hyperlink: http://www.cnn.com/>, <Hyperlink: http://www.cnn.com/video/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/US/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/WORLD/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/POLITICS/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/JUSTICE/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/SHOWBIZ/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/TECH/?hpt=sitenav>, <Hyperlink: http://www.cnn.com/HEALTH/?hpt=sitenav> ... ]
 
-Those hyperlinks and all their attributes can be quickly printed out in comma-delimited format.
+You could filter that list to just those estimated to be news stories like so.
+
+.. code-block:: python
+
+    >>> [h for h in url.hyperlinks if h.is_story]
+    [<Hyperlink: http://politicalticker.blogs.cnn.com/201...>, <Hyperlink: http://www.cnn.com/interactive/2014/06/u...>, <Hyperlink: http://www.cnn.com/interactive/2014/07/l...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/2014/07/27/us/florida...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, <Hyperlink: http://www.cnn.com/video/data/2.0/video/...>, ...]
+
+A complete list of hyperlinks and all their attributes can be quickly printed out in comma-delimited format.
 
 .. code-block:: python
 

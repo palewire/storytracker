@@ -7,6 +7,7 @@ if six.PY2:
 else:
     import csv
 import storytracker
+import storysniffer
 from six import BytesIO
 from bs4 import BeautifulSoup
 from .toolbox import UnicodeMixin
@@ -170,6 +171,7 @@ class ArchivedURL(UnicodeMixin):
             "url_domain",
             "url_string",
             "url_index",
+            "url_is_story",
         ]
         longest_row = max([len(r) for r in row_list])
         for i in range(longest_row - len(headers)):
@@ -291,10 +293,22 @@ class Hyperlink(UnicodeMixin):
             self.domain,
             self.string or '',
             self.index,
+            self.is_story,
         ]
         for img in self.images:
             row.append(img.src)
         return list(map(six.text_type, row))
+
+    @property
+    def is_story(self):
+        """
+        Returns a true or false estimate of whether the URL links to a news
+        story.
+        """
+        try:
+            return storysniffer.guess(self.href)
+        except ValueError:
+            return False
 
 
 class Image(UnicodeMixin):

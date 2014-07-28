@@ -8,6 +8,7 @@ install_requires = [
     'six==1.7.2',
     'pytz>=2014.4',
     'beautifulsoup4==4.3.2',
+    'storysniffer==0.0.2',
 ]
 
 if sys.version_info < (3,):

@@ -22,7 +22,9 @@ requests==2.3.0
 sh==1.09
 six==1.7.2
 sphinx-autobuild==0.2.3
+storysniffer==0.0.2
 storytracker==0.0.4
+tldextract==1.4
 tornado==3.1.1
 tox==1.7.1
 unicodecsv==0.9.4
