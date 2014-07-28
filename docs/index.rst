@@ -8,10 +8,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   gettingstarted
-   archiving
-   analysis
-   filehandling
+   howtouseit
+   pythoninterfaces
    commandlineinterfaces
    changelog
    credits
