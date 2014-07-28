@@ -39,6 +39,8 @@ program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html"
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         self.tmpdir = tempfile.mkdtemp()
+        # An simple archive we can reuse to prevent having to rerequest it
+        self.archive = storytracker.archive(self.url)
 
 
 class MutedTest(BaseTest):
@@ -48,7 +50,6 @@ class MutedTest(BaseTest):
         # Turning off stdout temporarily
         original_stdout = sys.stdout
         sys.stdout = NullDevice()
-
 
 #
 # Python tests
@@ -72,7 +73,7 @@ class ArchiveTest(MutedTest):
             storytracker.reverse_archive_filename("foo.bar")
 
     def test_archive(self):
-        obj1 = storytracker.archive(self.url)
+        obj1 = self.archive
         obj2 = storytracker.archive(self.url, minify=False)
         obj3 = storytracker.archive(self.url, extend_urls=False)
         obj4 = storytracker.archive(self.url, output_dir=self.tmpdir)
@@ -114,7 +115,7 @@ class AnalysisTest(MutedTest):
         self.assertEqual(obj1, obj2)
 
     def test_url_creation(self):
-        obj = storytracker.archive(self.url)
+        obj = self.archive
         self.assertEqual(self.url, obj.url)
         obj.timestamp
         obj.html
@@ -127,7 +128,7 @@ class AnalysisTest(MutedTest):
         obj.write_gzip_to_directory(self.tmpdir)
 
     def test_url_hyperlinks(self):
-        obj = storytracker.archive(self.url)
+        obj = self.archive
         self.assertEqual(obj._hyperlinks, [])
         self.assertTrue(isinstance(obj.hyperlinks, list))
         self.assertEqual(obj._hyperlinks, obj.hyperlinks)
@@ -148,7 +149,7 @@ class AnalysisTest(MutedTest):
         a.__csv__()
 
     def test_url_images(self):
-        obj = storytracker.archive(self.url)
+        obj = self.archive
         self.assertEqual(obj._images, [])
         self.assertTrue(len(obj.images) > 0)
         self.assertTrue(isinstance(obj.images, list))
@@ -194,6 +195,16 @@ class AnalysisTest(MutedTest):
         urlset = storytracker.open_archive_directory(self.tmpdir)
         self.assertTrue(len(urlset), 2)
         [self.assertTrue(isinstance(o, ArchivedURL)) for o in urlset]
+
+    def test_write_hyperlinks_csv_to_file(self):
+        o = self.archive
+        f = six.StringIO()
+        f = o.write_hyperlinks_csv_to_file(f)
+        p = os.path.join(self.tmpdir, 'links.csv')
+        f2 = open(p, 'w+')
+        f2 = o.write_hyperlinks_csv_to_file(f2)
+        self.assertTrue(os.path.exists(p))
+        os.remove(p)
 
 #
 # CLI tests

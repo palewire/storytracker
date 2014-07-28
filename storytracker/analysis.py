@@ -144,17 +144,21 @@ class ArchivedURL(UnicodeMixin):
         all hyperlinks extracted from the HTML.
         """
         writer = csv.writer(file)
-        writer.writerow([
+        headers = [
             "archive_url",
             "archive_timestamp",
             "url_href",
             "url_domain",
             "url_string",
             "url_index",
-        ])
+        ]
+        writer.writerow(headers)
         for h in self.hyperlinks:
-            row = map(six.text_type, [self.url, self.timestamp]) + h.__csv__()
+            row = list(
+                map(six.text_type, [self.url, self.timestamp])
+            ) + h.__csv__()
             writer.writerow(row)
+        file.seek(0)
         return file
 
     def get_images(self, force=False):
@@ -273,7 +277,7 @@ class Hyperlink(UnicodeMixin):
             self.string or '',
             self.index,
         ]
-        return map(six.text_type, row)
+        return list(map(six.text_type, row))
 
 
 class Image(UnicodeMixin):
