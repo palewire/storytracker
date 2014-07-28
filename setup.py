@@ -1,5 +1,5 @@
 import sys
-from distutils.core import setup
+from setuptools import setup
 
 install_requires = [
     'python-dateutil==2.2',
