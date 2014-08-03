@@ -20,7 +20,7 @@ def open_wayback_machine_url(url, **kwargs):
             "id_/%s" % archive_url
         )
     # Retrieve the raw HTML
-    html = storytracker.get(url)
+    html = storytracker.archive(url, **kwargs).html
     # Pass it all back
     return ArchivedURL(archive_url, timestamp, html)
 

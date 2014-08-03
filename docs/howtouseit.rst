@@ -149,3 +149,48 @@ Which also accepts a directory.
 .. code-block:: bash
 
     $ storytracker-links2csv /path/to/my/directory/
+
+Analyzing data from the Wayback Machine
+---------------------------------------
+
+A page saved by the Internet Archive's excellent Wayback Machine can be integrated
+by passing its URL to :py:func:`storytracker.reverse_wayback_machine_url`.
+
+This pulls down the CNN homepage captured on Sept. 11, 2001.
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> obj = storytracker.open_wayback_machine_url('https://web.archive.org/web/20010911213814/http://www.cnn.com/')
+
+Now you have an :py:class:`ArchivedURL` object like any other in the storytracker system.
+
+.. code-block:: python
+
+    >>> obj
+    <ArchivedURL: http://www.cnn.com/@2001-09-11 21:38:14>
+
+So, if for instance you wanted to see all the images on the page you could do this.
+
+    >>> for i in obj.images:
+    >>>     print i.src
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    https://web.archive.org/web/20010911213814id_/http://www.cnn.com/images/newmain/top.main.special.report.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    https://web.archive.org/web/20010911213814id_/http://www.cnn.com/images/newmain/header.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/0109/top.exclusive.jpg
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
+    http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif

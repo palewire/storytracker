@@ -270,7 +270,7 @@ Accepts a file path and returns an ``ArchivedURL`` object
     :param str path: The path to the archived file. Its file name must conform to the conventions of :py:func:`storytracker.create_archive_filename`.
     :return: An :py:class:`ArchivedURL` object
     :rtype: :py:class:`ArchivedURL`
-    :raises ArchiveFileNameError: If the file's name cannot not be parsed using the conventions of :py:func:`storytracker.create_archive_filename`.
+    :raises ArchiveFileNameError: If the file's name cannot be parsed using the conventions of :py:func:`storytracker.create_archive_filename`.
 
 Example usage:
 
@@ -278,6 +278,26 @@ Example usage:
 
     >>> import storytracker
     >>> obj = storytracker.open_archive_filepath('/home/ben/archive/http!www.latimes.com!!!!@2014-07-06T16:31:57.697250.gz')
+
+
+open_wayback_machine_url
+------------------------
+
+Accepts a URL from the `Internet Archive's Wayback Machine <http://www.archive.org>`_ and returns an ``ArchivedURL`` object
+
+.. py:function:: storytracker.open_wayback_machine_url(url)
+
+    :param str path: A URL from the Wayback Machine that links directly to an archive. An example is `https://web.archive.org/web/20010911213814/http://www.cnn.com/ <https://web.archive.org/web/20010911213814/http://www.cnn.com/>`_.
+    :return: An :py:class:`ArchivedURL` object
+    :rtype: :py:class:`ArchivedURL`
+    :raises ArchiveFileNameError: If the file's name cannot be parsed.
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> obj = storytracker.open_wayback_machine_url('https://web.archive.org/web/20010911213814/http://www.cnn.com/') 
 
 
 reverse_archive_filename
@@ -300,3 +320,23 @@ Example usage:
     >>> import storytracker
     >>> storytracker.reverse_archive_filename('http!www.latimes.com!!!!@2014-07-06T16:31:57.697250')
     ('http://www.latimes.com', datetime.datetime(2014, 7, 6, 16, 31, 57, 697250))
+
+reverse_wayback_machine_url
+---------------------------
+
+Accepts an url from the Internet Archive's Wayback Machine and returns a tuple  with the archived URL string and a
+timestamp.
+
+.. py:function:: storytracker.reverse_wayback_machine_url(url)
+
+    :param str filename: A URL from the Wayback Machine that links directly to an archive. An example is `https://web.archive.org/web/20010911213814/http://www.cnn.com/ <https://web.archive.org/web/20010911213814/http://www.cnn.com/>`_.
+    :return: A tuple containing the URL of the archived page as a string and a datetime object of the archive's timestamp 
+    :rtype: ``tuple``
+
+Example usage:
+
+.. code-block:: python
+
+    >>> import storytracker
+    >>> storytracker.reverse_wayback_machine_url('https://web.archive.org/web/20010911213814/http://www.cnn.com/')
+    ('http://www.cnn.com/', datetime.datetime(2001, 9, 11, 21, 38, 14))
