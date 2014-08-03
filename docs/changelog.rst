@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.0.7
+-----
+
+* Added ``open_wayback_machine_url`` and ``reverse_wayback_machine_url`` functions
+to introduce support for files saved by the Internet Archive's Wayback Machine.
+
 0.0.6
 -----
 
