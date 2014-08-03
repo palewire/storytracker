@@ -18,7 +18,6 @@ def reverse_wayback_machine_url(url):
             dateutil.parser.parse(timestamp_string)
         )
     except Exception as e:
-        raise e
         raise storytracker.ArchiveFileNameError(
             "Archive file name could not be parsed from %s:" % url
         )
