@@ -219,6 +219,20 @@ http://www.cnn.com/"
         self.assertTrue(isinstance(reverse[0], str))
         self.assertTrue(isinstance(reverse[1], datetime))
 
+    def test_url_open(self):
+        obj = storytracker.open_wayback_machine_url(self.url)
+        self.assertEqual("http://www.cnn.com/", obj.url)
+        obj.timestamp
+        obj.html
+        obj.soup
+        obj.gzip
+        obj.hyperlinks
+        obj.__unicode__()
+        obj.__str__()
+        obj.__repr__()
+        self.assertEqual(obj.archive_path, None)
+        obj.write_gzip_to_directory(self.tmpdir)
+
 #
 # CLI tests
 #
