@@ -206,6 +206,19 @@ class AnalysisTest(MutedTest):
         self.assertTrue(os.path.exists(p))
         os.remove(p)
 
+
+class WaybackMachineTest(BaseTest):
+
+    def setUp(self):
+        super(WaybackMachineTest, self).setUp()
+        self.url = "https://web.archive.org/web/20010911213814/\
+http://www.cnn.com/"
+
+    def test_url_reverse(self):
+        reverse = storytracker.reverse_wayback_machine_url(self.url)
+        self.assertTrue(isinstance(reverse[0], str))
+        self.assertTrue(isinstance(reverse[1], datetime))
+
 #
 # CLI tests
 #

@@ -8,6 +8,7 @@ from .files import open_archive_directory
 from .files import open_archive_filepath
 from .files import reverse_archive_filename
 from .get import get
+from .waybackmachine import reverse_wayback_machine_url
 
 __all__ = [
     'archive',
@@ -20,4 +21,5 @@ __all__ = [
     'open_archive_directory',
     'open_archive_filepath',
     'reverse_archive_filename',
+    'reverse_wayback_machine_url',
 ]

@@ -6,3 +6,4 @@ include =
     storytracker/files.py
     storytracker/get.py
     storytracker/toolbox.py
+    storytracker/waybackmachine.py
