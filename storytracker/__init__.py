@@ -11,6 +11,7 @@ from .get import get
 from .waybackmachine import open_wayback_machine_url
 from .waybackmachine import reverse_wayback_machine_url
 
+
 __all__ = [
     'archive',
     'ArchivedURL',

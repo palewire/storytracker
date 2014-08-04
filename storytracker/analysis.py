@@ -10,6 +10,7 @@ import storytracker
 import storysniffer
 from six import BytesIO
 from bs4 import BeautifulSoup
+from selenium import webdriver
 from .toolbox import UnicodeMixin
 try:
     from urlparse import urlparse
@@ -30,6 +31,7 @@ class ArchivedURL(UnicodeMixin):
         self.archive_path = None
         self._hyperlinks = []
         self._images = []
+        self.driver = None
 
     def __eq__(self, other):
         """
@@ -71,6 +73,32 @@ class ArchivedURL(UnicodeMixin):
         with gzip.GzipFile(fileobj=out, mode="wb") as f:
             f.write(self.html.encode("utf-8"))
         return out.getvalue()
+
+    def open_browser(self):
+        """
+        Open the web browser we will use to simulate the website for analysis.
+        """
+        # Just stop now if it already exists
+        if self.driver:
+            return
+        try:
+            # First try PhantomJS
+            self.driver = webdriver.PhantomJS()
+        except:
+            # If it isn't installed try Firefox
+            self.driver = webdriver.Firefox()
+
+    def close_browser(self):
+        """
+        Close the web browser we use to simulate the website.
+        """
+        # Just stop now if it doesn't exist
+        if not self.driver:
+            return
+        # Close it
+        self.driver.close()
+        # Null out the value
+        self.driver = None
 
     def get_hyperlinks(self, force=False):
         """

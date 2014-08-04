@@ -10,6 +10,7 @@ import storytracker
 from command import Command
 from datetime import datetime
 from bs4 import BeautifulSoup
+from selenium import webdriver
 from storytracker.analysis import ArchivedURL
 from storytracker.analysis import ArchivedURLSet
 from storytracker.analysis import Hyperlink, Image
@@ -232,6 +233,16 @@ http://www.cnn.com/"
         obj.__repr__()
         self.assertEqual(obj.archive_path, None)
         obj.write_gzip_to_directory(self.tmpdir)
+
+
+class SeleniumTest(BaseTest):
+
+    def test_open_and_close_browser(self):
+        self.assertEqual(self.archive.driver, None)
+        self.archive.open_browser()
+        self.assertTrue(isinstance(self.archive.driver, webdriver.PhantomJS))
+        self.archive.close_browser()
+        self.assertEqual(self.archive.driver, None)
 
 #
 # CLI tests
