@@ -2,13 +2,14 @@ import sys
 from setuptools import setup
 
 install_requires = [
-    'python-dateutil==2.2',
-    'requests==2.3.0',
+    'python-dateutil>=2.2',
+    'requests=>=2.3.0',
     'htmlmin==0.1.5',
-    'six==1.7.2',
+    'six>=1.7.2',
     'pytz>=2014.4',
-    'beautifulsoup4==4.3.2',
+    'beautifulsoup4>=4.3.2',
     'storysniffer==0.0.2',
+    'selenium>=2.42.1',
 ]
 
 if sys.version_info < (3,):
