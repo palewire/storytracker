@@ -31,7 +31,7 @@ class ArchivedURL(UnicodeMixin):
         self.archive_path = None
         self._hyperlinks = []
         self._images = []
-        self.driver = None
+        self.browser = None
 
     def __eq__(self, other):
         """
@@ -79,26 +79,26 @@ class ArchivedURL(UnicodeMixin):
         Open the web browser we will use to simulate the website for analysis.
         """
         # Just stop now if it already exists
-        if self.driver:
+        if self.browser:
             return
         try:
             # First try PhantomJS
-            self.driver = webdriver.PhantomJS()
+            self.browser = webdriver.PhantomJS()
         except:
             # If it isn't installed try Firefox
-            self.driver = webdriver.Firefox()
+            self.browser = webdriver.Firefox()
 
     def close_browser(self):
         """
         Close the web browser we use to simulate the website.
         """
         # Just stop now if it doesn't exist
-        if not self.driver:
+        if not self.browser:
             return
         # Close it
-        self.driver.close()
+        self.browser.close()
         # Null out the value
-        self.driver = None
+        self.browser = None
 
     def get_hyperlinks(self, force=False):
         """

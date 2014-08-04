@@ -238,11 +238,11 @@ http://www.cnn.com/"
 class SeleniumTest(BaseTest):
 
     def test_open_and_close_browser(self):
-        self.assertEqual(self.archive.driver, None)
+        self.assertEqual(self.archive.browser, None)
         self.archive.open_browser()
-        self.assertTrue(isinstance(self.archive.driver, webdriver.PhantomJS))
+        self.assertTrue(isinstance(self.archive.browser, webdriver.PhantomJS))
         self.archive.close_browser()
-        self.assertEqual(self.archive.driver, None)
+        self.assertEqual(self.archive.browser, None)
 
 #
 # CLI tests
