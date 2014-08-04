@@ -287,7 +287,7 @@ Accepts a URL from the `Internet Archive's Wayback Machine <http://www.archive.o
 
 .. py:function:: storytracker.open_wayback_machine_url(url)
 
-    :param str path: A URL from the Wayback Machine that links directly to an archive. An example is `https://web.archive.org/web/20010911213814/http://www.cnn.com/ <https://web.archive.org/web/20010911213814/http://www.cnn.com/>`_.
+    :param str url: A URL from the Wayback Machine that links directly to an archive. An example is `https://web.archive.org/web/20010911213814/http://www.cnn.com/ <https://web.archive.org/web/20010911213814/http://www.cnn.com/>`_.
     :return: An :py:class:`ArchivedURL` object
     :rtype: :py:class:`ArchivedURL`
     :raises ArchiveFileNameError: If the file's name cannot be parsed.
@@ -329,7 +329,7 @@ timestamp.
 
 .. py:function:: storytracker.reverse_wayback_machine_url(url)
 
-    :param str filename: A URL from the Wayback Machine that links directly to an archive. An example is `https://web.archive.org/web/20010911213814/http://www.cnn.com/ <https://web.archive.org/web/20010911213814/http://www.cnn.com/>`_.
+    :param str url: A URL from the Wayback Machine that links directly to an archive. An example is `https://web.archive.org/web/20010911213814/http://www.cnn.com/ <https://web.archive.org/web/20010911213814/http://www.cnn.com/>`_.
     :return: A tuple containing the URL of the archived page as a string and a datetime object of the archive's timestamp 
     :rtype: ``tuple``
 
