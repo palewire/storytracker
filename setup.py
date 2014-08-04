@@ -3,7 +3,7 @@ from setuptools import setup
 
 install_requires = [
     'python-dateutil>=2.2',
-    'requests=>=2.3.0',
+    'requests>=2.3.0',
     'htmlmin==0.1.5',
     'six>=1.7.2',
     'pytz>=2014.4',
