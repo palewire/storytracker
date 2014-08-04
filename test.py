@@ -241,8 +241,10 @@ class SeleniumTest(BaseTest):
         self.assertEqual(self.archive.browser, None)
         self.archive.open_browser()
         self.assertTrue(isinstance(self.archive.browser, webdriver.PhantomJS))
+        self.archive.open_browser()
         self.archive.close_browser()
         self.assertEqual(self.archive.browser, None)
+        self.archive.close_browser()
 
 #
 # CLI tests
