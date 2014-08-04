@@ -100,6 +100,16 @@ class ArchivedURL(UnicodeMixin):
         # Null out the value
         self.browser = None
 
+    def analyze(self):
+        """
+        Force all of the normally lazy-loading analysis methods to run
+        and cache the results.
+        """
+        self.open_browser()
+        self.get_hyperlinks(force=True)
+        self.get_images(force=True)
+        self.close_browser()
+
     def get_hyperlinks(self, force=False):
         """
         Parses all of the hyperlinks from the HTML and returns a list of

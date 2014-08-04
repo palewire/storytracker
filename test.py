@@ -246,6 +246,17 @@ class SeleniumTest(BaseTest):
         self.assertEqual(self.archive.browser, None)
         self.archive.close_browser()
 
+    def test_analyze(self):
+        self.assertEqual(self.archive._hyperlinks, [])
+        self.assertEqual(self.archive._images, [])
+        self.archive.analyze()
+        self.assertTrue(
+            isinstance(self.archive._hyperlinks[0], storytracker.Hyperlink)
+        )
+        self.assertTrue(
+            isinstance(self.archive._images[0], storytracker.Image)
+        )
+
 #
 # CLI tests
 #
