@@ -154,7 +154,7 @@ Analyzing data from the Wayback Machine
 ---------------------------------------
 
 A page saved by the Internet Archive's excellent Wayback Machine can be integrated
-by passing its URL to :py:func:`storytracker.reverse_wayback_machine_url`.
+by passing its URL to :py:func:`storytracker.open_wayback_machine_url`.
 
 This pulls down the CNN homepage captured on Sept. 11, 2001.
 
