@@ -145,17 +145,28 @@ class ArchivedURL(UnicodeMixin):
             img_list = a.find_elements_by_tag_name("img")
             img_list = [i for i in img_list if i.get_attribute("src")]
             for img in img_list:
-                image_obj = Image(img.get_attribute("src"))
+                location = img.location
+                size = img.size
+                image_obj = Image(
+                    img.get_attribute("src"),
+                    size['width'],
+                    size['height'],
+                    location['x'],
+                    location['y'],
+                )
                 try:
                     image_obj_list.append(image_obj)
                 except ValueError:
                     pass
             # Create the Hyperlink object
+            location = a.location
             hyperlink_obj = Hyperlink(
                 a.get_attribute("href"),
                 a.text,
                 i,
-                image_obj_list
+                images=image_obj_list,
+                x=location['x'],
+                y=location['y'],
             )
             # Add to the link list
             obj_list.append(hyperlink_obj)
@@ -189,7 +200,15 @@ class ArchivedURL(UnicodeMixin):
         img_list = [i for i in img_list if i.get_attribute("src")]
         for img in img_list:
             # Create the Image object
-            image_obj = Image(img.get_attribute("src"))
+            location = img.location
+            size = img.size
+            image_obj = Image(
+                img.get_attribute("src"),
+                size['width'],
+                size['height'],
+                location['x'],
+                location['y'],
+            )
             # Add to the image list
             obj_list.append(image_obj)
 
@@ -304,12 +323,14 @@ class Hyperlink(UnicodeMixin):
     """
     A hyperlink extracted from an archived URL.
     """
-    def __init__(self, href, string, index, images=[]):
+    def __init__(self, href, string, index, images=[], x=None, y=None):
         self.href = href
         self.string = string
         self.index = index
         self.domain = urlparse(href).netloc
         self.images = images
+        self.x = x
+        self.y = y
 
     def __eq__(self, other):
         """
@@ -367,8 +388,12 @@ class Image(UnicodeMixin):
     """
     An image extracted from an archived URL.
     """
-    def __init__(self, src):
+    def __init__(self, src, width=None, height=None, x=None, y=None):
         self.src = src
+        self.width = width
+        self.height = height
+        self.x = x
+        self.y = y
 
     def __eq__(self, other):
         """
