@@ -224,7 +224,7 @@ class ArchivedURL(UnicodeMixin):
         Returns the Image with the greatest area in size
         """
         try:
-            return sorted(self.images, key=lambda x:x.area, reverse=True)[0]
+            return sorted(self.images, key=lambda x: x.area, reverse=True)[0]
         except IndexError:
             return None
 
