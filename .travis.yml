@@ -5,6 +5,7 @@ python:
   - "3.4"
 install:
   - pip install pyflakes pep8 coverage python-coveralls
+  - apt-get install phantomjs
   - python setup.py install
   - export PYTHONPATH="$PYTHONPATH:`pwd`"
 script:

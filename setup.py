@@ -13,7 +13,7 @@ install_requires = [
 ]
 
 if sys.version_info < (3,):
-    install_requires.append('unicodecsv==0.9.4')
+    install_requires.append('unicodecsv>=0.9.4')
 
 setup(
     name='storytracker',
