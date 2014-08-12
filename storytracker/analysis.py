@@ -6,10 +6,10 @@ if six.PY2:
     import unicodecsv as csv
 else:
     import csv
+import tempfile
 import storytracker
 import storysniffer
 from six import BytesIO
-from bs4 import BeautifulSoup
 from selenium import webdriver
 from .toolbox import UnicodeMixin
 try:
@@ -22,13 +22,12 @@ class ArchivedURL(UnicodeMixin):
     """
     An URL's archived HTML with tools for analysis
     """
-    def __init__(self, url, timestamp, html):
+    def __init__(self, url, timestamp, html, archive_path=None):
         self.url = url
         self.timestamp = timestamp
         self.html = html
-        self.soup = BeautifulSoup(html)
         # Attributes that come in handy below
-        self.archive_path = None
+        self.archive_path = archive_path
         self._hyperlinks = []
         self._images = []
         self.browser = None
@@ -87,6 +86,12 @@ class ArchivedURL(UnicodeMixin):
         except:
             # If it isn't installed try Firefox
             self.browser = webdriver.Firefox()
+        # Check if an archived HTML file exists, if not create one
+        # so our selenium browser has something to read.
+        if not self.archive_path or not self.archive_path.endswith("html"):
+            tmpdir = tempfile.mkdtemp()
+            self.write_html_to_directory(tmpdir)
+        self.browser.get("file://%s" % self.archive_path)
 
     def close_browser(self):
         """
@@ -123,32 +128,41 @@ class ArchivedURL(UnicodeMixin):
         if self._hyperlinks and not force:
             return self._hyperlinks
 
-        # Target the <body> tag if it exists since
-        # we don't care what's in the <head>
-        target = self.soup
-        if hasattr(target, 'body'):
-            target = target.body
+        # Open the browser if it's not already open
+        if not self.browser:
+            self.open_browser()
 
         # Loop through all <a> tags with href attributes
         # and convert them to Hyperlink objects
-        link_list = []
-        for i, a in enumerate(target.findAll("a", {"href": True})):
+        obj_list = []
+        link_list = self.browser.find_elements_by_tag_name("a")
+        link_list = [
+            a for a in link_list if a.get_attribute("href") and a.text
+        ]
+        for i, a in enumerate(link_list):
             # Search out any images
-            images = []
-            for img in a.findAll("img", {"src": True}):
-                image_obj = Image(img["src"])
+            image_obj_list = []
+            img_list = a.find_elements_by_tag_name("img")
+            img_list = [i for i in img_list if i.get_attribute("src")]
+            for img in img_list:
+                image_obj = Image(img.get_attribute("src"))
                 try:
-                    images.append(image_obj)
+                    image_obj_list.append(image_obj)
                 except ValueError:
                     pass
             # Create the Hyperlink object
-            hyperlink_obj = Hyperlink(a["href"], a.string, i, images)
+            hyperlink_obj = Hyperlink(
+                a.get_attribute("href"),
+                a.text,
+                i,
+                image_obj_list
+            )
             # Add to the link list
-            link_list.append(hyperlink_obj)
+            obj_list.append(hyperlink_obj)
 
         # Stuff that list in our cache and then pass it out
-        self._hyperlinks = link_list
-        return link_list
+        self._hyperlinks = obj_list
+        return obj_list
     hyperlinks = property(get_hyperlinks)
 
     def get_images(self, force=False):
@@ -164,24 +178,24 @@ class ArchivedURL(UnicodeMixin):
         if self._images and not force:
             return self._images
 
-        # Target the <body> tag if it exists since
-        # we don't care what's in the <head>
-        target = self.soup
-        if hasattr(target, 'body'):
-            target = target.body
+        # Open the browser if it's not already open
+        if not self.browser:
+            self.open_browser()
 
         # Loop through all <img> tags with src attributes
         # and convert them to Image objects
-        image_list = []
-        for img in target.findAll("img", {"src": True}):
+        obj_list = []
+        img_list = self.browser.find_elements_by_tag_name("img")
+        img_list = [i for i in img_list if i.get_attribute("src")]
+        for img in img_list:
             # Create the Image object
-            image_obj = Image(img["src"])
+            image_obj = Image(img.get_attribute("src"))
             # Add to the image list
-            image_list.append(image_obj)
+            obj_list.append(image_obj)
 
         # Stuff that list in our cache and then pass it out
-        self._images = image_list
-        return image_list
+        self._images = obj_list
+        return obj_list
     images = property(get_images)
 
     def write_hyperlinks_csv_to_file(self, file):
