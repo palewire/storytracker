@@ -243,10 +243,16 @@ class ArchivedURL(UnicodeMixin):
             "url_string",
             "url_index",
             "url_is_story",
+            "url_x",
+            "url_y",
         ]
         longest_row = max([len(r) for r in row_list])
-        for i in range(longest_row - len(headers)):
+        for i in range(((longest_row - len(headers))/5)):
             headers.append("image_%s_src" % (i + 1))
+            headers.append("image_%s_width" % (i + 1))
+            headers.append("image_%s_height" % (i + 1))
+            headers.append("image_%s_x" % (i + 1))
+            headers.append("image_%s_y" % (i + 1))
 
         # Write it out to the file
         writer.writerow(headers)
@@ -367,9 +373,15 @@ class Hyperlink(UnicodeMixin):
             self.string or '',
             self.index,
             self.is_story,
+            self.x,
+            self.y,
         ]
         for img in self.images:
             row.append(img.src)
+            row.append(img.width)
+            row.append(img.height)
+            row.append(img.x)
+            row.append(img.y)
         return list(map(six.text_type, row))
 
     @property
