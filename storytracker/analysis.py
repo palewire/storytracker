@@ -249,10 +249,11 @@ class ArchivedURL(UnicodeMixin):
             "url_font_size",
         ]
         longest_row = max([len(r) for r in row_list])
-        for i in range(((longest_row - len(headers))/5)):
+        for i in range(((longest_row - len(headers))/6)):
             headers.append("image_%s_src" % (i + 1))
             headers.append("image_%s_width" % (i + 1))
             headers.append("image_%s_height" % (i + 1))
+            headers.append("image_%s_orientation" % (i + 1))
             headers.append("image_%s_x" % (i + 1))
             headers.append("image_%s_y" % (i + 1))
 
@@ -387,6 +388,7 @@ class Hyperlink(UnicodeMixin):
             row.append(img.src)
             row.append(img.width)
             row.append(img.height)
+            row.append(img.orientation)
             row.append(img.x)
             row.append(img.y)
         return list(map(six.text_type, row))
@@ -438,3 +440,22 @@ class Image(UnicodeMixin):
             return six.text_type("%s..." % self.src[:40])
         else:
             return six.text_type(self.src)
+
+    @property
+    def orientation(self):
+        """
+        Returns a string describing the shape of the image.
+
+            'square' means the width and height are equal
+            'landscape' is a horizontal image with width greater than height
+            'portrait' is a vertical image with height greater than width
+            None means there are no size attributes to test
+        """
+        if not self.width or not self.height:
+            return None
+        elif self.width == self.height:
+            return 'square'
+        elif self.width > self.height:
+            return 'landscape'
+        elif self.height > self.width:
+            return 'portrait'
