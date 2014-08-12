@@ -246,6 +246,7 @@ class ArchivedURL(UnicodeMixin):
             "url_is_story",
             "url_x",
             "url_y",
+            "url_font_size",
         ]
         longest_row = max([len(r) for r in row_list])
         for i in range(((longest_row - len(headers))/5)):
@@ -380,6 +381,7 @@ class Hyperlink(UnicodeMixin):
             self.is_story,
             self.x,
             self.y,
+            self.font_size,
         ]
         for img in self.images:
             row.append(img.src)
