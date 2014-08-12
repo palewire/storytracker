@@ -229,7 +229,6 @@ http://www.cnn.com/"
         obj.__unicode__()
         obj.__str__()
         obj.__repr__()
-        self.assertEqual(obj.archive_path, None)
         obj.write_gzip_to_directory(self.tmpdir)
 
 
