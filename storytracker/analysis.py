@@ -218,6 +218,16 @@ class ArchivedURL(UnicodeMixin):
         return obj_list
     images = property(get_images)
 
+    @property
+    def largest_image(self):
+        """
+        Returns the Image with the greatest area in size
+        """
+        try:
+            return sorted(self.images, key=lambda x:x.area, reverse=True)[0]
+        except IndexError:
+            return None
+
     def write_hyperlinks_csv_to_file(self, file):
         """
         Returns the provided file object with a ready-to-serve CSV list of
