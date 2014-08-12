@@ -259,7 +259,7 @@ class ArchivedURL(UnicodeMixin):
             "url_font_size",
         ]
         longest_row = max([len(r) for r in row_list])
-        for i in range(((longest_row - len(headers))/7)):
+        for i in range(int(((longest_row - len(headers))/7))):
             headers.append("image_%s_src" % (i + 1))
             headers.append("image_%s_width" % (i + 1))
             headers.append("image_%s_height" % (i + 1))
