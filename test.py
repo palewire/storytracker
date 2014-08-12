@@ -120,7 +120,6 @@ class AnalysisTest(MutedTest):
         self.assertEqual(self.url, obj.url)
         obj.timestamp
         obj.html
-        obj.soup
         obj.gzip
         obj.__unicode__()
         obj.__str__()
@@ -225,7 +224,6 @@ http://www.cnn.com/"
         self.assertEqual("http://www.cnn.com/", obj.url)
         obj.timestamp
         obj.html
-        obj.soup
         obj.gzip
         obj.hyperlinks
         obj.__unicode__()
