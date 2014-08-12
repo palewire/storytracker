@@ -167,6 +167,7 @@ class ArchivedURL(UnicodeMixin):
                 images=image_obj_list,
                 x=location['x'],
                 y=location['y'],
+                font_size=a.value_of_css_property("font-size"),
             )
             # Add to the link list
             obj_list.append(hyperlink_obj)
@@ -329,7 +330,10 @@ class Hyperlink(UnicodeMixin):
     """
     A hyperlink extracted from an archived URL.
     """
-    def __init__(self, href, string, index, images=[], x=None, y=None):
+    def __init__(
+        self, href, string, index, images=[], x=None, y=None,
+        font_size=None
+    ):
         self.href = href
         self.string = string
         self.index = index
@@ -337,6 +341,7 @@ class Hyperlink(UnicodeMixin):
         self.images = images
         self.x = x
         self.y = y
+        self.font_size = font_size
 
     def __eq__(self, other):
         """
