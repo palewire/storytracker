@@ -249,11 +249,12 @@ class ArchivedURL(UnicodeMixin):
             "url_font_size",
         ]
         longest_row = max([len(r) for r in row_list])
-        for i in range(((longest_row - len(headers))/6)):
+        for i in range(((longest_row - len(headers))/7)):
             headers.append("image_%s_src" % (i + 1))
             headers.append("image_%s_width" % (i + 1))
             headers.append("image_%s_height" % (i + 1))
             headers.append("image_%s_orientation" % (i + 1))
+            headers.append("image_%s_area" % (i + 1))
             headers.append("image_%s_x" % (i + 1))
             headers.append("image_%s_y" % (i + 1))
 
@@ -389,6 +390,7 @@ class Hyperlink(UnicodeMixin):
             row.append(img.width)
             row.append(img.height)
             row.append(img.orientation)
+            row.append(img.area)
             row.append(img.x)
             row.append(img.y)
         return list(map(six.text_type, row))
@@ -440,6 +442,15 @@ class Image(UnicodeMixin):
             return six.text_type("%s..." % self.src[:40])
         else:
             return six.text_type(self.src)
+
+    @property
+    def area(self):
+        """
+        Returns the area of the image
+        """
+        if not self.width or not self.height:
+            return None
+        return self.width * self.height
 
     @property
     def orientation(self):
