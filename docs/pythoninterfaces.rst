@@ -69,7 +69,7 @@ ArchivedURL
 
 An URL's archived HTML with tools for analysis.
 
-.. py:class:: ArchivedURL(url, timestamp, html)
+.. py:class:: ArchivedURL(url, timestamp, html, browser_width=1024, browser_height=768)
 
     **Initialization arguments**
 
@@ -85,7 +85,25 @@ An URL's archived HTML with tools for analysis.
 
         The HTML archived
 
+    **Optional initialization options**
+
+    .. py:attribute:: browser_width
+
+        The width of the browser that will be opened to inspect the URL's HTML
+
+    .. py:attribute:: browser_height
+
+        The height of the browser that will be opened to inspect the URL's HTML
+
     **Other attributes**
+
+    .. py:attribute:: height
+
+        The height of the page in pixels after the URL is opened in a web browser
+
+    .. py:attribute:: width
+
+        The width of the page in pixels after the URL is opened in a web browser
 
     .. py:attribute:: gzip
 
@@ -95,10 +113,6 @@ An URL's archived HTML with tools for analysis.
 
         Returns a file name for this archive using the conventions of :py:func:`storytracker.create_archive_filename`.
 
-    .. py:attribute:: soup
-
-        The archived HTML passed into a `BeautifulSoup <http://www.crummy.com/software/BeautifulSoup/bs4/doc/#>`_ parser
-
     .. py:attribute:: hyperlinks
 
         A list of all the hyperlinks extracted from the HTML
@@ -106,6 +120,43 @@ An URL's archived HTML with tools for analysis.
     .. py:attribute:: images
 
         A list of all the images extracts from the HTML
+
+    .. py:attribute:: largest_image
+
+        The largest image extracted from the HTML
+
+    **Analysis methods**
+
+    .. py:attribute:: analyze()
+
+        Opens the URL's HTML in a web browser and runs all of the analysis
+        methods that use it.
+
+    .. py:attribute:: get_cell(x, y, cell_size=256)
+
+        Returns the grid cell where the provided x and y coordinates
+        appear on the page. Cells are sized as squares, with 256 pixels as
+        the default.
+
+        The value is returned in the style of `algebraic notation
+        used in a game of chess <http://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29>`_.
+
+        .. code-block:: python
+
+            >>> obj.get_cell(1, 1)
+            'a1'
+            >>> obj.get_cell(257, 1)
+            'b1'
+            >>> obj.get_cell(1, 513)
+            'a3'
+
+    .. py:attribute:: open_browser()
+
+        Opens the URL's HTML in an web browser so it can be analyzed.
+
+    .. py:attribute:: close_browser()
+
+        Closes the web browser opened to analyze the URL's HTML
 
     **Output methods**
 
@@ -163,7 +214,7 @@ Hyperlink
 
 A hyperlink extracted from an :py:class:`ArchivedURL` object.
 
-.. py:class:: Hyperlink(href, string, index, images=[])
+.. py:class:: Hyperlink(href, string, index, images=[], x=None, y=None, width=None, height=None, cell=None, font_size=None)
 
     **Initialization arguments**
 
@@ -181,7 +232,36 @@ A hyperlink extracted from an :py:class:`ArchivedURL` object.
 
     .. py:attribute:: images
 
-        A list of the :py:class:`Image` objects extracted from the HTML
+        A list of the :py:class:`Image` objects extracted from the HTML.
+
+    .. py:attribute:: x
+
+        The x coordinate of the object's location on the page.
+
+    .. py:attribute:: y
+
+        The y coordinate of the object's location on the page.
+
+    .. py:attribute:: width
+
+        The width of the object's size on the page.
+
+    .. py:attribute:: height
+
+        The height of the object's size on the page.
+
+    .. py:attribute:: cell
+
+        The grid cell where the provided x and y coordinates
+        appear on the page. Cells are sized as squares, with 256 pixels as
+        the default.
+
+        The value is returned in the style of `algebraic notation
+        used in a game of chess <http://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29>`_.
+
+    .. py:attribute:: font_size
+
+        The size of the font of the text inside the hyperlink.
 
     **Other attributes**
 
@@ -211,6 +291,49 @@ Image
     .. py:attribute:: src
 
         The ``src`` attribute of the image tag
+
+    .. py:attribute:: x
+
+        The x coordinate of the object's location on the page.
+
+    .. py:attribute:: y
+
+        The y coordinate of the object's location on the page.
+
+    .. py:attribute:: width
+
+        The width of the object's size on the page.
+
+    .. py:attribute:: height
+
+        The height of the object's size on the page.
+
+    .. py:attribute:: cell
+
+        The grid cell where the provided x and y coordinates
+        appear on the page. Cells are sized as squares, with 256 pixels as
+        the default.
+
+        The value is returned in the style of `algebraic notation
+        used in a game of chess <http://en.wikipedia.org/wiki/Algebraic_notation_%28chess%29>`_.
+
+    **Analysis methods**
+
+    .. py:attribute:: area
+
+        Returns the square area of the image
+
+    .. py:attribute:: orientation
+
+        Returns a string describing the shape of the image.
+
+        'square' means the width and height are equal
+
+        'landscape' is a horizontal image with width greater than height
+
+        'portrait' is a vertical image with height greater than width
+        None means there are no size attributes to test
+
 
 File handling
 =============

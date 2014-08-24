@@ -200,17 +200,17 @@ class ArchivedURL(UnicodeMixin):
             # Search out any images
             image_obj_list = []
             img_list = a.find_elements_by_tag_name("img")
-            img_list = [i for i in img_list if i.get_attribute("src")]
+            img_list = [o for o in img_list if o.get_attribute("src")]
             for img in img_list:
-                location = img.location
-                size = img.size
+                ilocation = img.location
+                isize = img.size
                 image_obj = Image(
                     img.get_attribute("src"),
-                    width=size['width'],
-                    height=size['height'],
-                    x=location['x'],
-                    y=location['y'],
-                    cell=self.get_cell(location['x'], location['y']),
+                    width=isize['width'],
+                    height=isize['height'],
+                    x=ilocation['x'],
+                    y=ilocation['y'],
+                    cell=self.get_cell(ilocation['x'], ilocation['y']),
                 )
                 try:
                     image_obj_list.append(image_obj)
