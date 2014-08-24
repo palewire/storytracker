@@ -1,5 +1,6 @@
 import os
 import six
+import math
 import copy
 import gzip
 if six.PY2:
@@ -22,15 +23,20 @@ class ArchivedURL(UnicodeMixin):
     """
     An URL's archived HTML with tools for analysis
     """
-    def __init__(self, url, timestamp, html, archive_path=None):
+    def __init__(self, url, timestamp, html, archive_path=None,
+        browser_width=1024, browser_height=768):
         self.url = url
         self.timestamp = timestamp
         self.html = html
         # Attributes that come in handy below
         self.archive_path = archive_path
+        self._height = None
+        self._width = None
         self._hyperlinks = []
         self._images = []
         self.browser = None
+        self.browser_width = browser_width
+        self.browser_height = browser_height
 
     def __eq__(self, other):
         """
@@ -86,6 +92,10 @@ class ArchivedURL(UnicodeMixin):
         except:
             # If it isn't installed try Firefox
             self.browser = webdriver.Firefox()
+
+        # Size the browser
+        self.browser.set_window_size(self.browser_width, self.browser_height)
+
         # Check if an archived HTML file exists, if not create one
         # so our selenium browser has something to read.
         if not self.archive_path or not self.archive_path.endswith("html"):
@@ -111,9 +121,54 @@ class ArchivedURL(UnicodeMixin):
         and cache the results.
         """
         self.open_browser()
+        self.get_height(force=True)
+        self.get_width(force=True)
         self.get_hyperlinks(force=True)
         self.get_images(force=True)
         self.close_browser()
+
+    def get_cell(self, x, y, cell_size=256):
+        """
+        Returns the grid cell where the provided x and y coordinates
+        appear on the page.
+        """
+        xgroup = int(math.floor(float(x) / cell_size))
+        # Convert the x value to a letter ala chess notation
+        xgroup = chr(xgroup + ord('a'))
+        ygroup = int(math.ceil(float(y) / cell_size))
+        return '%s%s' % (xgroup, ygroup)
+
+    def get_height(self, force=False):
+        # If we already have it return it
+        if self._height and not force:
+            return self._height
+
+        # Open the browser if it's not already open
+        if not self.browser:
+            self.open_browser()
+
+        # Stuff that list in our cache and then pass it out
+        self._height = self.browser.execute_script(
+            "return document.body.scrollHeight"
+        )
+        return self._height
+    height = property(get_height)
+
+    def get_width(self, force=False):
+        # If we already have it return it
+        if self._width and not force:
+            return self._width
+
+        # Open the browser if it's not already open
+        if not self.browser:
+            self.open_browser()
+
+        # Stuff that list in our cache and then pass it out
+        self._width = self.browser.execute_script(
+            "return document.body.scrollWidth"
+        )
+        return self._width
+    width = property(get_width)
 
     def get_hyperlinks(self, force=False):
         """
@@ -153,6 +208,7 @@ class ArchivedURL(UnicodeMixin):
                     size['height'],
                     location['x'],
                     location['y'],
+                    cell=self.get_cell(location['x'], location['y']),
                 )
                 try:
                     image_obj_list.append(image_obj)
@@ -167,6 +223,7 @@ class ArchivedURL(UnicodeMixin):
                 images=image_obj_list,
                 x=location['x'],
                 y=location['y'],
+                cell=self.get_cell(location['x'], location['y']),
                 font_size=a.value_of_css_property("font-size"),
             )
             # Add to the link list
@@ -207,8 +264,9 @@ class ArchivedURL(UnicodeMixin):
                 img.get_attribute("src"),
                 size['width'],
                 size['height'],
-                location['x'],
-                location['y'],
+                x=location['x'],
+                y=location['y'],
+                cell=self.get_cell(location['x'], location['y']),
             )
             # Add to the image list
             obj_list.append(image_obj)
@@ -256,10 +314,11 @@ class ArchivedURL(UnicodeMixin):
             "url_is_story",
             "url_x",
             "url_y",
+            "url_cell",
             "url_font_size",
         ]
         longest_row = max([len(r) for r in row_list])
-        for i in range(int(((longest_row - len(headers))/7))):
+        for i in range(int(((longest_row - len(headers))/8))):
             headers.append("image_%s_src" % (i + 1))
             headers.append("image_%s_width" % (i + 1))
             headers.append("image_%s_height" % (i + 1))
@@ -267,6 +326,7 @@ class ArchivedURL(UnicodeMixin):
             headers.append("image_%s_area" % (i + 1))
             headers.append("image_%s_x" % (i + 1))
             headers.append("image_%s_y" % (i + 1))
+            headers.append("image_%s_cell" % (i + 1))
 
         # Write it out to the file
         writer.writerow(headers)
@@ -345,7 +405,7 @@ class Hyperlink(UnicodeMixin):
     """
     def __init__(
         self, href, string, index, images=[], x=None, y=None,
-        font_size=None
+        cell=None, font_size=None
     ):
         self.href = href
         self.string = string
@@ -354,6 +414,7 @@ class Hyperlink(UnicodeMixin):
         self.images = images
         self.x = x
         self.y = y
+        self.cell = cell
         self.font_size = font_size
 
     def __eq__(self, other):
@@ -393,6 +454,7 @@ class Hyperlink(UnicodeMixin):
             self.is_story,
             self.x,
             self.y,
+            self.cell,
             self.font_size,
         ]
         for img in self.images:
@@ -403,6 +465,7 @@ class Hyperlink(UnicodeMixin):
             row.append(img.area)
             row.append(img.x)
             row.append(img.y)
+            row.append(img.cell)
         return list(map(six.text_type, row))
 
     @property
@@ -421,12 +484,14 @@ class Image(UnicodeMixin):
     """
     An image extracted from an archived URL.
     """
-    def __init__(self, src, width=None, height=None, x=None, y=None):
+    def __init__(self, src, width=None, height=None, x=None, y=None,
+        cell=None):
         self.src = src
         self.width = width
         self.height = height
         self.x = x
         self.y = y
+        self.cell = cell
 
     def __eq__(self, other):
         """
