@@ -217,15 +217,18 @@ class ArchivedURL(UnicodeMixin):
                 except ValueError:
                     pass
             # Create the Hyperlink object
-            location = a.location
+            alocation = a.location
+            asize = a.size
             hyperlink_obj = Hyperlink(
                 a.get_attribute("href"),
                 a.text,
                 i,
                 images=image_obj_list,
-                x=location['x'],
-                y=location['y'],
-                cell=self.get_cell(location['x'], location['y']),
+                width=asize['width'],
+                height=asize['height'],
+                x=alocation['x'],
+                y=alocation['y'],
+                cell=self.get_cell(alocation['x'], alocation['y']),
                 font_size=a.value_of_css_property("font-size"),
             )
             # Add to the link list
@@ -314,6 +317,8 @@ class ArchivedURL(UnicodeMixin):
             "url_string",
             "url_index",
             "url_is_story",
+            "url_width",
+            "url_height",
             "url_x",
             "url_y",
             "url_cell",
@@ -406,7 +411,9 @@ class Hyperlink(UnicodeMixin):
     A hyperlink extracted from an archived URL.
     """
     def __init__(
-        self, href, string, index, images=[], x=None, y=None,
+        self, href, string, index, images=[],
+        x=None, y=None,
+        width=None, height=None,
         cell=None, font_size=None
     ):
         self.href = href
@@ -414,6 +421,8 @@ class Hyperlink(UnicodeMixin):
         self.index = index
         self.domain = urlparse(href).netloc
         self.images = images
+        self.width = width
+        self.height = height
         self.x = x
         self.y = y
         self.cell = cell
@@ -454,6 +463,8 @@ class Hyperlink(UnicodeMixin):
             self.string or '',
             self.index,
             self.is_story,
+            self.width,
+            self.height,
             self.x,
             self.y,
             self.cell,
