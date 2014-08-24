@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.0.8
+-----
+
+* Refactored analysis tools to use Selenium and PhantomJS rather than BeautifulSoup, which allowed for a whole of size and location attributes to be parsed from the fully rendered HTML document.
+
 0.0.7
 -----
 
