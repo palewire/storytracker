@@ -23,8 +23,10 @@ class ArchivedURL(UnicodeMixin):
     """
     An URL's archived HTML with tools for analysis
     """
-    def __init__(self, url, timestamp, html, archive_path=None,
-        browser_width=1024, browser_height=768):
+    def __init__(
+        self, url, timestamp, html, archive_path=None,
+        browser_width=1024, browser_height=768
+    ):
         self.url = url
         self.timestamp = timestamp
         self.html = html
@@ -204,10 +206,10 @@ class ArchivedURL(UnicodeMixin):
                 size = img.size
                 image_obj = Image(
                     img.get_attribute("src"),
-                    size['width'],
-                    size['height'],
-                    location['x'],
-                    location['y'],
+                    width=size['width'],
+                    height=size['height'],
+                    x=location['x'],
+                    y=location['y'],
                     cell=self.get_cell(location['x'], location['y']),
                 )
                 try:
@@ -262,8 +264,8 @@ class ArchivedURL(UnicodeMixin):
             size = img.size
             image_obj = Image(
                 img.get_attribute("src"),
-                size['width'],
-                size['height'],
+                width=size['width'],
+                height=size['height'],
                 x=location['x'],
                 y=location['y'],
                 cell=self.get_cell(location['x'], location['y']),
@@ -484,8 +486,9 @@ class Image(UnicodeMixin):
     """
     An image extracted from an archived URL.
     """
-    def __init__(self, src, width=None, height=None, x=None, y=None,
-        cell=None):
+    def __init__(
+        self, src, width=None, height=None, x=None, y=None, cell=None
+    ):
         self.src = src
         self.width = width
         self.height = height
