@@ -2,6 +2,7 @@ cron.py
 MANIFEST
 IDEAS
 scratch.py
+toolbox/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

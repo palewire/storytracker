@@ -377,6 +377,8 @@ class ArchivedURL(UnicodeMixin):
             path,
             "%s.jpg" % self.archive_filename
         )
+        if os.path.exists(img_path):
+            os.remove(img_path)
         im = PIL.Image.new(
             "RGBA",
             (self.width, self.height),
@@ -384,11 +386,13 @@ class ArchivedURL(UnicodeMixin):
         )
         draw = PIL.ImageDraw.Draw(im)
         for a in self.hyperlinks:
-            if a.images:
-                fill = "red"
+            if a.is_story:
+                fill = "pink"
             else:
                 fill = "blue"
             draw.rectangle(a.bounding_box, fill=fill)
+        for i in self.images:
+            draw.rectangle(i.bounding_box, fill="red")
         im.save(img_path, 'JPEG')
         return img_path
 
