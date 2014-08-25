@@ -372,6 +372,10 @@ class ArchivedURL(UnicodeMixin):
         return self.archive_path
 
     def write_illustration_to_directory(self, path):
+        """
+        Writes out a visualization of the hyperlinks and images on the page
+        as a JPG to the provided directory path.
+        """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
         img_path = os.path.join(

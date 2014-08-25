@@ -188,6 +188,8 @@ Now you have an :py:class:`ArchivedURL` object like any other in the storytracke
 
 So, if for instance you wanted to see all the images on the page you could do this.
 
+.. code-block:: python
+
     >>> for i in obj.images:
     >>>     print i.src
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com//images/hub2000/1.gif
@@ -210,3 +212,25 @@ So, if for instance you wanted to see all the images on the page you could do th
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
+
+
+Creating an illustration that visualizes stories on the page
+------------------------------------------------------------
+
+You can output a static image visualizing where headlines, stories and images are on
+the page using the ``ArchivedURL.write_illustration_to_directory`` method available on
+all :py:func:`ArchivedURL` objects. The following code will write a new image of the CNN homepage to my desktop.
+
+.. code-block:: python
+
+    obj = storytracker.archive("http://www.cnn.com")
+    obj.write_illustration_to_directory("/home/ben/Desktop")
+
+The resulting image is sized at the same width and height of the real page,
+with images colored red. Hyperlinks are colored in too. If our system
+thinks the link leads to a news story, it's filled in purple. Otherwise it's colored blue.
+
+Here's a slimmed down version of the one I just made. Click on it to see it full sized.
+
+.. image:: _static/http!www.cnn.com!!!!@2014-08-25T02:28:44.549851+00:00.jpg
+    :width: 400px

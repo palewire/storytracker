@@ -173,6 +173,11 @@ An URL's archived HTML with tools for analysis.
 
         Writes HTML data to a file in the provided directory path
 
+    .. py:method:: write_illustration_to_directory(path)
+
+        Writes out a visualization of the hyperlinks and images on the page
+        as a JPG to the provided directory path.
+
 Example usage:
 
 .. code-block:: python
