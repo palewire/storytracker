@@ -1,4 +1,5 @@
 import os
+import PIL
 import six
 import math
 import copy
@@ -369,6 +370,28 @@ class ArchivedURL(UnicodeMixin):
             f.write(self.html.encode("utf-8"))
         return self.archive_path
 
+    def write_illustration_to_directory(self, path):
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        img_path = os.path.join(
+            path,
+            "%s.jpg" % self.archive_filename
+        )
+        im = PIL.Image.new(
+            "RGBA",
+            (self.width, self.height),
+            (221, 221, 221, 255)
+        )
+        draw = PIL.ImageDraw.Draw(im)
+        for a in self.hyperlinks:
+            if a.images:
+                fill = "red"
+            else:
+                fill = "blue"
+            draw.rectangle(a.bounding_box, fill=fill)
+        im.save(img_path, 'JPEG')
+        return img_path
+
 
 class ArchivedURLSet(list):
     """
@@ -482,6 +505,16 @@ class Hyperlink(UnicodeMixin):
         return list(map(six.text_type, row))
 
     @property
+    def bounding_box(self):
+        """
+        Returns a bounding box for the image on the page.
+        """
+        return (
+            (self.x, self.y),
+            (self.x+self.width, self.y+self.height)
+        )
+
+    @property
     def is_story(self):
         """
         Returns a true or false estimate of whether the URL links to a news
@@ -540,6 +573,16 @@ class Image(UnicodeMixin):
         if not self.width or not self.height:
             return None
         return self.width * self.height
+
+    @property
+    def bounding_box(self):
+        """
+        Returns a bounding box for the image on the page.
+        """
+        return (
+            (self.x, self.y),
+            (self.x+self.width, self.y+self.height)
+        )
 
     @property
     def orientation(self):
