@@ -1,19 +1,20 @@
 import os
-import PIL
 import six
 import math
 import copy
 import gzip
-if six.PY2:
-    import unicodecsv as csv
-else:
-    import csv
 import tempfile
 import storytracker
 import storysniffer
 from six import BytesIO
 from selenium import webdriver
 from .toolbox import UnicodeMixin
+from PIL import Image as PILImage
+from PIL import ImageDraw as PILImageDraw
+if six.PY2:
+    import unicodecsv as csv
+else:
+    import csv
 try:
     from urlparse import urlparse
 except ImportError:
@@ -379,15 +380,15 @@ class ArchivedURL(UnicodeMixin):
         )
         if os.path.exists(img_path):
             os.remove(img_path)
-        im = PIL.Image.new(
+        im = PILImage.new(
             "RGBA",
             (self.width, self.height),
             (221, 221, 221, 255)
         )
-        draw = PIL.ImageDraw.Draw(im)
+        draw = PILImageDraw.Draw(im)
         for a in self.hyperlinks:
             if a.is_story:
-                fill = "pink"
+                fill = "purple"
             else:
                 fill = "blue"
             draw.rectangle(a.bounding_box, fill=fill)
