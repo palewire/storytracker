@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.0.9
+-----
+
+* Created a new method to write out an visualization of the page as an image file.
+
 0.0.8
 -----
 
