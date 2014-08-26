@@ -5,15 +5,18 @@ import six
 import site
 import glob
 import shlex
+import random
 import tempfile
 import unittest
 import threading
+import multiprocessing
 import traceback
 import subprocess
 import storytracker
 from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from wsgiref.simple_server import make_server
 from storytracker.analysis import ArchivedURL
 from storytracker.analysis import ArchivedURLSet
 from storytracker.analysis import Hyperlink, Image
@@ -75,18 +78,45 @@ class NullDevice():
         pass
 
 
+def hello_world_app(environ, start_response):
+    status = '200 OK' # HTTP Status
+    headers = [('Content-type', 'text/html')]
+    start_response(status, headers)
+    # The returned object is going to be printed
+    return ["""<!DOCTYPE html>
+<html>
+<body>
+    <a href="http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html">
+        U.S., British intelligence mining data from nine U.S. Internet companies in broad secret program
+    </a>
+    <p>The National Security Agency and the FBI are tapping directly into the central servers of nine leading U.S. Internet companies, extracting audio and video chats, photographs, e-mails, documents, and connection logs that enable analysts to track foreign targets, according to a top-secret document obtained by The Washington Post.</p>
+    <img src="http://www.washingtonpost.com/wp-srv/special/politics/prism-collection-documents/images/upstream-slide.jpg">
+    <a href="http://www.washingtonpost.com/wp-srv/special/politics/prism-collection-documents/">
+        <img src="http://www.washingtonpost.com/wp-srv/special/politics/prism-collection-documents/images/prism-slide-6.jpg">
+    </a>
+</body>
+</html>"""]
+
+
 class BaseTest(unittest.TestCase):
 
     def setUp(self):
-        self.url = "http://www.cnn.com"
-        self.long_url = "http://www.washingtonpost.com/investigations/us-\
-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-\
-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html"
+        port = random.choice(range(9000, 9999))
+        server = make_server('', port, hello_world_app)
+        self.server_process = multiprocessing.Process(
+            target=server.serve_forever
+        )
+        self.server_process.start()
+        self.url = "http://localhost:%s/" % port
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         self.tmpdir = tempfile.mkdtemp()
-        # An simple archive we can reuse to prevent having to rerequest it
         self.archive = storytracker.archive(self.url)
+
+    def tearDown( self ):
+        self.server_process.terminate()
+        self.server_process.join()
+        del(self.server_process)
 
 
 class MutedTest(BaseTest):
@@ -134,14 +164,6 @@ class ArchiveTest(MutedTest):
         self.assertTrue(os.path.exists(obj5.archive_path))
         os.remove(obj4.archive_path)
         os.remove(obj5.archive_path)
-
-    def test_long_url(self):
-        now = datetime.now()
-        filename = storytracker.create_archive_filename(self.long_url, now)
-        url, then = storytracker.reverse_archive_filename(filename)
-        obj = storytracker.archive(self.long_url, output_dir=self.tmpdir)
-        self.assertTrue(os.path.exists(obj.archive_path))
-        os.remove(obj.archive_path)
 
 
 class AnalysisTest(MutedTest):
@@ -303,84 +325,82 @@ class SeleniumTest(BaseTest):
 # CLI tests
 #
 
-if six.PY2:
-    class CLITest(BaseTest):
+#if six.PY2:
+#    class CLITest(BaseTest):
 
-        def setUp(self):
-            super(CLITest, self).setUp()
-            self.this_dir = os.path.dirname(os.path.abspath(__file__))
-            sys.path.append(self.this_dir)
-            self.simple_url = "http://www.example.com"
+#        def setUp(self):
+#            super(CLITest, self).setUp()
+#            self.this_dir = os.path.dirname(os.path.abspath(__file__))
+#            sys.path.append(self.this_dir)
 
-        def test_get(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-get")
-            cmd = '%s %s' % (path, self.simple_url)
-            process = Command(cmd)
-            code, out, err = process.run(timeout=3)
-            python = storytracker.get(self.simple_url).encode("utf-8")
-            self.assertEqual(type(out), type(python))
-            self.assertEqual(out, python)
+#        def test_get(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-get")
+#            cmd = '%s %s' % (path, self.url)
+#            process = Command(cmd)
+#            code, out, err = process.run(timeout=3)
+#            python = storytracker.get(self.url).encode("utf-8")
+#            self.assertEqual(type(out), type(python))
+#            self.assertEqual(out, python)
 
-        def test_get_no_verify(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-get")
-            cmd = '%s %s --do-not-verify' % (path, self.simple_url)
-            process = Command(cmd)
-            code, out, err = process.run(timeout=3)
-            python = storytracker.get(self.simple_url).encode("utf-8")
-            self.assertEqual(type(out), type(python))
-            self.assertEqual(out, python)
+#        def test_get_no_verify(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-get")
+#            cmd = '%s %s --do-not-verify' % (path, self.url)
+#            process = Command(cmd)
+#            code, out, err = process.run(timeout=3)
+#            python = storytracker.get(self.url).encode("utf-8")
+#            self.assertEqual(type(out), type(python))
+#            self.assertEqual(out, python)
 
-        def test_archive(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-archive")
-            cmd = '%s %s --do-not-compress' % (path, self.simple_url)
-            process = Command(cmd)
-            code, out, err = process.run(timeout=3)
-            python = storytracker.archive(self.simple_url).html.encode("utf-8")
-            self.assertEqual(type(out), type(python))
-            self.assertEqual(out, python)
+#        def test_archive(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+#            cmd = '%s %s --do-not-compress' % (path, self.url)
+#            process = Command(cmd)
+#            code, out, err = process.run(timeout=3)
+#            python = storytracker.archive(self.url).html.encode("utf-8")
+#            self.assertEqual(type(out), type(python))
+#            self.assertEqual(out, python)
 
-        def test_archive_gzipped(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-archive")
-            cmd = '%s %s' % (path, self.simple_url)
-            process = Command(cmd)
-            code, out, err = process.run(timeout=3)
-            python = storytracker.archive(self.simple_url).gzip
-            self.assertEqual(type(out), type(python))
-            self.assertEqual(out, python)
+#        def test_archive_gzipped(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+#            cmd = '%s %s' % (path, self.url)
+#            process = Command(cmd)
+#            code, out, err = process.run(timeout=3)
+#            python = storytracker.archive(self.url).gzip
+#            self.assertEqual(type(out), type(python))
+#            self.assertEqual(out, python)
 
-        def test_archive_output_dir(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-archive")
-            cmd1 = "%s %s --output-dir=%s" % (
-                path, self.simple_url, self.tmpdir
-            )
-            code1, path1, err1 = Command(cmd1).run(timeout=3)
-            obj1 = storytracker.open_archive_filepath(path1)
-            self.assertTrue(isinstance(obj1, storytracker.ArchivedURL))
-            self.assertTrue(os.path.exists(path1))
-            os.remove(path1)
+#        def test_archive_output_dir(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+#            cmd1 = "%s %s --output-dir=%s" % (
+#                path, self.url, self.tmpdir
+#            )
+#            code1, path1, err1 = Command(cmd1).run(timeout=3)
+#            obj1 = storytracker.open_archive_filepath(path1)
+#            self.assertTrue(isinstance(obj1, storytracker.ArchivedURL))
+#            self.assertTrue(os.path.exists(path1))
+#            os.remove(path1)
 
-        def test_archive_output_dir_html(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-archive")
-            cmd2 = "%s %s --do-not-compress --output-dir=%s" % (
-                path, self.simple_url, self.tmpdir
-            )
-            code2, path2, err2 = Command(cmd2).run(timeout=3)
-            obj2 = storytracker.open_archive_filepath(path2)
-            self.assertTrue(os.path.exists(path2))
-            os.remove(path2)
+#        def test_archive_output_dir_html(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-archive")
+#            cmd2 = "%s %s --do-not-compress --output-dir=%s" % (
+#                path, self.url, self.tmpdir
+#            )
+#            code2, path2, err2 = Command(cmd2).run(timeout=3)
+#            obj2 = storytracker.open_archive_filepath(path2)
+#            self.assertTrue(os.path.exists(path2))
+#            os.remove(path2)
 
-        def test_links2csv_filepath(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-links2csv")
-            obj = storytracker.archive(self.url, output_dir=self.tmpdir)
-            cmd = "%s %s" % (path, obj.archive_path)
-            code, out, err = Command(cmd).run(timeout=3)
+#        def test_links2csv_filepath(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-links2csv")
+#            obj = storytracker.archive(self.url, output_dir=self.tmpdir)
+#            cmd = "%s %s" % (path, obj.archive_path)
+#            code, out, err = Command(cmd).run(timeout=3)
 
-        def test_links2csv_filedirectory(self):
-            path = os.path.join(self.this_dir, "bin/storytracker-links2csv")
-            obj = storytracker.archive(self.url, output_dir=self.tmpdir)
-            obj2 = storytracker.archive(self.long_url, output_dir=self.tmpdir)
-            cmd = "%s %s" % (path, self.tmpdir)
-            code, out, err = Command(cmd).run(timeout=3)
+#        def test_links2csv_filedirectory(self):
+#            path = os.path.join(self.this_dir, "bin/storytracker-links2csv")
+#            obj = storytracker.archive(self.url, output_dir=self.tmpdir)
+#            cmd = "%s %s" % (path, self.tmpdir)
+#            code, out, err = Command(cmd).run(timeout=3)
 
 
 if __name__ == '__main__':
