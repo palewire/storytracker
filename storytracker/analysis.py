@@ -12,7 +12,7 @@ from six import BytesIO
 from selenium import webdriver
 import selenium.webdriver.support.ui as ui
 from selenium.webdriver.common.keys import Keys
-from .toolbox import UnicodeMixin
+from .toolbox import UnicodeMixin, indent
 from PIL import Image as PILImage
 from PIL import ImageDraw as PILImageDraw
 if six.PY2:
@@ -32,7 +32,7 @@ class ArchivedURL(UnicodeMixin):
     def __init__(
         self, url, timestamp, html, archive_path=None,
         browser_width=1024, browser_height=768,
-        browser_driver="Firefox"#"PhantomJS"
+        browser_driver="PhantomJS"
     ):
         self.url = url
         self.timestamp = timestamp
@@ -120,9 +120,7 @@ class ArchivedURL(UnicodeMixin):
         try:
             self.browser.get("file://%s" % self.archive_path)
         except socket.timeout:
-            pass
-            #self.browser.execute_script("window.stop()")
-            #self.browser.find_elements_by_tag_name("body").send_keys(Keys.ESCAPE)
+            self.browser.execute_script("window.stop()")
 
     def close_browser(self):
         """
@@ -533,6 +531,50 @@ class ArchivedURLSet(list):
             analyzed_list.append(d)
         return analyzed_list
     hyperlinks = property(get_hyperlinks)
+
+    def print_href_analysis(self, href):
+        """
+        Outputs a human-readable 
+        """
+        hyperlink_dict = dict((h['href'], h) for h in self.get_hyperlinks())
+        try:
+            stats = hyperlink_dict[href]
+        except KeyError:
+            raise ValueError("href could not be found in archived URL set")
+
+        print href
+        print ""
+
+        table = indent(
+            [
+                ['Statistic', 'Value'],
+                ['Archived URL total', str(stats['population'])],
+                ['Observations of href', str(stats['observations'])],
+                ['First timestamp', str(stats['earliest_timestamp'])],
+                ['Last timestamp', str(stats['latest_timestamp'])],
+                ['Timedelta', str(stats['timedelta'])],
+                ['Maximum y position', str(stats['maximum_y'])],
+                ['Minimum y position', str(stats['minimum_y'])],
+                ['Range of y positions', str(stats['range_y'])],
+                ['Average y position', str(stats['average_y'])],
+                ['Median y position', str(stats['median_y'])],
+            ],
+            hasHeader=True,
+            separateRows=False,
+            prefix="| ", postfix=" |",
+        )
+        print table
+
+        headline_table = [['Headline'],]
+        for hed in stats['headline_list']:
+            headline_table.append([hed,])
+        table = indent(
+            headline_table,
+            hasHeader=True,
+            separateRows=False,
+            prefix="| ", postfix=" |",
+        )
+        print table
 
     def write_hyperlinks_csv_to_file(self, file):
         """

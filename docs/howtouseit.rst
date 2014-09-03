@@ -234,3 +234,34 @@ Here's a slimmed down version of the one I just made. Click on it to see it full
 
 .. image:: _static/http!www.cnn.com!!!!@2014-08-25T02:28:44.549851+00:00.jpg
     :width: 400px
+
+Analyzing how hyperlink shifted across a set of pages
+----------------------------------------------------
+
+.. code-block:: python
+
+    >>> urlset = storytracker.ArchivedURLSet([
+    >>>     "http!www.nytimes.com!!!!@2014-08-25T01:15:02.464296+00:00.html"
+    >>>     "http!www.nytimes.com!!!!@2014-08-25T01:00:02.455702+00:00.html"
+    >>> ])
+    >>> urlset.sort()
+    >>> urlset.print_href_analysis("http://www.nytimes.com/2014/08/24/world/europe/russian-convoy-ukraine.html")
+    http://www.nytimes.com/2014/08/24/world/europe/russian-convoy-ukraine.html
+
+    | Statistic            | Value                            |
+    -----------------------------------------------------------
+    | Archived URL total   | 2                                |
+    | Observations of href | 2                                |
+    | First timestamp      | 2014-08-25 01:00:02.455702+00:00 |
+    | Last timestamp       | 2014-08-25 01:15:02.464296+00:00 |
+    | Timedelta            | 0:15:00.008594                   |
+    | Maximum y position   | 2568                             |
+    | Minimum y position   | 2546                             |
+    | Range of y positions | 22.0                             |
+    | Average y position   | 2557.0                           |
+    | Median y position    | 2557.0                           |
+
+    | Headline                                                           |
+    ----------------------------------------------------------------------
+    | Germany Pledges Aid for Ukraine as Russia Hails a Returning Convoy |
+
