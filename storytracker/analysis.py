@@ -3,11 +3,15 @@ import six
 import math
 import copy
 import gzip
+import socket
 import tempfile
+import calculate
 import storytracker
 import storysniffer
 from six import BytesIO
 from selenium import webdriver
+import selenium.webdriver.support.ui as ui
+from selenium.webdriver.common.keys import Keys
 from .toolbox import UnicodeMixin
 from PIL import Image as PILImage
 from PIL import ImageDraw as PILImageDraw
@@ -27,7 +31,8 @@ class ArchivedURL(UnicodeMixin):
     """
     def __init__(
         self, url, timestamp, html, archive_path=None,
-        browser_width=1024, browser_height=768
+        browser_width=1024, browser_height=768,
+        browser_driver="Firefox"#"PhantomJS"
     ):
         self.url = url
         self.timestamp = timestamp
@@ -41,6 +46,7 @@ class ArchivedURL(UnicodeMixin):
         self.browser = None
         self.browser_width = browser_width
         self.browser_height = browser_height
+        self.browser_driver = browser_driver
 
     def __eq__(self, other):
         """
@@ -62,6 +68,12 @@ class ArchivedURL(UnicodeMixin):
         if result is NotImplemented:
             return result
         return not result
+
+    def __gt__(self, other):
+        return self.timestamp > other.timestamp
+
+    def __lt__(self, other):
+        return self.timestamp < other.timestamp
 
     def __unicode__(self):
         return six.text_type("%s@%s" % (self.url, self.timestamp))
@@ -90,12 +102,9 @@ class ArchivedURL(UnicodeMixin):
         # Just stop now if it already exists
         if self.browser:
             return
-        try:
-            # First try PhantomJS
-            self.browser = webdriver.PhantomJS()
-        except:
-            # If it isn't installed try Firefox
-            self.browser = webdriver.Firefox()
+
+        # Open the browser
+        self.browser = getattr(webdriver, self.browser_driver)()
 
         # Size the browser
         self.browser.set_window_size(self.browser_width, self.browser_height)
@@ -105,7 +114,15 @@ class ArchivedURL(UnicodeMixin):
         if not self.archive_path or not self.archive_path.endswith("html"):
             tmpdir = tempfile.mkdtemp()
             self.write_html_to_directory(tmpdir)
-        self.browser.get("file://%s" % self.archive_path)
+
+        # Open the file
+        socket.setdefaulttimeout(10)
+        try:
+            self.browser.get("file://%s" % self.archive_path)
+        except socket.timeout:
+            pass
+            #self.browser.execute_script("window.stop()")
+            #self.browser.find_elements_by_tag_name("body").send_keys(Keys.ESCAPE)
 
     def close_browser(self):
         """
@@ -240,6 +257,12 @@ class ArchivedURL(UnicodeMixin):
         self._hyperlinks = obj_list
         return obj_list
     hyperlinks = property(get_hyperlinks)
+
+    def get_hyperlink_by_href(self, submitted_href, if_not_found=None):
+        for this_hyperlink in self.hyperlinks:
+            if this_hyperlink.href == submitted_href:
+                return this_hyperlink
+        return if_not_found
 
     def get_images(self, force=False):
         """
@@ -436,6 +459,138 @@ class ArchivedURLSet(list):
 
         # If it's all true, append it.
         super(ArchivedURLSet, self).append(copy.copy(obj))
+
+    def uniquify(self, seq):
+       keys = {}
+       for e in seq:
+           keys[e] = 1
+       return keys.keys()
+
+    def get_hyperlinks(self):
+        # Analyze hyperlinks for all of the URLs in the set
+        [obj.analyze() for obj in self]
+
+        # Create a list of all the unique href attributes
+        all_hrefs = []
+        for url in self:
+            all_hrefs.extend([a.href for a in url.hyperlinks])
+        unique_hrefs = self.uniquify(all_hrefs)
+
+        # Loop through them all and run the numbers
+        analyzed_list = []
+        for href in unique_hrefs:
+            # Find all the times it occurs
+            url_hits, a_hits = [], []
+            for url in self:
+                a = url.get_hyperlink_by_href(href)
+                if a:
+                    url_hits.append(url)
+                    a_hits.append(a)
+
+            # Some basic stats
+            population = len(self)
+            observations = len(url_hits)
+
+            # The earliest timestamp the link appeared
+            earliest_timestamp = min([url.timestamp for url in url_hits])
+
+            # The last timestamp the link appeared
+            latest_timestamp = max([url.timestamp for url in url_hits])
+
+            # The time delta between those two times
+            timedelta = latest_timestamp - earliest_timestamp
+
+            # Headlines
+            headline_list = self.uniquify([a.string for a in a_hits])
+
+            # Vertical position on the page
+            y_list = [a.y for a in a_hits]
+            maximum_y = max(y_list)
+            minimum_y = min(y_list)
+            if len(y_list) > 1:
+                range_y = calculate.range(y_list)
+                average_y = calculate.mean(y_list)
+                median_y = calculate.median(y_list)
+            else:
+                range_y, average_y, median_y = None, None, None
+
+            # Stuff it in the dict and pass it out
+            d = dict(
+                href=href,
+                is_story=a_hits[0].is_story,
+                population=population,
+                observations=observations,
+                earliest_timestamp=earliest_timestamp,
+                latest_timestamp=latest_timestamp,
+                timedelta=timedelta,
+                headline_list=headline_list,
+                maximum_y=maximum_y,
+                minimum_y=minimum_y,
+                range_y=range_y,
+                average_y=average_y,
+                median_y=median_y,
+            )
+            analyzed_list.append(d)
+        return analyzed_list
+    hyperlinks = property(get_hyperlinks)
+
+    def write_hyperlinks_csv_to_file(self, file):
+        """
+        Returns the provided file object with a ready-to-serve CSV list of
+        all hyperlinks extracted from the HTML.
+        """
+        # Create a CSV writer object out of the file
+        writer = csv.writer(file)
+
+        # Create the headers, which will change depending on how many
+        # images are found in the urls
+        headers = [
+            "href",
+            "is_story",
+            "population",
+            "observations",
+            "earliest_timestamp",
+            "latest_timestamp",
+            "timedelta",
+            "maximum_y",
+            "minimum_y",
+            "range_y",
+            "average_y",
+            "median_y",
+        ]
+
+        hyperlinks = self.hyperlinks
+        max_headlines = max([h['headline_list'] for h in hyperlinks])
+        for i in range(1, len(max_headlines) + 1):
+            headers.append("headline_%s" % i)
+
+        # Write it out to the file
+        writer.writerow(headers)
+        for h in hyperlinks:
+            headline_list = h.pop("headline_list")
+            row = list(
+                map(six.text_type, [
+                    h['href'],
+                    h['is_story'],
+                    h['population'],
+                    h['observations'],
+                    h['earliest_timestamp'],
+                    h['latest_timestamp'],
+                    h['timedelta'],
+                    h['maximum_y'],
+                    h['minimum_y'],
+                    h['range_y'],
+                    h['average_y'],
+                    h['median_y'],
+                ])
+            )
+            for hed in headline_list:
+                row.append(six.text_type(hed))
+            writer.writerow(row)
+
+        # Reboot the file and pass it back out
+        file.seek(0)
+        return file
 
 
 class Hyperlink(UnicodeMixin):
