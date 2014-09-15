@@ -4,8 +4,10 @@ import math
 import copy
 import gzip
 import socket
+import logging
 import tempfile
 import calculate
+import images2gif
 import storytracker
 import storysniffer
 from six import BytesIO
@@ -13,6 +15,7 @@ from selenium import webdriver
 import selenium.webdriver.support.ui as ui
 from selenium.webdriver.common.keys import Keys
 from .toolbox import UnicodeMixin, indent
+from PIL import ImageOps
 from PIL import Image as PILImage
 from PIL import ImageDraw as PILImageDraw
 if six.PY2:
@@ -23,6 +26,8 @@ try:
     from urlparse import urlparse
 except ImportError:
     from six.moves.urllib.parse import urlparse
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class ArchivedURL(UnicodeMixin):
@@ -104,6 +109,7 @@ class ArchivedURL(UnicodeMixin):
             return
 
         # Open the browser
+        logger.debug("Opening browser")
         self.browser = getattr(webdriver, self.browser_driver)()
 
         # Size the browser
@@ -116,10 +122,12 @@ class ArchivedURL(UnicodeMixin):
             self.write_html_to_directory(tmpdir)
 
         # Open the file
-        socket.setdefaulttimeout(10)
+        socket.setdefaulttimeout(5)
         try:
+            logger.debug("Retrieving %s in browser" % self.archive_path)
             self.browser.get("file://%s" % self.archive_path)
         except socket.timeout:
+            logger.debug("Browser timeout")
             self.browser.execute_script("window.stop()")
 
     def close_browser(self):
@@ -130,6 +138,7 @@ class ArchivedURL(UnicodeMixin):
         if not self.browser:
             return
         # Close it
+        logger.debug("Closing browser")
         self.browser.close()
         # Null out the value
         self.browser = None
@@ -143,7 +152,7 @@ class ArchivedURL(UnicodeMixin):
         self.get_height(force=True)
         self.get_width(force=True)
         self.get_hyperlinks(force=True)
-        self.get_images(force=True)
+#        self.get_images(force=True)
         self.close_browser()
 
     def get_cell(self, x, y, cell_size=256):
@@ -208,6 +217,7 @@ class ArchivedURL(UnicodeMixin):
 
         # Loop through all <a> tags with href attributes
         # and convert them to Hyperlink objects
+        logger.debug("Extracting hyperlinks from HTML")
         obj_list = []
         link_list = self.browser.find_elements_by_tag_name("a")
         link_list = [
@@ -633,6 +643,66 @@ class ArchivedURLSet(list):
         # Reboot the file and pass it back out
         file.seek(0)
         return file
+
+    def write_href_gif_to_directory(self, href, path, duration=0.5):
+        """
+        Writes out animation of a hyperlinks on the page
+        as a JPG to the provided directory path.
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        jpg_paths = []
+        for page in self:
+            jpg_path = os.path.join(
+                path,
+                "%s.jpg" % page.archive_filename
+            )
+            if os.path.exists(jpg_path):
+                os.remove(jpg_path)
+            im = PILImage.new(
+                "RGBA",
+                (page.width, page.height),
+                (221, 221, 221, 255)
+            )
+            draw = PILImageDraw.Draw(im)
+            a = page.get_hyperlink_by_href(href)
+            if a:
+                if a.is_story:
+                    fill = "purple"
+                else:
+                    fill = "blue"
+                draw.rectangle(a.bounding_box, fill=fill)
+            im.save(jpg_path, 'JPEG')
+            jpg_paths.append(jpg_path)
+
+        img_list = []
+        for jpg in jpg_paths:
+            i = PILImage.open(jpg)
+            img_list.append(i)
+
+        # Resize them so they fit together
+        # and then thumbnail them down
+        min_width = min([i.size[0] for i in img_list])
+        min_height = min([i.size[1] for i in img_list])
+        max_width = max([i.size[0] for i in img_list])
+        max_height = max([i.size[1] for i in img_list])
+        trim_list = []
+        for x, i in enumerate(img_list):
+            if i.size != (min_width, min_height):
+                i = ImageOps.fit(i, (min_width, min_height))
+            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
+            trim_list.append(i)
+
+        # Create the GIF animation
+        gif_path = os.path.join(path, "href.gif")
+        if os.path.exists(gif_path):
+            os.remove(gif_path)
+        images2gif.writeGif(
+            gif_path,
+            trim_list,
+            duration=duration,
+        )
+        return gif_path
 
 
 class Hyperlink(UnicodeMixin):

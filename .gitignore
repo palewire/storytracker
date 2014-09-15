@@ -3,6 +3,7 @@ MANIFEST
 IDEAS
 scratch.py
 toolbox/
+dummy/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
