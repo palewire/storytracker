@@ -10,7 +10,7 @@ install_requires = [
     'beautifulsoup4>=4.3.2',
     'storysniffer==0.0.3',
     'selenium>=2.42.1',
-    'Pillow>=2.5.3',
+    'PIL==1.1.7',
 ]
 
 if sys.version_info < (3,):
