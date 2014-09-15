@@ -235,8 +235,8 @@ Here's a slimmed down version of the one I just made. Click on it to see it full
 .. image:: _static/http!www.cnn.com!!!!@2014-08-25T02:28:44.549851+00:00.jpg
     :width: 400px
 
-Analyzing how hyperlink shifted across a set of pages
-----------------------------------------------------
+Analyzing how a hyperlink shifted across a set of pages
+-------------------------------------------------------
 
 .. code-block:: python
 
@@ -266,8 +266,8 @@ Analyzing how hyperlink shifted across a set of pages
     | Germany Pledges Aid for Ukraine as Russia Hails a Returning Convoy |
 
 
-Creating an animation that tracks a hyperlinks movement on the page
--------------------------------------------------------------------
+Creating an animation that tracks a hyperlink's movement across a set of pages
+------------------------------------------------------------------------------
 
 .. code-block:: python
 
