@@ -265,3 +265,16 @@ Analyzing how hyperlink shifted across a set of pages
     ----------------------------------------------------------------------
     | Germany Pledges Aid for Ukraine as Russia Hails a Returning Convoy |
 
+
+Creating an animation that tracks a hyperlinks movement on the page
+-------------------------------------------------------------------
+
+.. code-block:: python
+
+    >>> urlset.write_href_gif_to_directory(
+        "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
+        "./"
+    )
+    
+    .. image:: _static/href.gif
+        :width: 400px
