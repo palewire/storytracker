@@ -1,0 +1,10 @@
+#!/home/ben/Code/palewire/storytracker/repo/.tox/py34/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'htmlmin==0.1.5','console_scripts','htmlmin'
+__requires__ = 'htmlmin==0.1.5'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('htmlmin==0.1.5', 'console_scripts', 'htmlmin')()
+    )

@@ -1,0 +1,29 @@
+#!/home/ben/Code/palewire/storytracker/repo/.tox/py34/bin/python
+import os
+import sys
+import csv
+import six
+import optparse
+import storytracker
+
+
+p = optparse.OptionParser(
+    description="Extracts hyperlinks from archived files or streams and \
+outputs them as comma-delimited values",
+    usage="storytracker-links2csv [ARCHIVE PATHS OR DIRECTORIES]...",
+)
+
+kwargs, args = p.parse_args()
+
+for a in args:
+    if os.path.isdir(a):
+        l = storytracker.open_archive_directory(a)
+        for o in l:
+            f = six.BytesIO()
+            f = o.write_hyperlinks_csv_to_file(f)
+            sys.stdout.write(f.getvalue())
+    else:
+        o = storytracker.open_archive_filepath(a)
+        f = six.BytesIO()
+        f = o.write_hyperlinks_csv_to_file(f)
+        sys.stdout.write(f.getvalue())

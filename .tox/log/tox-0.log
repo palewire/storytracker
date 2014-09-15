@@ -1,0 +1,59 @@
+actionid=tox
+msg=packaging
+cmdargs=['/home/ben/Code/palewire/storytracker/bin/python', local('/home/ben/Code/palewire/storytracker/repo/setup.py'), 'sdist', '--formats=zip', '--dist-dir', local('/home/ben/Code/palewire/storytracker/repo/.tox/dist')]
+env=None
+running sdist
+running egg_info
+writing requirements to storytracker.egg-info/requires.txt
+writing storytracker.egg-info/PKG-INFO
+writing top-level names to storytracker.egg-info/top_level.txt
+writing dependency_links to storytracker.egg-info/dependency_links.txt
+reading manifest file 'storytracker.egg-info/SOURCES.txt'
+writing manifest file 'storytracker.egg-info/SOURCES.txt'
+warning: sdist: standard file not found: should have one of README, README.rst, README.txt
+
+running check
+creating storytracker-0.0.9
+creating storytracker-0.0.9/bin
+creating storytracker-0.0.9/storytracker
+creating storytracker-0.0.9/storytracker.egg-info
+making hard links in storytracker-0.0.9...
+hard linking setup.py -> storytracker-0.0.9
+hard linking bin/storytracker-archive -> storytracker-0.0.9/bin
+hard linking bin/storytracker-get -> storytracker-0.0.9/bin
+hard linking bin/storytracker-links2csv -> storytracker-0.0.9/bin
+hard linking storytracker/__init__.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/analysis.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/archive.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/exceptions.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/files.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/get.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/toolbox.py -> storytracker-0.0.9/storytracker
+hard linking storytracker/waybackmachine.py -> storytracker-0.0.9/storytracker
+hard linking storytracker.egg-info/PKG-INFO -> storytracker-0.0.9/storytracker.egg-info
+hard linking storytracker.egg-info/SOURCES.txt -> storytracker-0.0.9/storytracker.egg-info
+hard linking storytracker.egg-info/dependency_links.txt -> storytracker-0.0.9/storytracker.egg-info
+hard linking storytracker.egg-info/requires.txt -> storytracker-0.0.9/storytracker.egg-info
+hard linking storytracker.egg-info/top_level.txt -> storytracker-0.0.9/storytracker.egg-info
+Writing storytracker-0.0.9/setup.cfg
+creating '.tox/dist/storytracker-0.0.9.zip' and adding 'storytracker-0.0.9' to it
+adding 'storytracker-0.0.9/setup.py'
+adding 'storytracker-0.0.9/setup.cfg'
+adding 'storytracker-0.0.9/PKG-INFO'
+adding 'storytracker-0.0.9/storytracker.egg-info/dependency_links.txt'
+adding 'storytracker-0.0.9/storytracker.egg-info/PKG-INFO'
+adding 'storytracker-0.0.9/storytracker.egg-info/top_level.txt'
+adding 'storytracker-0.0.9/storytracker.egg-info/SOURCES.txt'
+adding 'storytracker-0.0.9/storytracker.egg-info/requires.txt'
+adding 'storytracker-0.0.9/bin/storytracker-archive'
+adding 'storytracker-0.0.9/bin/storytracker-get'
+adding 'storytracker-0.0.9/bin/storytracker-links2csv'
+adding 'storytracker-0.0.9/storytracker/waybackmachine.py'
+adding 'storytracker-0.0.9/storytracker/analysis.py'
+adding 'storytracker-0.0.9/storytracker/archive.py'
+adding 'storytracker-0.0.9/storytracker/files.py'
+adding 'storytracker-0.0.9/storytracker/toolbox.py'
+adding 'storytracker-0.0.9/storytracker/__init__.py'
+adding 'storytracker-0.0.9/storytracker/exceptions.py'
+adding 'storytracker-0.0.9/storytracker/get.py'
+removing 'storytracker-0.0.9' (and everything under it)

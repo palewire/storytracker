@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: storysniffer
+Version: 0.0.3
+Summary: Inspect a URL and estimate if it links to news story
+Home-page: https://github.com/pastpages/storysniffer
+Author: Ben Welsh
+Author-email: ben.welsh@gmail.com
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN

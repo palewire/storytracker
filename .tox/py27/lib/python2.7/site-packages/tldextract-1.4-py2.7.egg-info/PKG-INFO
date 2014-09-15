@@ -1,0 +1,37 @@
+Metadata-Version: 1.1
+Name: tldextract
+Version: 1.4
+Summary: Accurately separate the TLD from the registered domain and subdomains of a URL, using the Public Suffix List.
+Home-page: https://github.com/john-kurkowski/tldextract
+Author: John Kurkowski
+Author-email: john.kurkowski@gmail.com
+License: BSD License
+Description: `tldextract` accurately separates the gTLD or ccTLD (generic or country code
+        top-level domain) from the registered domain and subdomains of a URL.
+        
+            >>> import tldextract
+            >>> tldextract.extract('http://forums.news.cnn.com/')
+            ExtractResult(subdomain='forums.news', domain='cnn', suffix='com')
+            >>> tldextract.extract('http://forums.bbc.co.uk/') # United Kingdom
+            ExtractResult(subdomain='forums', domain='bbc', suffix='co.uk')
+            >>> tldextract.extract('http://www.worldbank.org.kg/') # Kyrgyzstan
+            ExtractResult(subdomain='www', domain='worldbank', suffix='org.kg')
+        
+        `ExtractResult` is a namedtuple, so it's simple to access the parts you want.
+        
+            >>> ext = tldextract.extract('http://forums.bbc.co.uk')
+            >>> ext.domain
+            'bbc'
+            >>> '.'.join(ext[:2]) # rejoin subdomain and domain
+            'forums.bbc'
+        
+Keywords: tld domain subdomain url parse extract urlparse urlsplit public suffix list
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Topic :: Utilities
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3

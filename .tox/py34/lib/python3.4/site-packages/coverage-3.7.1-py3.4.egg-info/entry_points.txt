@@ -1,0 +1,5 @@
+[console_scripts]
+coverage = coverage:main
+coverage-3.4 = coverage:main
+coverage3 = coverage:main
+

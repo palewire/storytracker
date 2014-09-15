@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>File handling &mdash; storytracker 0.0.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="storytracker 0.0.5 documentation" href="index.html" />
+    <link rel="next" title="Command-line interfaces" href="commandlineinterfaces.html" />
+    <link rel="prev" title="Analysis" href="analysis.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="commandlineinterfaces.html" title="Command-line interfaces"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="analysis.html" title="Analysis"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">storytracker 0.0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="file-handling">
+<h1>File handling<a class="headerlink" href="#file-handling" title="Permalink to this headline">¶</a></h1>
+<p>Functions for naming, saving and retrieving archived URLs.</p>
+<div class="section" id="create-archive-filename">
+<h2>create_archive_filename<a class="headerlink" href="#create-archive-filename" title="Permalink to this headline">¶</a></h2>
+<p>Returns a string that combines a URL and a timestamp of for naming archives saved to the filesystem.</p>
+<dl class="function">
+<dt id="storytracker.create_archive_filename">
+<tt class="descclassname">storytracker.</tt><tt class="descname">create_archive_filename</tt><big>(</big><em>url</em>, <em>timestamp</em><big>)</big><a class="headerlink" href="#storytracker.create_archive_filename" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>url</strong> (<em>str</em>) &#8211; The URL of the page that is being archived</li>
+<li><strong>timestamp</strong> (<em>datetime</em>) &#8211; A timestamp recording approximately when the URL was archive</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A string that combines the two arguments into a structure can be reversed back into Python</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">str</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">storytracker</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storytracker</span><span class="o">.</span><span class="n">create_archive_filename</span><span class="p">(</span><span class="s">&quot;http://www.latimes.com&quot;</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+<span class="go">&#39;http!www.latimes.com!!!!@2014-07-06T16:31:57.697250&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="open-archive-directory">
+<h2>open_archive_directory<a class="headerlink" href="#open-archive-directory" title="Permalink to this headline">¶</a></h2>
+<p>Accepts a directory path and returns an <a class="reference internal" href="analysis.html#ArchivedURLSet" title="ArchivedURLSet"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURLSet</span></tt></a> list filled with an <a class="reference internal" href="analysis.html#ArchivedURL" title="ArchivedURL"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURL</span></tt></a>
+object that corresponds to every archived file it finds.</p>
+<dl class="function">
+<dt id="storytracker.open_archive_directory">
+<tt class="descclassname">storytracker.</tt><tt class="descname">open_archive_directory</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#storytracker.open_archive_directory" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; The path to directory containing archived files.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An  <a class="reference internal" href="analysis.html#ArchivedURLSet" title="ArchivedURLSet"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURLSet</span></tt></a> list</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="analysis.html#ArchivedURLSet" title="ArchivedURLSet"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURLSet</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">storytracker</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_list</span> <span class="o">=</span> <span class="n">storytracker</span><span class="o">.</span><span class="n">open_archive_directory</span><span class="p">(</span><span class="s">&#39;/home/ben/archive/&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="open-archive-filepath">
+<h2>open_archive_filepath<a class="headerlink" href="#open-archive-filepath" title="Permalink to this headline">¶</a></h2>
+<p>Accepts a file path and returns an <tt class="docutils literal"><span class="pre">ArchivedURL</span></tt> object</p>
+<dl class="function">
+<dt id="storytracker.open_archive_filepath">
+<tt class="descclassname">storytracker.</tt><tt class="descname">open_archive_filepath</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#storytracker.open_archive_filepath" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; The path to the archived file. Its file name must conform to the conventions of <a class="reference internal" href="#storytracker.create_archive_filename" title="storytracker.create_archive_filename"><tt class="xref py py-func docutils literal"><span class="pre">storytracker.create_archive_filename()</span></tt></a>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An <a class="reference internal" href="analysis.html#ArchivedURL" title="ArchivedURL"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURL</span></tt></a> object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="analysis.html#ArchivedURL" title="ArchivedURL"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURL</span></tt></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises ArchiveFileNameError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">If the file&#8217;s name cannot not be parsed using the conventions of <a class="reference internal" href="#storytracker.create_archive_filename" title="storytracker.create_archive_filename"><tt class="xref py py-func docutils literal"><span class="pre">storytracker.create_archive_filename()</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">storytracker</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">storytracker</span><span class="o">.</span><span class="n">open_archive_filepath</span><span class="p">(</span><span class="s">&#39;/home/ben/archive/http!www.latimes.com!!!!@2014-07-06T16:31:57.697250.gz&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reverse-archive-filename">
+<h2>reverse_archive_filename<a class="headerlink" href="#reverse-archive-filename" title="Permalink to this headline">¶</a></h2>
+<p>Accepts a filename created using the rules of <a class="reference internal" href="#storytracker.create_archive_filename" title="storytracker.create_archive_filename"><tt class="xref py py-func docutils literal"><span class="pre">storytracker.create_archive_filename()</span></tt></a>
+and converts it back to Python. Returns a tuple: The URL string and a
+timestamp. Do not include the file extension when providing a string.</p>
+<dl class="function">
+<dt id="storytracker.reverse_archive_filename">
+<tt class="descclassname">storytracker.</tt><tt class="descname">reverse_archive_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#storytracker.reverse_archive_filename" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; A filename structured using the style of the <a class="reference internal" href="#storytracker.create_archive_filename" title="storytracker.create_archive_filename"><tt class="xref py py-func docutils literal"><span class="pre">storytracker.create_archive_filename()</span></tt></a> function</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple containing the URL of the archived page as a string and a datetime object of the archive&#8217;s timestamp</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="docutils literal"><span class="pre">tuple</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">storytracker</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">storytracker</span><span class="o">.</span><span class="n">reverse_archive_filename</span><span class="p">(</span><span class="s">&#39;http!www.latimes.com!!!!@2014-07-06T16:31:57.697250&#39;</span><span class="p">)</span>
+<span class="go">(&#39;http://www.latimes.com&#39;, datetime.datetime(2014, 7, 6, 16, 31, 57, 697250))</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">File handling</a><ul>
+<li><a class="reference internal" href="#create-archive-filename">create_archive_filename</a></li>
+<li><a class="reference internal" href="#open-archive-directory">open_archive_directory</a></li>
+<li><a class="reference internal" href="#open-archive-filepath">open_archive_filepath</a></li>
+<li><a class="reference internal" href="#reverse-archive-filename">reverse_archive_filename</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="analysis.html"
+                        title="previous chapter">Analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="commandlineinterfaces.html"
+                        title="next chapter">Command-line interfaces</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/filehandling.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="commandlineinterfaces.html" title="Command-line interfaces"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="analysis.html" title="Analysis"
+             >previous</a> |</li>
+        <li><a href="index.html">storytracker 0.0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Ben Welsh.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

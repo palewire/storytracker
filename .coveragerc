@@ -1,9 +1,0 @@
-[run]
-include =
-    storytracker/__init__.py
-    storytracker/archive.py
-    storytracker/analysis.py
-    storytracker/files.py
-    storytracker/get.py
-    storytracker/toolbox.py
-    storytracker/waybackmachine.py

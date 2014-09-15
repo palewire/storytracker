@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Analysis &mdash; storytracker 0.0.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="storytracker 0.0.5 documentation" href="index.html" />
+    <link rel="next" title="File handling" href="filehandling.html" />
+    <link rel="prev" title="Archiving" href="archiving.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="filehandling.html" title="File handling"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="archiving.html" title="Archiving"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">storytracker 0.0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="analysis">
+<h1>Analysis<a class="headerlink" href="#analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="archivedurl">
+<h2>ArchivedURL<a class="headerlink" href="#archivedurl" title="Permalink to this headline">¶</a></h2>
+<p>An URL&#8217;s archived HTML with tools for analysis.</p>
+<dl class="class">
+<dt id="ArchivedURL">
+<em class="property">class </em><tt class="descname">ArchivedURL</tt><big>(</big><em>url</em>, <em>timestamp</em>, <em>html</em><big>)</big><a class="headerlink" href="#ArchivedURL" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Initialization arguments</strong></p>
+<dl class="attribute">
+<dt id="ArchivedURL.url">
+<tt class="descname">url</tt><a class="headerlink" href="#ArchivedURL.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>The url archived</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ArchivedURL.timestamp">
+<tt class="descname">timestamp</tt><a class="headerlink" href="#ArchivedURL.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>The date and time when the url was archived</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ArchivedURL.html">
+<tt class="descname">html</tt><a class="headerlink" href="#ArchivedURL.html" title="Permalink to this definition">¶</a></dt>
+<dd><p>The HTML archived</p>
+</dd></dl>
+
+<p><strong>Other attributes</strong></p>
+<dl class="attribute">
+<dt id="ArchivedURL.gzip">
+<tt class="descname">gzip</tt><a class="headerlink" href="#ArchivedURL.gzip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the archived HTML as a stream of gzipped data</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ArchivedURL.archive_filename">
+<tt class="descname">archive_filename</tt><a class="headerlink" href="#ArchivedURL.archive_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a file name for this archive using the conventions of <a class="reference internal" href="filehandling.html#storytracker.create_archive_filename" title="storytracker.create_archive_filename"><tt class="xref py py-func docutils literal"><span class="pre">storytracker.create_archive_filename()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ArchivedURL.soup">
+<tt class="descname">soup</tt><a class="headerlink" href="#ArchivedURL.soup" title="Permalink to this definition">¶</a></dt>
+<dd><p>The archived HTML passed into a <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/bs4/doc/#">BeautifulSoup</a> parser</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ArchivedURL.hyperlinks">
+<tt class="descname">hyperlinks</tt><a class="headerlink" href="#ArchivedURL.hyperlinks" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all the hyperlinks extracted from the HTML</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ArchivedURL.images">
+<tt class="descname">images</tt><a class="headerlink" href="#ArchivedURL.images" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all the images extracts from the HTML</p>
+</dd></dl>
+
+<p><strong>Output methods</strong></p>
+<dl class="attribute">
+<dt id="ArchivedURL.write_hyperlinks_csv_to_file">
+<tt class="descname">write_hyperlinks_csv_to_file</tt><big>(</big><em>file</em>, <em>encoding=&quot;utf-8&quot;</em><big>)</big><a class="headerlink" href="#ArchivedURL.write_hyperlinks_csv_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the provided file object with a ready-to-serve CSV list of
+all hyperlinks extracted from the HTML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ArchivedURL.write_gzip_to_directory">
+<tt class="descname">write_gzip_to_directory</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#ArchivedURL.write_gzip_to_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes gzipped HTML data to a file in the provided directory path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ArchivedURL.write_html_to_directory">
+<tt class="descname">write_html_to_directory</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#ArchivedURL.write_html_to_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes HTML data to a file in the provided directory path</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">storytracker</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">storytracker</span><span class="o">.</span><span class="n">open_archive_filepath</span><span class="p">(</span><span class="s">&#39;/home/ben/archive/http!www.latimes.com!!!!@2014-07-06T16:31:57.697250.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">url</span>
+<span class="go">&#39;http://www.latimes.com&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">timestamp</span>
+<span class="go">datetime.datetime(2014, 7, 6, 16, 31, 57, 697250)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="archivedurlset">
+<h2>ArchivedURLSet<a class="headerlink" href="#archivedurlset" title="Permalink to this headline">¶</a></h2>
+<p>A list of <a class="reference internal" href="#ArchivedURL" title="ArchivedURL"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURL</span></tt></a> objects.</p>
+<dl class="class">
+<dt id="ArchivedURLSet">
+<em class="property">class </em><tt class="descname">ArchivedURLSet</tt><big>(</big><em>list</em><big>)</big><a class="headerlink" href="#ArchivedURLSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>List items added to the set must be unique <a class="reference internal" href="#ArchivedURL" title="ArchivedURL"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURL</span></tt></a> objects.</p>
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">storytracker</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_list</span> <span class="o">=</span> <span class="n">storytracker</span><span class="o">.</span><span class="n">open_archive_directory</span><span class="p">(</span><span class="s">&#39;/home/ben/archive/&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">url</span>
+<span class="go">&#39;http://www.latimes.com&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span>
+<span class="go">datetime.datetime(2014, 7, 6, 16, 31, 57, 697250)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hyperlink">
+<h2>Hyperlink<a class="headerlink" href="#hyperlink" title="Permalink to this headline">¶</a></h2>
+<p>A hyperlink extracted from an <a class="reference internal" href="#ArchivedURL" title="ArchivedURL"><tt class="xref py py-class docutils literal"><span class="pre">ArchivedURL</span></tt></a> object.</p>
+<dl class="class">
+<dt id="Hyperlink">
+<em class="property">class </em><tt class="descname">Hyperlink</tt><big>(</big><em>href</em>, <em>string</em>, <em>index</em>, <em>images=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#Hyperlink" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Initialization arguments</strong></p>
+<dl class="attribute">
+<dt id="Hyperlink.href">
+<tt class="descname">href</tt><a class="headerlink" href="#Hyperlink.href" title="Permalink to this definition">¶</a></dt>
+<dd><p>The URL the hyperlink references</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Hyperlink.string">
+<tt class="descname">string</tt><a class="headerlink" href="#Hyperlink.string" title="Permalink to this definition">¶</a></dt>
+<dd><p>The strings contents of the anchor tag</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Hyperlink.index">
+<tt class="descname">index</tt><a class="headerlink" href="#Hyperlink.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The index value of the links order within its source HTML. Starts counting at zero.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Hyperlink.images">
+<tt class="descname">images</tt><a class="headerlink" href="#Hyperlink.images" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of the <a class="reference internal" href="#Image" title="Image"><tt class="xref py py-class docutils literal"><span class="pre">Image</span></tt></a> objects extracted from the HTML</p>
+</dd></dl>
+
+<p><strong>Other attributes</strong></p>
+<dl class="attribute">
+<dt id="Hyperlink.__csv__">
+<tt class="descname">__csv__</tt><a class="headerlink" href="#Hyperlink.__csv__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of values ready to be written to a CSV file object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Hyperlink.domain">
+<tt class="descname">domain</tt><a class="headerlink" href="#Hyperlink.domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>The domain of the href</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="image">
+<h2>Image<a class="headerlink" href="#image" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Image">
+<em class="property">class </em><tt class="descname">Image</tt><big>(</big><em>src</em><big>)</big><a class="headerlink" href="#Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>An image extracted from an archived URL.</p>
+<p><strong>Initialization arguments</strong></p>
+<dl class="attribute">
+<dt id="Image.src">
+<tt class="descname">src</tt><a class="headerlink" href="#Image.src" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <tt class="docutils literal"><span class="pre">src</span></tt> attribute of the image tag</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Analysis</a><ul>
+<li><a class="reference internal" href="#archivedurl">ArchivedURL</a></li>
+<li><a class="reference internal" href="#archivedurlset">ArchivedURLSet</a></li>
+<li><a class="reference internal" href="#hyperlink">Hyperlink</a></li>
+<li><a class="reference internal" href="#image">Image</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="archiving.html"
+                        title="previous chapter">Archiving</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="filehandling.html"
+                        title="next chapter">File handling</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/analysis.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="filehandling.html" title="File handling"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="archiving.html" title="Archiving"
+             >previous</a> |</li>
+        <li><a href="index.html">storytracker 0.0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Ben Welsh.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
