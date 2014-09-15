@@ -410,18 +410,18 @@ class GifWriter:
         # Obtain palette for all images and count each occurance
         palettes, occur = [], []
         for im in images:
-            palettes.append( getheader(im)[1] )
+            palettes.append(getheader(im)[1])
+
         for palette in palettes:
-            occur.append( palettes.count( palette ) )
-        
+            occur.append(palettes.count(palette))
+
         # Select most-used palette as the global one (or first in case no max)
-        globalPalette = palettes[ occur.index(max(occur)) ]
-        
+        globalPalette = palettes[occur.index(max(occur))]
+
         # Init
         frames = 0
         firstFrame = True
-        
-        
+
         for im, palette in zip(images, palettes):
         
             if firstFrame:

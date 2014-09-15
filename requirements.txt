@@ -1,6 +1,6 @@
 Jinja2==2.7.3
 MarkupSafe==0.23
-Pillow==2.5.3
+PIL==1.1.7
 PyYAML==3.10
 Pygments==1.6
 Sphinx==1.2.2

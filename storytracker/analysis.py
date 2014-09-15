@@ -702,6 +702,11 @@ class ArchivedURLSet(list):
             trim_list,
             duration=duration,
         )
+
+        # Delete all the jpgs
+        for jpg in jpg_paths:
+            os.remove(jpg)
+
         return gif_path
 
 
