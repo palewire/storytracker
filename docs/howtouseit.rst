@@ -275,6 +275,7 @@ Creating an animation that tracks a hyperlink's movement across a set of pages
         "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
         "./"
     )
-    
+
+
     .. image:: _static/href.gif
         :width: 400px
