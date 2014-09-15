@@ -276,6 +276,5 @@ Creating an animation that tracks a hyperlink's movement across a set of pages
         "./"
     )
 
-
-    .. image:: _static/href.gif
-        :width: 400px
+.. image:: _static/href.gif
+    :width: 400px
