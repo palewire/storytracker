@@ -1,5 +1,0 @@
-#!/home/ben/Code/palewire/storytracker/repo/.tox/py34/bin/python
-# EASY-INSTALL-SCRIPT: 'storytracker==0.0.9','storytracker-get'
-__requires__ = 'storytracker==0.0.9'
-import pkg_resources
-pkg_resources.run_script('storytracker==0.0.9', 'storytracker-get')
