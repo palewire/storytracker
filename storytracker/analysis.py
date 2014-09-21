@@ -270,6 +270,13 @@ class ArchivedURL(UnicodeMixin):
         return obj_list
     hyperlinks = property(get_hyperlinks)
 
+    def get_story_links(self):
+        """
+        Return only hyperlinks estimated to be stories.
+        """
+        return [h for h in self.hyperlinks if h.is_story]
+    story_links = property(get_story_links)
+
     def get_hyperlink_by_href(self, submitted_href, if_not_found=None):
         for this_hyperlink in self.hyperlinks:
             if this_hyperlink.href == submitted_href:
@@ -357,7 +364,7 @@ class ArchivedURL(UnicodeMixin):
         self._summary_statistics = {
             'hyperlink_count': len(self.hyperlinks),
             'image_count': len(self.images),
-            'hyperlink_story_count': len([
+            'story_link_count': len([
                 h for h in self.hyperlinks if h.is_story
             ])
         }
@@ -520,7 +527,7 @@ class ArchivedURLSet(list):
        return keys.keys()
 
     #
-    # Extract all hyperlinks
+    # Analyzing all hyperlinks
     #
 
     def get_hyperlinks(self):
@@ -590,6 +597,65 @@ class ArchivedURLSet(list):
             analyzed_list.append(d)
         return analyzed_list
     hyperlinks = property(get_hyperlinks)
+
+    @property
+    def summary_statistics(self):
+        """
+        Returns a dictionary of summary statistics about the whole set.
+        """
+        # Analyze hyperlinks for all of the URLs in the set
+        [obj.analyze() for obj in self]
+        hyperlink_sets = [u.hyperlinks for u in self]
+        story_link_sets = [u.story_links for u in self]
+        image_sets = [u.images for u in self]
+        summary_statistics = {
+            'hyperlink_count_average': calculate.mean(
+                [len(s) for s in hyperlink_sets]
+            ),
+            'hyperlink_count_median': calculate.median(
+                [len(s) for s in hyperlink_sets]
+            ),
+            'hyperlink_count_min': min(
+                [len(s) for s in hyperlink_sets]
+            ),
+            'hyperlink_count_max': max(
+                [len(s) for s in hyperlink_sets]
+            ),
+            'hyperlink_count_range': calculate.range(
+                [len(s) for s in hyperlink_sets]
+            ),
+            'story_link_count_average': calculate.mean(
+                [len(s) for s in story_link_sets]
+            ),
+            'story_link_count_median': calculate.median(
+                [len(s) for s in story_link_sets]
+            ),
+            'story_link_count_min': min(
+                [len(s) for s in story_link_sets]
+            ),
+            'story_link_count_max': max(
+                [len(s) for s in story_link_sets]
+            ),
+            'story_link_count_range': calculate.range(
+                [len(s) for s in story_link_sets]
+            ),
+            'image_count_average': calculate.mean(
+                [len(s) for s in image_sets]
+            ),
+            'image_count_median': calculate.median(
+                [len(s) for s in image_sets]
+            ),
+            'image_count_min': min(
+                [len(s) for s in hyperlink_sets]
+            ),
+            'image_count_max': max(
+                [len(s) for s in image_sets]
+            ),
+            'image_count_range': calculate.range(
+                [len(s) for s in image_sets]
+            ),
+        }
+        return summary_statistics
 
     def write_hyperlinks_csv_to_file(self, file):
         """
