@@ -51,6 +51,8 @@ class ArchivedURL(UnicodeMixin):
         self._width = None
         self._hyperlinks = []
         self._images = []
+        self._summary_statistics = {}
+        # Configuration for our web browser
         self.browser = None
         self.browser_width = browser_width
         self.browser_height = browser_height
@@ -154,6 +156,7 @@ class ArchivedURL(UnicodeMixin):
         self.get_width(force=True)
         self.get_hyperlinks(force=True)
         self.get_images(force=True)
+        self.get_summary_statistics(force=True)
         self.close_browser()
 
     def get_cell(self, x, y, cell_size=256):
@@ -324,6 +327,17 @@ class ArchivedURL(UnicodeMixin):
             return sorted(self.images, key=lambda x: x.area, reverse=True)[0]
         except IndexError:
             return None
+
+    def get_summary_statistics(self, force=False):
+        # If we already have them, return them
+        if self._summary_statistics and not force:
+            return self._summary_statistics
+ 
+        # all the biz adding stuff to the dict here
+
+        # Pass it back out
+        return self._summary_statistics
+    summary_statistics = property(get_summary_statistics)
 
     def write_hyperlinks_csv_to_file(self, file):
         """
