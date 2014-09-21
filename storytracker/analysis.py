@@ -334,6 +334,11 @@ class ArchivedURL(UnicodeMixin):
             return self._summary_statistics
  
         # all the biz adding stuff to the dict here
+        self._summary_statistics = {
+            'hyperlink_count': len(self.hyperlinks),
+            'image_count': len(self.images),
+            'hyperlink_story_count': len([h.is_story for h in self.hyperlinks])
+        }
 
         # Pass it back out
         return self._summary_statistics

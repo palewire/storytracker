@@ -182,9 +182,11 @@ class AnalysisTest(MutedTest):
         obj2 = storytracker.open_archive_filepath(obj1.html_archive_path)
         self.assertEqual(obj1, obj2)
 
-    def test_url_creation(self):
+    def test_url(self):
         self.archive = storytracker.archive(self.url)
         obj = self.archive
+
+        # Metadata
         self.assertEqual(self.url, obj.url)
         obj.timestamp
         obj.html
@@ -192,12 +194,21 @@ class AnalysisTest(MutedTest):
         obj.__unicode__()
         obj.__str__()
         obj.__repr__()
+
+        # Browser
+        self.assertEqual(self.archive.browser, None)
+        self.archive.open_browser()
+        self.assertTrue(isinstance(self.archive.browser, webdriver.PhantomJS))
+        self.archive.open_browser()
+        self.archive.close_browser()
+        self.assertEqual(self.archive.browser, None)
+        self.archive.close_browser()
+
+        # Gzip
         self.assertEqual(obj.gzip_archive_path, None)
         obj.write_gzip_to_directory(self.tmpdir)
 
-    def test_url_hyperlinks(self):
-        self.archive = storytracker.archive(self.url)
-        obj = self.archive
+        # Hyperlinks
         self.assertEqual(obj._hyperlinks, [])
         self.assertTrue(isinstance(obj.hyperlinks, list))
         self.assertEqual(obj._hyperlinks, obj.hyperlinks)
@@ -217,9 +228,16 @@ class AnalysisTest(MutedTest):
         a.__repr__()
         a.__csv__()
 
-    def test_url_images(self):
-        self.archive = storytracker.archive(self.url)
-        obj = self.archive
+        # Hyperlinks to CSV
+        f = six.StringIO()
+        f = obj.write_hyperlinks_csv_to_file(f)
+        p = os.path.join(self.tmpdir, 'links.csv')
+        f2 = open(p, 'w+')
+        f2 = obj.write_hyperlinks_csv_to_file(f2)
+        self.assertTrue(os.path.exists(p))
+        os.remove(p)
+
+        # Images
         self.assertEqual(obj._images, [])
         self.assertTrue(len(obj.images) > 0)
         self.assertTrue(isinstance(obj.images, list))
@@ -230,6 +248,18 @@ class AnalysisTest(MutedTest):
         img.__unicode__()
         img.__str__()
         img.__repr__()
+
+    def test_analyze(self):
+        self.archive = storytracker.archive(self.url)
+        self.assertEqual(self.archive._hyperlinks, [])
+        self.assertEqual(self.archive._images, [])
+        self.archive.analyze()
+        self.assertTrue(
+            isinstance(self.archive._hyperlinks[0], storytracker.Hyperlink)
+        )
+        self.assertTrue(
+            isinstance(self.archive._images[0], storytracker.Image)
+        )
 
     def test_urlset_creation(self):
         obj = ArchivedURL(self.url, datetime.now(), "foobar")
@@ -266,19 +296,8 @@ class AnalysisTest(MutedTest):
         self.assertTrue(len(urlset), 2)
         [self.assertTrue(isinstance(o, ArchivedURL)) for o in urlset]
 
-    def test_write_hyperlinks_csv_to_file(self):
-        self.archive = storytracker.archive(self.url)
-        o = self.archive
-        f = six.StringIO()
-        f = o.write_hyperlinks_csv_to_file(f)
-        p = os.path.join(self.tmpdir, 'links.csv')
-        f2 = open(p, 'w+')
-        f2 = o.write_hyperlinks_csv_to_file(f2)
-        self.assertTrue(os.path.exists(p))
-        os.remove(p)
 
-
-class WaybackMachineTest(BaseTest):
+class WaybackMachineTest(MutedTest):
 
     def setUp(self):
         super(WaybackMachineTest, self).setUp()
@@ -301,31 +320,6 @@ http://www.cnn.com/"
         obj.__str__()
         obj.__repr__()
         obj.write_gzip_to_directory(self.tmpdir)
-
-
-class SeleniumTest(BaseTest):
-
-    def test_open_and_close_browser(self):
-        self.archive = storytracker.archive(self.url)
-        self.assertEqual(self.archive.browser, None)
-        self.archive.open_browser()
-        self.assertTrue(isinstance(self.archive.browser, webdriver.PhantomJS))
-        self.archive.open_browser()
-        self.archive.close_browser()
-        self.assertEqual(self.archive.browser, None)
-        self.archive.close_browser()
-
-    def test_analyze(self):
-        self.archive = storytracker.archive(self.url)
-        self.assertEqual(self.archive._hyperlinks, [])
-        self.assertEqual(self.archive._images, [])
-        self.archive.analyze()
-        self.assertTrue(
-            isinstance(self.archive._hyperlinks[0], storytracker.Hyperlink)
-        )
-        self.assertTrue(
-            isinstance(self.archive._images[0], storytracker.Image)
-        )
 
 #
 # CLI tests
