@@ -11,6 +11,7 @@ import images2gif
 import storytracker
 import storysniffer
 from six import BytesIO
+from datetime import timedelta
 from selenium import webdriver
 import selenium.webdriver.support.ui as ui
 from selenium.webdriver.common.keys import Keys
@@ -146,17 +147,17 @@ class ArchivedURL(UnicodeMixin):
         # Null out the value
         self.browser = None
 
-    def analyze(self):
+    def analyze(self, force=True):
         """
         Force all of the normally lazy-loading analysis methods to run
         and cache the results.
         """
         self.open_browser()
-        self.get_height(force=True)
-        self.get_width(force=True)
-        self.get_hyperlinks(force=True)
-        self.get_images(force=True)
-        self.get_summary_statistics(force=True)
+        self.get_height(force=force)
+        self.get_width(force=force)
+        self.get_hyperlinks(force=force)
+        self.get_images(force=force)
+        self.get_summary_statistics(force=force)
         self.close_browser()
 
     def get_cell(self, x, y, cell_size=256):
@@ -532,7 +533,7 @@ class ArchivedURLSet(list):
 
     def get_hyperlinks(self):
         # Analyze hyperlinks for all of the URLs in the set
-        [obj.analyze() for obj in self]
+        [obj.analyze(force=False) for obj in self]
 
         # Create a list of all the unique href attributes
         all_hrefs = []
@@ -604,10 +605,12 @@ class ArchivedURLSet(list):
         Returns a dictionary of summary statistics about the whole set.
         """
         # Analyze hyperlinks for all of the URLs in the set
-        [obj.analyze() for obj in self]
+        [obj.analyze(force=False) for obj in self]
         hyperlink_sets = [u.hyperlinks for u in self]
         story_link_sets = [u.story_links for u in self]
         image_sets = [u.images for u in self]
+        unique_hyperlinks = self.hyperlinks
+        unique_story_links = [h for h in self.hyperlinks if h['is_story']]
         summary_statistics = {
             'hyperlink_count_average': calculate.mean(
                 [len(s) for s in hyperlink_sets]
@@ -624,6 +627,10 @@ class ArchivedURLSet(list):
             'hyperlink_count_range': calculate.range(
                 [len(s) for s in hyperlink_sets]
             ),
+            'hyperlink_timedelta_average': sum(
+                [h['timedelta'] for h in unique_hyperlinks],
+                timedelta()
+            ) / len([h['timedelta'] for h in unique_hyperlinks]),
             'story_link_count_average': calculate.mean(
                 [len(s) for s in story_link_sets]
             ),
@@ -639,6 +646,10 @@ class ArchivedURLSet(list):
             'story_link_count_range': calculate.range(
                 [len(s) for s in story_link_sets]
             ),
+            'story_link_timedelta_average': sum(
+                [h['timedelta'] for h in unique_story_links],
+                timedelta()
+            ) / len([h['timedelta'] for h in unique_story_links]),
             'image_count_average': calculate.mean(
                 [len(s) for s in image_sets]
             ),
