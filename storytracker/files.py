@@ -63,15 +63,21 @@ def open_archive_filepath(path):
     # If it is gzipped, then open it that way
     if ext == '.gz':
         obj = gzip.open(path)
+        return ArchivedURL(
+            url,
+            timestamp,
+            obj.read().decode("utf-8"),
+            gzip_archive_path=path
+        )
     # Otherwise handle it normally
     else:
         obj = open(path, "rb")
-    return ArchivedURL(
-        url,
-        timestamp,
-        obj.read().decode("utf-8"),
-        archive_path=path
-    )
+        return ArchivedURL(
+            url,
+            timestamp,
+            obj.read().decode("utf-8"),
+            html_archive_path=path
+        )
 
 
 def reverse_archive_filename(filename):

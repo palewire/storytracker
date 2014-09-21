@@ -35,7 +35,9 @@ class ArchivedURL(UnicodeMixin):
     An URL's archived HTML with tools for analysis
     """
     def __init__(
-        self, url, timestamp, html, archive_path=None,
+        self,
+        url, timestamp, html,
+        html_archive_path=None, gzip_archive_path=None,
         browser_width=1024, browser_height=768,
         browser_driver="PhantomJS"
     ):
@@ -43,7 +45,8 @@ class ArchivedURL(UnicodeMixin):
         self.timestamp = timestamp
         self.html = html
         # Attributes that come in handy below
-        self.archive_path = archive_path
+        self.html_archive_path = html_archive_path
+        self.gzip_archive_path = gzip_archive_path
         self._height = None
         self._width = None
         self._hyperlinks = []
@@ -115,17 +118,15 @@ class ArchivedURL(UnicodeMixin):
         # Size the browser
         self.browser.set_window_size(self.browser_width, self.browser_height)
 
-        # Check if an archived HTML file exists, if not create one
-        # so our selenium browser has something to read.
-        if not self.archive_path or not self.archive_path.endswith("html"):
+        if not self.html_archive_path:
             tmpdir = tempfile.mkdtemp()
             self.write_html_to_directory(tmpdir)
 
         # Open the file
         socket.setdefaulttimeout(5)
         try:
-            logger.debug("Retrieving %s in browser" % self.archive_path)
-            self.browser.get("file://%s" % self.archive_path)
+            logger.debug("Retrieving %s in browser" % self.html_archive_path)
+            self.browser.get("file://%s" % self.html_archive_path)
         except socket.timeout:
             logger.debug("Browser timeout")
             self.browser.execute_script("window.stop()")
@@ -382,11 +383,14 @@ class ArchivedURL(UnicodeMixin):
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
-        self.archive_path = os.path.join(path, "%s.gz" % self.archive_filename)
-        fileobj = open(self.archive_path, 'wb')
+        self.gzip_archive_path = os.path.join(
+            path,
+            "%s.gz" % self.archive_filename
+        )
+        fileobj = open(self.gzip_archive_path, 'wb')
         with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
             f.write(self.html.encode("utf-8"))
-        return self.archive_path
+        return self.gzip_archive_path
 
     def write_html_to_directory(self, path):
         """
@@ -394,13 +398,13 @@ class ArchivedURL(UnicodeMixin):
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
-        self.archive_path = os.path.join(
+        self.html_archive_path = os.path.join(
             path,
             "%s.html" % self.archive_filename
         )
-        with open(self.archive_path, 'wb') as f:
+        with open(self.html_archive_path, 'wb') as f:
             f.write(self.html.encode("utf-8"))
-        return self.archive_path
+        return self.html_archive_path
 
     def write_illustration_to_directory(self, path):
         """

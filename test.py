@@ -160,17 +160,17 @@ class ArchiveTest(MutedTest):
         )
         for obj in [obj1, obj2, obj3, obj4, obj5]:
             self.assertTrue(isinstance(obj, storytracker.ArchivedURL))
-        self.assertTrue(os.path.exists(obj4.archive_path))
-        self.assertTrue(os.path.exists(obj5.archive_path))
-        os.remove(obj4.archive_path)
-        os.remove(obj5.archive_path)
+        self.assertTrue(os.path.exists(obj4.gzip_archive_path))
+        self.assertTrue(os.path.exists(obj5.html_archive_path))
+        os.remove(obj4.gzip_archive_path)
+        os.remove(obj5.html_archive_path)
 
 
 class AnalysisTest(MutedTest):
 
     def test_open_archive_gzip(self):
         obj1 = storytracker.archive(self.url, output_dir=self.tmpdir)
-        obj2 = storytracker.open_archive_filepath(obj1.archive_path)
+        obj2 = storytracker.open_archive_filepath(obj1.gzip_archive_path)
         self.assertEqual(obj1, obj2)
 
     def test_open_archive_html(self):
@@ -179,7 +179,7 @@ class AnalysisTest(MutedTest):
             output_dir=self.tmpdir,
             compress=False
         )
-        obj2 = storytracker.open_archive_filepath(obj1.archive_path)
+        obj2 = storytracker.open_archive_filepath(obj1.html_archive_path)
         self.assertEqual(obj1, obj2)
 
     def test_url_creation(self):
@@ -192,7 +192,7 @@ class AnalysisTest(MutedTest):
         obj.__unicode__()
         obj.__str__()
         obj.__repr__()
-        self.assertEqual(obj.archive_path, None)
+        self.assertEqual(obj.gzip_archive_path, None)
         obj.write_gzip_to_directory(self.tmpdir)
 
     def test_url_hyperlinks(self):
