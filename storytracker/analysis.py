@@ -519,6 +519,10 @@ class ArchivedURLSet(list):
            keys[e] = 1
        return keys.keys()
 
+    #
+    # Extract all hyperlinks
+    #
+
     def get_hyperlinks(self):
         # Analyze hyperlinks for all of the URLs in the set
         [obj.analyze() for obj in self]
@@ -541,8 +545,8 @@ class ArchivedURLSet(list):
                     a_hits.append(a)
 
             # Some basic stats
-            population = len(self)
-            observations = len(url_hits)
+            archived_url_count = len(self)
+            archived_urls_with_href = len(url_hits)
 
             # The earliest timestamp the link appeared
             earliest_timestamp = min([url.timestamp for url in url_hits])
@@ -571,8 +575,8 @@ class ArchivedURLSet(list):
             d = dict(
                 href=href,
                 is_story=a_hits[0].is_story,
-                population=population,
-                observations=observations,
+                archived_url_count=archived_url_count,
+                archived_urls_with_href=archived_urls_with_href,
                 earliest_timestamp=earliest_timestamp,
                 latest_timestamp=latest_timestamp,
                 timedelta=timedelta,
@@ -586,6 +590,68 @@ class ArchivedURLSet(list):
             analyzed_list.append(d)
         return analyzed_list
     hyperlinks = property(get_hyperlinks)
+
+    def write_hyperlinks_csv_to_file(self, file):
+        """
+        Returns the provided file object with a ready-to-serve CSV list of
+        all hyperlinks extracted from the HTML.
+        """
+        # Create a CSV writer object out of the file
+        writer = csv.writer(file)
+
+        # Create the headers, which will change depending on how many
+        # images are found in the urls
+        headers = [
+            "href",
+            "is_story",
+            "archived_url_count",
+            "archived_urls_with_href",
+            "earliest_timestamp",
+            "latest_timestamp",
+            "timedelta",
+            "maximum_y",
+            "minimum_y",
+            "range_y",
+            "average_y",
+            "median_y",
+        ]
+
+        hyperlinks = self.hyperlinks
+        max_headlines = max([h['headline_list'] for h in hyperlinks])
+        for i in range(1, len(max_headlines) + 1):
+            headers.append("headline_%s" % i)
+
+        # Write it out to the file
+        writer.writerow(headers)
+        for h in hyperlinks:
+            headline_list = h.pop("headline_list")
+            row = list(
+                map(six.text_type, [
+                    h['href'],
+                    h['is_story'],
+                    h['archived_url_count'],
+                    h['archived_urls_with_href'],
+                    h['earliest_timestamp'],
+                    h['latest_timestamp'],
+                    h['timedelta'],
+                    h['maximum_y'],
+                    h['minimum_y'],
+                    h['range_y'],
+                    h['average_y'],
+                    h['median_y'],
+                ])
+            )
+            for hed in headline_list:
+                row.append(six.text_type(hed))
+            writer.writerow(row)
+
+        # Reboot the file and pass it back out
+        file.seek(0)
+        return file
+
+    #
+    # Analyze individual hyperlinks
+    #
 
     def print_href_analysis(self, href):
         """
@@ -603,8 +669,11 @@ class ArchivedURLSet(list):
         table = indent(
             [
                 ['Statistic', 'Value'],
-                ['Archived URL total', str(stats['population'])],
-                ['Observations of href', str(stats['observations'])],
+                ['Archived URL count', str(stats['archived_url_count'])],
+                [
+                    'Archived URLs with href',
+                    str(stats['archived_urls_with_href'])
+                ],
                 ['First timestamp', str(stats['earliest_timestamp'])],
                 ['Last timestamp', str(stats['latest_timestamp'])],
                 ['Timedelta', str(stats['timedelta'])],
@@ -630,64 +699,6 @@ class ArchivedURLSet(list):
             prefix="| ", postfix=" |",
         )
         print table
-
-    def write_hyperlinks_csv_to_file(self, file):
-        """
-        Returns the provided file object with a ready-to-serve CSV list of
-        all hyperlinks extracted from the HTML.
-        """
-        # Create a CSV writer object out of the file
-        writer = csv.writer(file)
-
-        # Create the headers, which will change depending on how many
-        # images are found in the urls
-        headers = [
-            "href",
-            "is_story",
-            "population",
-            "observations",
-            "earliest_timestamp",
-            "latest_timestamp",
-            "timedelta",
-            "maximum_y",
-            "minimum_y",
-            "range_y",
-            "average_y",
-            "median_y",
-        ]
-
-        hyperlinks = self.hyperlinks
-        max_headlines = max([h['headline_list'] for h in hyperlinks])
-        for i in range(1, len(max_headlines) + 1):
-            headers.append("headline_%s" % i)
-
-        # Write it out to the file
-        writer.writerow(headers)
-        for h in hyperlinks:
-            headline_list = h.pop("headline_list")
-            row = list(
-                map(six.text_type, [
-                    h['href'],
-                    h['is_story'],
-                    h['population'],
-                    h['observations'],
-                    h['earliest_timestamp'],
-                    h['latest_timestamp'],
-                    h['timedelta'],
-                    h['maximum_y'],
-                    h['minimum_y'],
-                    h['range_y'],
-                    h['average_y'],
-                    h['median_y'],
-                ])
-            )
-            for hed in headline_list:
-                row.append(six.text_type(hed))
-            writer.writerow(row)
-
-        # Reboot the file and pass it back out
-        file.seek(0)
-        return file
 
     def write_href_gif_to_directory(self, href, path, duration=0.5):
         """
