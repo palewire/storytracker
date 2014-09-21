@@ -328,7 +328,27 @@ class ArchivedURL(UnicodeMixin):
         except IndexError:
             return None
 
+    @property
+    def largest_headline(self):
+        """
+        Returns the story hyperlink with the largest area on the page
+
+        If there is a tie, returns the one that appears first on the page.
+        """
+        story_hyperlinks = [h for h in self.hyperlinks if h.is_story]
+        try:
+            return sorted(
+                story_hyperlinks,
+                key=lambda x: (-x.area, x.index)
+            )[0]
+        except IndexError:
+            return None
+
     def get_summary_statistics(self, force=False):
+        """
+        Returns a dictionary with basic summary statistics about hyperlinks
+        and images on the page.
+        """
         # If we already have them, return them
         if self._summary_statistics and not force:
             return self._summary_statistics
@@ -337,7 +357,9 @@ class ArchivedURL(UnicodeMixin):
         self._summary_statistics = {
             'hyperlink_count': len(self.hyperlinks),
             'image_count': len(self.images),
-            'hyperlink_story_count': len([h.is_story for h in self.hyperlinks])
+            'hyperlink_story_count': len([
+                h for h in self.hyperlinks if h.is_story
+            ])
         }
 
         # Pass it back out
@@ -828,6 +850,15 @@ class Hyperlink(UnicodeMixin):
             return storysniffer.guess(self.href)
         except ValueError:
             return False
+
+    @property
+    def area(self):
+        """
+        Returns the area of the image
+        """
+        if not self.width or not self.height:
+            return None
+        return self.width * self.height
 
 
 class Image(UnicodeMixin):
