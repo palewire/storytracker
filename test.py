@@ -111,9 +111,8 @@ class BaseTest(unittest.TestCase):
         self.img = "http://www.trbimg.com/img-5359922b/turbine/\
 la-me-lafd-budget-20140415-001/750/16x9"
         self.tmpdir = tempfile.mkdtemp()
-        self.archive = storytracker.archive(self.url)
 
-    def tearDown( self ):
+    def tearDown(self):
         self.server_process.terminate()
         self.server_process.join()
         del(self.server_process)
@@ -149,6 +148,7 @@ class ArchiveTest(MutedTest):
             storytracker.reverse_archive_filename("foo.bar")
 
     def test_archive(self):
+        self.archive = storytracker.archive(self.url)
         obj1 = self.archive
         obj2 = storytracker.archive(self.url, minify=False)
         obj3 = storytracker.archive(self.url, extend_urls=False)
@@ -183,6 +183,7 @@ class AnalysisTest(MutedTest):
         self.assertEqual(obj1, obj2)
 
     def test_url_creation(self):
+        self.archive = storytracker.archive(self.url)
         obj = self.archive
         self.assertEqual(self.url, obj.url)
         obj.timestamp
@@ -195,6 +196,7 @@ class AnalysisTest(MutedTest):
         obj.write_gzip_to_directory(self.tmpdir)
 
     def test_url_hyperlinks(self):
+        self.archive = storytracker.archive(self.url)
         obj = self.archive
         self.assertEqual(obj._hyperlinks, [])
         self.assertTrue(isinstance(obj.hyperlinks, list))
@@ -216,6 +218,7 @@ class AnalysisTest(MutedTest):
         a.__csv__()
 
     def test_url_images(self):
+        self.archive = storytracker.archive(self.url)
         obj = self.archive
         self.assertEqual(obj._images, [])
         self.assertTrue(len(obj.images) > 0)
@@ -264,6 +267,7 @@ class AnalysisTest(MutedTest):
         [self.assertTrue(isinstance(o, ArchivedURL)) for o in urlset]
 
     def test_write_hyperlinks_csv_to_file(self):
+        self.archive = storytracker.archive(self.url)
         o = self.archive
         f = six.StringIO()
         f = o.write_hyperlinks_csv_to_file(f)
@@ -302,6 +306,7 @@ http://www.cnn.com/"
 class SeleniumTest(BaseTest):
 
     def test_open_and_close_browser(self):
+        self.archive = storytracker.archive(self.url)
         self.assertEqual(self.archive.browser, None)
         self.archive.open_browser()
         self.assertTrue(isinstance(self.archive.browser, webdriver.PhantomJS))
@@ -311,6 +316,7 @@ class SeleniumTest(BaseTest):
         self.archive.close_browser()
 
     def test_analyze(self):
+        self.archive = storytracker.archive(self.url)
         self.assertEqual(self.archive._hyperlinks, [])
         self.assertEqual(self.archive._images, [])
         self.archive.analyze()
