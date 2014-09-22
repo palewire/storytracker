@@ -3,6 +3,7 @@ import six
 import math
 import copy
 import gzip
+import shutil
 import socket
 import logging
 import tempfile
@@ -149,7 +150,7 @@ class ArchivedURL(UnicodeMixin):
         # Null out the value
         self.browser = None
 
-    def analyze(self, force=True):
+    def analyze(self, force=False):
         """
         Force all of the normally lazy-loading analysis methods to run
         and cache the results.
@@ -383,10 +384,47 @@ class ArchivedURL(UnicodeMixin):
         return self._summary_statistics
     summary_statistics = property(get_summary_statistics)
 
-    def write_analysis_report_to_file(self, file):
+    def write_analysis_report_to_directory(self, path):
+        """
+        Create an analysis report that summarizes our outputs
+        as an HTML package.
+        """
+        # Run the numbers
+        self.analyze(force=False)
+
+        # Set up the directory where we will output the data
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        output_path = os.path.join(
+            path,
+            "urlanalysis-report-%s" % self.archive_filename
+        )
+        if os.path.exists(output_path):
+            shutil.rmtree(output_path)
+        os.mkdir(output_path)
+
+        # Write out a copy of the HTML archive
+        html_archive_path = self.write_html_to_directory(path)
+
+        # Write out hyperlinks csv
+        hyperlinks_csv_path = os.path.join(output_path, "hyperlinks.csv")
+        self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
+
+        # Write out the illo jpg
+        illo_jpg_path = self.write_illustration_to_directory(output_path)
+
+        # Render report template
+        context = {
+            'object': self,
+            'html_archive_path': html_archive_path,
+            'hyperlinks_csv_path': hyperlinks_csv_path,
+            'illo_jpg_path': illo_jpg_path
+        }
         template = jinja.get_template('archivedurl.html')
-        context = {}
-        html = template.render(the='variables', **context)
+        html = template.render(**context)
+
+        # Write out to file
+        file = open(os.path.join(output_path, "index.html"), "wb")
         file.write(html)
         file.close()
 
