@@ -69,7 +69,7 @@ ArchivedURL
 
 An URL's archived HTML with tools for analysis.
 
-.. py:class:: ArchivedURL(url, timestamp, html, browser_width=1024, browser_height=768)
+.. py:class:: ArchivedURL(url, timestamp, html, gzip_archive_path=None, html_archive_path=None, browser_width=1024, browser_height=768, browser_driver="PhantomJS")
 
     **Initialization arguments**
 
