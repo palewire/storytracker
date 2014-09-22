@@ -4,44 +4,74 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ object.url }} @ {{ object.timestamp }} - URL Archive Analysis - Storytracker</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <style type="text/css">
+        .navbar { margin-bottom: 4px;}
+        .navbar-brand { color:#ffffff !important; }
+        hr { margin-bottom: 0px; }
+    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+
+    <header class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1  navbar navbar-inverse">
+              <ul class="nav nav-pills navbar-header">
+                <li class="navbar-brand">
+                    Storytracker
+                </li>
+              </ul>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
+            <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1">
                 <h1>Archived URL analysis</h1>
-                <h3>URL: {{ object.url }}</h3>
-                <h3>Timestamp: {{ object.timestamp }}</h3>
-                <h3><a target="_blank" href="file://{{ html_archive_path }}">View archived HTML</a></h3>
+                <h4>URL: {{ object.url }}</h4>
+                <h4>Timestamp: {{ object.timestamp }}</h4>
+                <h4><a target="_blank" href="file://{{ html_archive_path }}">View archived HTML</a></h4>
                 <hr>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h4>Hyperlinks statistics (<a href="{{ hyperlinks_csv_path }}">Download full list as CSV</a>)</h4>
+            <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1">
+                <h3>Content</h3>
                 <table class="table table-bordered">
-                    {% for k, v in object.summary_statistics.items() %}
                     <tr>
-                        <th>{{ k }}</th>
-                        <td>{{ v }}</td>
+                        <th>Hyperlink count</th>
+                        <td>{{ object.summary_statistics.hyperlink_count }}</td>
                     </tr>
-                    {% endfor %}
+                    <tr>
+                        <th>Story link count</th>
+                        <td>{{ object.summary_statistics.story_link_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Image count</th>
+                        <td>{{ object.summary_statistics.image_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Download</th>
+                        <td><a href="{{ hyperlinks_csv_path }}">CSV</a></td>
+                    </tr>
                 </table>
                 <hr>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h4>Illustration</h4>
-                <img src="{{ illo_jpg_path }}">
+            <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1">
+                <h3>Illustration</h3>
+                    <a href="{{ illo_jpg_path }}"><img width="100%" src="{{ illo_jpg_path }}"></a>
                 <hr>
             </div>
         </div>
     </div>
+
 </body>
 </html>
 

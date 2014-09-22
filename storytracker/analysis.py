@@ -404,7 +404,7 @@ class ArchivedURL(UnicodeMixin):
         os.mkdir(output_path)
 
         # Write out a copy of the HTML archive
-        html_archive_path = self.write_html_to_directory(path)
+        html_archive_path = self.write_html_to_directory(output_path)
 
         # Write out hyperlinks csv
         hyperlinks_csv_path = os.path.join(output_path, "hyperlinks.csv")
