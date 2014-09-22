@@ -11,10 +11,11 @@ import images2gif
 import storytracker
 import storysniffer
 from six import BytesIO
+from jinja2 import Template
 from datetime import timedelta
 from selenium import webdriver
 import selenium.webdriver.support.ui as ui
-from selenium.webdriver.common.keys import Keys
+from jinja2 import Environment, PackageLoader
 from .toolbox import UnicodeMixin, indent
 from PIL import ImageOps
 from PIL import Image as PILImage
@@ -29,6 +30,7 @@ except ImportError:
     from six.moves.urllib.parse import urlparse
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+jinja = Environment(loader=PackageLoader('storytracker', 'templates'))
 
 
 class ArchivedURL(UnicodeMixin):
@@ -380,6 +382,13 @@ class ArchivedURL(UnicodeMixin):
         # Pass it back out
         return self._summary_statistics
     summary_statistics = property(get_summary_statistics)
+
+    def write_analysis_report_to_file(self, file):
+        template = jinja.get_template('archivedurl.html')
+        context = {}
+        html = template.render(the='variables', **context)
+        file.write(html)
+        file.close()
 
     def write_hyperlinks_csv_to_file(self, file):
         """
