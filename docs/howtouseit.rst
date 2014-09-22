@@ -278,11 +278,11 @@ shifted across a series of pages with the following code.
 .. code-block:: python
 
     >>> urlset.write_href_gif_to_directory(
-        # First give it your hyperlink
-        "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
-        # Then give it the directory where you'd like the file to be saved
-        "./"
-    )
+    >>>    # First give it your hyperlink
+    >>>    "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
+    >>>    # Then give it the directory where you'd like the file to be saved
+    >>>    "./"
+    >>> )
 
 .. image:: _static/href.gif
     :width: 400px
