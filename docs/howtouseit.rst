@@ -238,6 +238,9 @@ Here's a slimmed down version of the one I just made. Click on it to see it full
 Analyzing how a hyperlink shifted across a set of pages
 -------------------------------------------------------
 
+You can analyze how a particular hyperlink moved across a set of archived URLs
+like so:
+
 .. code-block:: python
 
     >>> urlset = storytracker.ArchivedURLSet([
@@ -269,10 +272,15 @@ Analyzing how a hyperlink shifted across a set of pages
 Creating an animation that tracks a hyperlink's movement across a set of pages
 ------------------------------------------------------------------------------
 
+You can create an animated GIF that shows how a particular hyperlink's position
+shifted across a series of pages with the following code. 
+
 .. code-block:: python
 
     >>> urlset.write_href_gif_to_directory(
+        # First give it your hyperlink
         "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
+        # Then give it the directory where you'd like the file to be saved
         "./"
     )
 

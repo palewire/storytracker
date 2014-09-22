@@ -278,11 +278,18 @@ class ArchivedURL(UnicodeMixin):
         return [h for h in self.hyperlinks if h.is_story]
     story_links = property(get_story_links)
 
-    def get_hyperlink_by_href(self, submitted_href, if_not_found=None):
+    def get_hyperlink_by_href(self, href, fails_silently=True):
+        """
+        Returns the Hyperlink object that matches the submitted href,
+        if it exists.
+        """
         for this_hyperlink in self.hyperlinks:
-            if this_hyperlink.href == submitted_href:
+            if this_hyperlink.href == href:
                 return this_hyperlink
-        return if_not_found
+        if fails_silently:
+            return if_not_found
+        else:
+            raise ValueError("href could not be found")
 
     def get_images(self, force=False):
         """
@@ -327,19 +334,9 @@ class ArchivedURL(UnicodeMixin):
     images = property(get_images)
 
     @property
-    def largest_image(self):
-        """
-        Returns the Image with the greatest area in size
-        """
-        try:
-            return sorted(self.images, key=lambda x: x.area, reverse=True)[0]
-        except IndexError:
-            return None
-
-    @property
     def largest_headline(self):
         """
-        Returns the story hyperlink with the largest area on the page
+        Returns the story hyperlink with the largest area on the page.
 
         If there is a tie, returns the one that appears first on the page.
         """
@@ -349,6 +346,16 @@ class ArchivedURL(UnicodeMixin):
                 story_hyperlinks,
                 key=lambda x: (-x.area, x.index)
             )[0]
+        except IndexError:
+            return None
+
+    @property
+    def largest_image(self):
+        """
+        Returns the Image with the greatest area in size
+        """
+        try:
+            return sorted(self.images, key=lambda x: x.area, reverse=True)[0]
         except IndexError:
             return None
 
@@ -532,6 +539,12 @@ class ArchivedURLSet(list):
     #
 
     def get_hyperlinks(self):
+        """
+        Parses all of the hyperlinks from the HTML of all the archived URLs
+        and returns a list of the distinct href hyperlinks with a series
+        of statistics attached that describe how they are
+        positioned.
+        """
         # Analyze hyperlinks for all of the URLs in the set
         [obj.analyze(force=False) for obj in self]
 
@@ -602,7 +615,8 @@ class ArchivedURLSet(list):
     @property
     def summary_statistics(self):
         """
-        Returns a dictionary of summary statistics about the whole set.
+        Returns a dictionary of summary statistics about the whole set
+        of archived URLs.
         """
         # Analyze hyperlinks for all of the URLs in the set
         [obj.analyze(force=False) for obj in self]
@@ -732,7 +746,8 @@ class ArchivedURLSet(list):
 
     def print_href_analysis(self, href):
         """
-        Outputs a human-readable 
+        Outputs a human-readable analysis of the submitted href's position
+        across the set of archived URLs.
         """
         hyperlink_dict = dict((h['href'], h) for h in self.get_hyperlinks())
         try:
@@ -780,7 +795,7 @@ class ArchivedURLSet(list):
     def write_href_gif_to_directory(self, href, path, duration=0.5):
         """
         Writes out animation of a hyperlinks on the page
-        as a JPG to the provided directory path.
+        as a GIF to the provided directory path
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")

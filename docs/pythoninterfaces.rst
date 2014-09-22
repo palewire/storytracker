@@ -87,13 +87,28 @@ An URL's archived HTML with tools for analysis.
 
     **Optional initialization options**
 
+    .. py:attribute:: gzip_archive_path
+
+        A file path leading to an archive of the URL stored in a gzipped file.
+
+    .. py:attribute:: html_archive_path
+
+        A file path leading to an archive of the URL storied in a raw HTML file.
+
     .. py:attribute:: browser_width
 
         The width of the browser that will be opened to inspect the URL's HTML
+        By default it is 1024.
 
     .. py:attribute:: browser_height
 
         The height of the browser that will be opened to inspect the URL's HTML
+        By default is 768.
+
+    .. py:attribute:: browser_driver
+
+        The name of the browser that Selenium will use to open up HTML files.
+        By default it is ``PhantomJS``.
 
     **Other attributes**
 
@@ -121,18 +136,33 @@ An URL's archived HTML with tools for analysis.
 
         A list of all the images extracts from the HTML
 
+    .. py:attribute:: largest_headline
+
+        Returns the story hyperlink with the largest area on the page. If there
+        is a tie, returns the one that appears first on the page.
+
     .. py:attribute:: largest_image
 
         The largest image extracted from the HTML
 
+    .. py:attribute:: story_links
+
+        A list of all the hyperlinks extracted from the HTML that are estimated
+        to lead to news stories.
+
+    .. py:attribute:: summary_statistics
+
+        Returns a dictionary with basic summary statistics about hyperlinks
+        and images on the page
+
     **Analysis methods**
 
-    .. py:attribute:: analyze()
+    .. py:method:: analyze()
 
         Opens the URL's HTML in a web browser and runs all of the analysis
         methods that use it.
 
-    .. py:attribute:: get_cell(x, y, cell_size=256)
+    .. py:method:: get_cell(x, y, cell_size=256)
 
         Returns the grid cell where the provided x and y coordinates
         appear on the page. Cells are sized as squares, with 256 pixels as
@@ -150,17 +180,21 @@ An URL's archived HTML with tools for analysis.
             >>> obj.get_cell(1, 513)
             'a3'
 
-    .. py:attribute:: open_browser()
+    .. py:method:: get_hyperlink_by_href(href, fails_silently=True)
+
+        Returns the Hyperlink object that matches the submitted href, if it exists.
+
+    .. py:method:: open_browser()
 
         Opens the URL's HTML in an web browser so it can be analyzed.
 
-    .. py:attribute:: close_browser()
+    .. py:method:: close_browser()
 
         Closes the web browser opened to analyze the URL's HTML
 
     **Output methods**
 
-    .. py:attribute:: write_hyperlinks_csv_to_file(file, encoding="utf-8")
+    .. py:method:: write_hyperlinks_csv_to_file(file, encoding="utf-8")
 
         Returns the provided file object with a ready-to-serve CSV list of
         all hyperlinks extracted from the HTML.
@@ -199,6 +233,32 @@ A list of :py:class:`ArchivedURL` objects.
 .. py:class:: ArchivedURLSet(list)
 
     List items added to the set must be unique :py:class:`ArchivedURL` objects.
+
+    .. py:attribute:: hyperlinks
+
+        Parses all of the hyperlinks from the HTML of all the archived URLs
+        and returns a list of the distinct href hyperlinks with a series
+        of statistics attached that describe how they are
+        positioned.
+
+    .. py:attribute:: summary_statistics
+
+        Returns a dictionary of summary statistics about the whole set
+        of archived URLs.
+
+    .. py:method:: print_href_analysis(href)
+
+        Outputs a human-readable analysis of the submitted href's position
+        across the set of archived URLs.
+
+    .. py:method:: write_href_gif_to_directory(href, path, duration=0.5)
+
+        Writes out animation of a hyperlinks on the page as a GIF to the provided directory path
+
+    .. py:method:: write_hyperlinks_csv_to_file(file, encoding="utf-8")
+
+        Returns the provided file object with a ready-to-serve CSV list of
+        all hyperlinks extracted from the HTML.
 
 Example usage:
 
