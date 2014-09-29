@@ -30,3 +30,4 @@ urlset = storytracker.ArchivedURLSet([
 ])
 
 urlset[0].write_analysis_report_to_directory("./docs/_static/example/")
+urlset.write_analysis_report_to_directory("./docs/_static/example/")

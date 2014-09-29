@@ -790,6 +790,35 @@ class ArchivedURLSet(list):
         file.seek(0)
         return file
 
+    def write_analysis_report_to_directory(self, path):
+        """
+        Create an analysis report that summarizes our outputs
+        as an HTML package.
+        """
+        # Set up the directory where we will output the data
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        output_path = os.path.join(path, "urlsetanalysis-report")
+        if os.path.exists(output_path):
+            shutil.rmtree(output_path)
+        os.mkdir(output_path)
+
+        # Write out reports for each item in the urlset
+        for url in self:
+            url.write_analysis_report_to_directory(output_path)
+
+        # Render report template
+        context = {
+            'object_list': self,
+        }
+        template = jinja.get_template('archivedurlset.html')
+        html = template.render(**context)
+
+        # Write out to file
+        file = open(os.path.join(output_path, "index.html"), "wb")
+        file.write(html)
+        file.close()
+
     #
     # Analyze individual hyperlinks
     #
