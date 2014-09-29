@@ -807,6 +807,10 @@ class ArchivedURLSet(list):
         for url in self:
             url.write_analysis_report_to_directory(output_path)
 
+        # Write out hyperlinks csv
+        hyperlinks_csv_path = os.path.join(output_path, "hyperlinks.csv")
+        self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
+
         # Render report template
         context = {
             'object_list': self,
