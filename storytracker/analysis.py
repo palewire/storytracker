@@ -404,21 +404,24 @@ class ArchivedURL(UnicodeMixin):
         os.mkdir(output_path)
 
         # Write out a copy of the HTML archive
-        html_archive_path = self.write_html_to_directory(output_path)
+        html_archive_name = "%s.html" % self.archive_filename
+        self.write_html_to_directory(output_path)
 
         # Write out hyperlinks csv
-        hyperlinks_csv_path = os.path.join(output_path, "hyperlinks.csv")
+        hyperlinks_csv_name = "hyperlinks-%s.csv" % self.archive_filename
+        hyperlinks_csv_path = os.path.join(output_path, hyperlinks_csv_name)
         self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
 
         # Write out the illo jpg
-        illo_jpg_path = self.write_illustration_to_directory(output_path)
+        self.write_illustration_to_directory(output_path)
+        illo_jpg_name = "illustration-%s.jpg" % self.archive_filename
 
         # Render report template
         context = {
             'object': self,
-            'html_archive_path': html_archive_path,
-            'hyperlinks_csv_path': hyperlinks_csv_path,
-            'illo_jpg_path': illo_jpg_path
+            'html_archive_name': html_archive_name,
+            'hyperlinks_csv_name': hyperlinks_csv_name,
+            'illo_jpg_name': illo_jpg_name
         }
         template = jinja.get_template('archivedurl.html')
         html = template.render(**context)
@@ -518,7 +521,7 @@ class ArchivedURL(UnicodeMixin):
             raise ValueError("Path must be a directory")
         img_path = os.path.join(
             path,
-            "%s.jpg" % self.archive_filename
+            "illustration-%s.jpg" % self.archive_filename
         )
         if os.path.exists(img_path):
             os.remove(img_path)

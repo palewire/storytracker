@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ object.url }} @ {{ object.timestamp }} - URL Archive Analysis - Storytracker</title>
+    <title>http://example.com @ 2014-01-01 00:00:00 - URL Archive Analysis - Storytracker</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <style type="text/css">
@@ -33,9 +33,9 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1">
                 <h1>Archived URL analysis</h1>
-                <h4>URL: {{ object.url }}</h4>
-                <h4>Timestamp: {{ object.timestamp }}</h4>
-                <h4><a target="_blank" href="./{{ html_archive_name }}">View archived HTML</a></h4>
+                <h4>URL: http://example.com</h4>
+                <h4>Timestamp: 2014-01-01 00:00:00</h4>
+                <h4><a target="_blank" href="./http!example.com!!!!@2014-01-01T00:00:00.html">View archived HTML</a></h4>
                 <hr>
             </div>
         </div>
@@ -45,19 +45,19 @@
                 <table class="table table-bordered">
                     <tr>
                         <th>Hyperlink count</th>
-                        <td>{{ object.summary_statistics.hyperlink_count }}</td>
+                        <td>1</td>
                     </tr>
                     <tr>
                         <th>Story link count</th>
-                        <td>{{ object.summary_statistics.story_link_count }}</td>
+                        <td>1</td>
                     </tr>
                     <tr>
                         <th>Image count</th>
-                        <td>{{ object.summary_statistics.image_count }}</td>
+                        <td>2</td>
                     </tr>
                     <tr>
                         <th>Download</th>
-                        <td><a href="./{{ hyperlinks_csv_name }}">CSV</a></td>
+                        <td><a href="./hyperlinks-http!example.com!!!!@2014-01-01T00:00:00.csv">CSV</a></td>
                     </tr>
                 </table>
                 <hr>
@@ -66,8 +66,8 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12 col-lg-offset-2 col-md-offset-1">
                 <h3>Illustration</h3>
-                    <a href="./{{ illo_jpg_name }}">
-                        <img width="100%" src="./{{ illo_jpg_name }}">
+                    <a href="./illustration-http!example.com!!!!@2014-01-01T00:00:00.jpg">
+                        <img width="100%" src="./illustration-http!example.com!!!!@2014-01-01T00:00:00.jpg">
                     </a>
                 <hr>
             </div>
@@ -76,4 +76,3 @@
 
 </body>
 </html>
-
