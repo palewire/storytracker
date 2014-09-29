@@ -50,11 +50,28 @@
             <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 col-lg-offset-1 col-md-offset-1">
                 <h3>Archived URLs</h3>
                 <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Timestamp</th>
+                            <th>Report</th>
+                            <th>Archived URL</th>
+                        </tr>
+                    </thead>
                     {% for obj in object_list %}
                     <tr>
+                        <td>{{ obj.url }}</td>
+                        <td>
+                                {{ obj.timestamp }}
+                        </td>
                         <td>
                             <a href="./urlanalysis-report-{{ obj.archive_filename }}/index.html">
-                                {{ obj.url }} @ {{ obj.timestamp }}
+                                URL
+                            </a>
+                        </td>
+                        <td>
+                            <a href="./urlanalysis-report-{{ obj.archive_filename }}/{{ obj.archive_filename }}.html">
+                                HTML
                             </a>
                         </td>
                     </tr>
