@@ -290,7 +290,7 @@ class ArchivedURL(UnicodeMixin):
             if this_hyperlink.href == href:
                 return this_hyperlink
         if fails_silently:
-            return if_not_found
+            return None
         else:
             raise ValueError("href could not be found")
 

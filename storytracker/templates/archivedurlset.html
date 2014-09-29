@@ -13,6 +13,26 @@
                 <hr>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 col-lg-offset-1 col-md-offset-1">
+                <h3>Analysis</h3>
+                <table class="table table-bordered">
+                    {% for key, value in object_list.summary_statistics.items()|sort %}
+                    <tr>
+                        <th>
+                            {{ key|replace("_", " ")|capitalize }}
+                        </th>
+                        <td class="right">
+                            {{ value }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <hr>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 col-lg-offset-1 col-md-offset-1">
                 <h3>Archived URLs</h3>
@@ -30,6 +50,7 @@
                 <hr>
             </div>
         </div>
+
     </div>
 </body>
 </html>
