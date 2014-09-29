@@ -811,6 +811,9 @@ class ArchivedURLSet(list):
         hyperlinks_csv_path = os.path.join(output_path, "hyperlinks.csv")
         self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
 
+        # Write out the animation gif
+        self.write_gif_to_directory(output_path)
+
         # Render report template
         context = {
             'object_list': self,
@@ -874,6 +877,52 @@ class ArchivedURLSet(list):
             prefix="| ", postfix=" |",
         )
         print table
+
+    def write_gif_to_directory(self, path, duration=0.5):
+        """
+        Writes out animation of the pages
+        as a GIF to the provided directory path
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        jpg_paths = []
+        for page in self:
+            jpg_path = page.write_illustration_to_directory(path)
+            jpg_paths.append(jpg_path)
+
+        img_list = []
+        for jpg in jpg_paths:
+            i = PILImage.open(jpg)
+            img_list.append(i)
+
+        # Resize them so they fit together
+        # and then thumbnail them down
+        min_width = min([i.size[0] for i in img_list])
+        min_height = min([i.size[1] for i in img_list])
+        max_width = max([i.size[0] for i in img_list])
+        max_height = max([i.size[1] for i in img_list])
+        trim_list = []
+        for x, i in enumerate(img_list):
+            if i.size != (min_width, min_height):
+                i = ImageOps.fit(i, (min_width, min_height))
+            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
+            trim_list.append(i)
+
+        # Create the GIF animation
+        gif_path = os.path.join(path, "urlset.gif")
+        if os.path.exists(gif_path):
+            os.remove(gif_path)
+        images2gif.writeGif(
+            gif_path,
+            trim_list,
+            duration=duration,
+        )
+
+        # Delete all the jpgs
+        for jpg in jpg_paths:
+            os.remove(jpg)
+
+        return gif_path
 
     def write_href_gif_to_directory(self, href, path, duration=0.5):
         """
