@@ -35,7 +35,22 @@
                 <h1>Archived URL analysis</h1>
                 <h4>URL: {{ object.url }}</h4>
                 <h4>Timestamp: {{ object.timestamp }}</h4>
-                <h4><a target="_blank" href="./{{ html_archive_name }}">View archived HTML</a></h4>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12 col-lg-offset-1 col-md-offset-1">
+                <h3>Downloads</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Archived URL</th>
+                        <td><a target="_blank" href="./{{ html_archive_name }}">HTML</a></td>
+                    </tr>
+                    <tr>
+                        <th>Extracted hyperlinks</th>
+                        <td><a href="./{{ hyperlinks_csv_name }}">CSV</a></td>
+                    </tr>
+                </table>
                 <hr>
             </div>
         </div>
@@ -62,10 +77,6 @@
                                 {{ object.largest_headline.string }}
                             </a>
                         </td>
-                    </tr>
-                    <tr>
-                        <th>Download</th>
-                        <td><a href="./{{ hyperlinks_csv_name }}">CSV</a></td>
                     </tr>
                 </table>
                 <hr>
