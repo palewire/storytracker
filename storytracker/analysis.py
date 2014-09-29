@@ -56,6 +56,7 @@ class ArchivedURL(UnicodeMixin):
         self._hyperlinks = []
         self._images = []
         self._summary_statistics = {}
+        self._screenshot = None
         # Configuration for our web browser
         self.browser = None
         self.browser_width = browser_width
@@ -129,7 +130,7 @@ class ArchivedURL(UnicodeMixin):
             self.write_html_to_directory(tmpdir)
 
         # Open the file
-        socket.setdefaulttimeout(5)
+        socket.setdefaulttimeout(10)
         try:
             logger.debug("Retrieving %s in browser" % self.html_archive_path)
             self.browser.get("file://%s" % self.html_archive_path)
@@ -570,12 +571,16 @@ class ArchivedURL(UnicodeMixin):
             os.remove(overlay_path)
 
         # Take a screenshot
-        self.open_browser()
-        self.browser.save_screenshot(sshot_path)
-        self.close_browser()
+        import base64
+        if not self._screenshot:
+            if not self.browser:
+                self.open_browser()
+            self._screenshot = BytesIO(base64.b64decode(
+                self.browser.get_screenshot_as_base64())
+            )
 
         # Reopen it and paste it on a white background
-        sshot = PILImage.open(sshot_path)
+        sshot = PILImage.open(self._screenshot)
         sshot_width, sshot_height = sshot.size
         im = PILImage.new(
             "RGBA",
@@ -611,7 +616,7 @@ class ArchivedURL(UnicodeMixin):
                 )
                 draw.rectangle(stroke, fill=None, outline="red")
         im.save(overlay_path, 'PNG')
-        os.remove(sshot_path)
+        self._screenshot.seek(0)
         return overlay_path
 
 
