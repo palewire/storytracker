@@ -403,6 +403,14 @@ class ArchivedURL(UnicodeMixin):
             shutil.rmtree(output_path)
         os.mkdir(output_path)
 
+        # Write out the overlay png
+        self.write_overlay_to_directory(output_path)
+        overlay_png_name = "overlay-%s.png" % self.archive_filename
+
+        # Write out the illo jpg
+        self.write_illustration_to_directory(output_path)
+        illo_jpg_name = "illustration-%s.jpg" % self.archive_filename
+
         # Write out a copy of the HTML archive
         html_archive_name = "%s.html" % self.archive_filename
         self.write_html_to_directory(output_path)
@@ -412,16 +420,13 @@ class ArchivedURL(UnicodeMixin):
         hyperlinks_csv_path = os.path.join(output_path, hyperlinks_csv_name)
         self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
 
-        # Write out the illo jpg
-        self.write_illustration_to_directory(output_path)
-        illo_jpg_name = "illustration-%s.jpg" % self.archive_filename
-
         # Render report template
         context = {
             'object': self,
             'html_archive_name': html_archive_name,
             'hyperlinks_csv_name': hyperlinks_csv_name,
-            'illo_jpg_name': illo_jpg_name
+            'overlay_png_name': overlay_png_name,
+            'illo_jpg_name': illo_jpg_name,
         }
         template = jinja.get_template('archivedurl.html')
         html = template.render(**context)
@@ -541,6 +546,73 @@ class ArchivedURL(UnicodeMixin):
             draw.rectangle(i.bounding_box, fill="red")
         im.save(img_path, 'JPEG')
         return img_path
+
+    def write_overlay_to_directory(self, path, stroke_width=5,
+        stroke_padding=10):
+        """
+        Writes out a screenshot of the page with overlays that emphasize
+        the location of hyperlinks on the page as a JPG to the provided
+        directory path.
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        sshot_path = os.path.join(
+            path,
+            "screenshot-%s.png" % self.archive_filename
+        )
+        if os.path.exists(sshot_path):
+            os.remove(sshot_path)
+        overlay_path = os.path.join(
+            path,
+            "overlay-%s.png" % self.archive_filename
+        )
+        if os.path.exists(overlay_path):
+            os.remove(overlay_path)
+
+        # Take a screenshot
+        self.open_browser()
+        self.browser.save_screenshot(sshot_path)
+        self.close_browser()
+
+        # Reopen it and paste it on a white background
+        sshot = PILImage.open(sshot_path)
+        sshot_width, sshot_height = sshot.size
+        im = PILImage.new(
+            "RGBA",
+            (sshot_width, sshot_height),
+            (255, 255, 255, 255)
+        )
+        im.paste(sshot, sshot)
+
+        # Draw borders around the links and images
+        draw = PILImageDraw.Draw(im)
+        for a in self.hyperlinks:
+            if a.is_story:
+                fill = "purple"
+            else:
+                fill = "blue"
+            box = a.bounding_box
+            for i in range(stroke_padding, (stroke_padding+stroke_width)+1):
+                stroke = (
+                    box[0][0] + (stroke_width - i),
+                    box[0][1] + (stroke_width - i),
+                    box[1][0] - (stroke_width - i),
+                    box[1][1] - (stroke_width - i)
+                )
+                draw.rectangle(stroke, fill=None, outline=fill)
+        for i in self.images:
+            box = i.bounding_box
+            for i in range(1, stroke_width+1):
+                stroke = (
+                    box[0][0] + (stroke_width - i),
+                    box[0][1] + (stroke_width - i),
+                    box[1][0] - (stroke_width - i),
+                    box[1][1] - (stroke_width - i)
+                )
+                draw.rectangle(stroke, fill=None, outline="red")
+        im.save(overlay_path, 'PNG')
+        #os.remove(sshot_path)
+        return overlay_path
 
 
 class ArchivedURLSet(list):
