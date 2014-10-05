@@ -589,8 +589,8 @@ class ArchivedURL(UnicodeMixin):
         )
         im.paste(sshot, sshot)
 
-        # Draw borders around the links and images
-        draw = PILImageDraw.Draw(im)
+        # Cut out the boxes we'll want to highlight in the final image
+        box_list = []
         for a in self.hyperlinks:
             if a.is_story:
                 fill = "purple"
@@ -604,7 +604,12 @@ class ArchivedURL(UnicodeMixin):
                     box[1][0] - (stroke_width - i),
                     box[1][1] - (stroke_width - i)
                 )
-                draw.rectangle(stroke, fill=None, outline=fill)
+                box_list.append(dict(
+                    region = im.crop(stroke),
+                    stroke=stroke,
+                    fill=None,
+                    outline=fill
+                ))
         for i in self.images:
             box = i.bounding_box
             for i in range(1, stroke_width+1):
@@ -614,7 +619,33 @@ class ArchivedURL(UnicodeMixin):
                     box[1][0] - (stroke_width - i),
                     box[1][1] - (stroke_width - i)
                 )
-                draw.rectangle(stroke, fill=None, outline="red")
+                box_list.append(dict(
+                    region = im.crop(stroke),
+                    stroke=stroke,
+                    fill=None,
+                    outline="red"
+                ))
+
+        # Draw a transparent overlay and put it on the page
+        overlay = PILImage.new(
+            "RGBA",
+            (sshot_width, sshot_height),
+            (255, 255, 255, 150)
+        )
+        
+        im = PILImage.composite(overlay, im, overlay)
+
+        # Now paste the story boxes back on top of the overlay
+        draw = PILImageDraw.Draw(im)
+        for box in box_list:
+            im.paste(box['region'], box['stroke'])
+            draw.rectangle(
+                box['stroke'],
+                fill=box['fill'],
+                outline=box['outline']
+            )
+
+        # Save the image and pass out the path
         im.save(overlay_path, 'PNG')
         self._screenshot.seek(0)
         return overlay_path
