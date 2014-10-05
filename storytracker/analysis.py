@@ -3,6 +3,7 @@ import six
 import math
 import copy
 import gzip
+import base64
 import shutil
 import socket
 import logging
@@ -571,7 +572,6 @@ class ArchivedURL(UnicodeMixin):
             os.remove(overlay_path)
 
         # Take a screenshot
-        import base64
         if not self._screenshot:
             if not self.browser:
                 self.open_browser()
