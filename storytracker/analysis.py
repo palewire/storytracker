@@ -138,6 +138,7 @@ class ArchivedURL(UnicodeMixin):
         except socket.timeout:
             logger.debug("Browser timeout")
             self.browser.execute_script("window.stop()")
+        self.browser.execute_script("document.body.style.backgroundColor = 'white';")
 
     def close_browser(self):
         """
@@ -549,8 +550,8 @@ class ArchivedURL(UnicodeMixin):
         im.save(img_path, 'JPEG')
         return img_path
 
-    def write_overlay_to_directory(self, path, stroke_width=5,
-        stroke_padding=10):
+    def write_overlay_to_directory(self, path, stroke_width=2,
+        stroke_padding=2):
         """
         Writes out a screenshot of the page with overlays that emphasize
         the location of hyperlinks on the page as a JPG to the provided
@@ -575,8 +576,10 @@ class ArchivedURL(UnicodeMixin):
         if not self._screenshot:
             if not self.browser:
                 self.open_browser()
-            self._screenshot = BytesIO(base64.b64decode(
-                self.browser.get_screenshot_as_base64())
+            self._screenshot = BytesIO(
+                base64.b64decode(
+                    self.browser.get_screenshot_as_base64()
+                )
             )
 
         # Reopen it and paste it on a white background
@@ -604,6 +607,7 @@ class ArchivedURL(UnicodeMixin):
                     box[1][0] - (stroke_width - i),
                     box[1][1] - (stroke_width - i)
                 )
+                stroke = map(int, stroke)
                 box_list.append(dict(
                     region = im.crop(stroke),
                     stroke=stroke,
@@ -619,6 +623,7 @@ class ArchivedURL(UnicodeMixin):
                     box[1][0] - (stroke_width - i),
                     box[1][1] - (stroke_width - i)
                 )
+                stroke = map(int, stroke)
                 box_list.append(dict(
                     region = im.crop(stroke),
                     stroke=stroke,
@@ -630,15 +635,14 @@ class ArchivedURL(UnicodeMixin):
         overlay = PILImage.new(
             "RGBA",
             (sshot_width, sshot_height),
-            (255, 255, 255, 150)
+            (0, 0, 0, 125)
         )
-        
         im = PILImage.composite(overlay, im, overlay)
 
         # Now paste the story boxes back on top of the overlay
         draw = PILImageDraw.Draw(im)
         for box in box_list:
-            im.paste(box['region'], box['stroke'])
+            im.paste(box['region'], (box['stroke'][0], box['stroke'][1]))
             draw.rectangle(
                 box['stroke'],
                 fill=box['fill'],

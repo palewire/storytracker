@@ -27,6 +27,13 @@ In Apple's OSX you can use Homebrew to install it like so:
 
     $ brew update && brew install phantomjs
 
+
+Archiving URLs
+--------------
+
+From the command line
+~~~~~~~~~~~~~~~~~~~~~
+
 Once installed, you can start using storytracker's command-line tools immediately, like :py:func:`storytracker.archive`.
 
 .. code-block:: bash
@@ -61,8 +68,8 @@ Run that and you'll see the file right away in your current directory.
     $ ls | grep .html
 
 
-Scheduling archives with Python and cron
-----------------------------------------
+With Python
+~~~~~~~~~~~
 
 UNIX-like systems typically come equipped with a built in method for scheduling tasks known as `cron <http://en.wikipedia.org/wiki/Cron>`_.
 To utilize it with storytracker, one approach is to write a Python script that retrieves a series of sites each time it is run.
@@ -97,6 +104,9 @@ To utilize it with storytracker, one approach is to write a Python script that r
                 # And just move along and keep rolling if it fails.
                 print e
 
+Scheduling with cron
+~~~~~~~~~~~~~~~~~~~~
+
 Then edit the cron file from the command line.
 
 .. code-block:: bash
@@ -112,8 +122,11 @@ configuration, you should begin the line with a path leading to that particular 
 
     0 * * * *  /usr/bin/python /path/to/my/script/cron.py
 
-Extracting hyperlinks from archived files
------------------------------------------
+Analyzing archived URLs
+-----------------------
+
+Extracting hyperlinks
+~~~~~~~~~~~~~~~~~~~~~
 
 The cron task above is regularly saving archived files to the ``OUTPUT_DIR``. Those files
 can be accessed for analysis using tools like :py:func:`storytracker.open_archive_filepath` and
@@ -166,8 +179,104 @@ Which also accepts a directory.
 
     $ storytracker-links2csv /path/to/my/directory/
 
-Analyzing data from the Wayback Machine
----------------------------------------
+Tracking hyperlinks across a set of URLs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can analyze how a particular hyperlink moved across a set of archived URLs
+like so:
+
+.. code-block:: python
+
+    >>> urlset = storytracker.ArchivedURLSet([
+    >>>     "http!www.nytimes.com!!!!@2014-08-25T01:15:02.464296+00:00.html"
+    >>>     "http!www.nytimes.com!!!!@2014-08-25T01:00:02.455702+00:00.html"
+    >>> ])
+    >>> urlset.sort()
+    >>> urlset.print_href_analysis("http://www.nytimes.com/2014/08/24/world/europe/russian-convoy-ukraine.html")
+    http://www.nytimes.com/2014/08/24/world/europe/russian-convoy-ukraine.html
+
+    | Statistic            | Value                            |
+    -----------------------------------------------------------
+    | Archived URL total   | 2                                |
+    | Observations of href | 2                                |
+    | First timestamp      | 2014-08-25 01:00:02.455702+00:00 |
+    | Last timestamp       | 2014-08-25 01:15:02.464296+00:00 |
+    | Timedelta            | 0:15:00.008594                   |
+    | Maximum y position   | 2568                             |
+    | Minimum y position   | 2546                             |
+    | Range of y positions | 22.0                             |
+    | Average y position   | 2557.0                           |
+    | Median y position    | 2557.0                           |
+
+    | Headline                                                           |
+    ----------------------------------------------------------------------
+    | Germany Pledges Aid for Ukraine as Russia Hails a Returning Convoy |
+
+
+Visualizing archived URLs
+-------------------------
+
+Highlighted overlay
+~~~~~~~~~~~~~~~~~~~
+
+You can output a static image that pops out headlines, stories and images on
+the page using the ``ArchivedURL.write_overlay_to_directory`` method available on
+all :py:func:`ArchivedURL` objects.
+
+.. code-block:: python
+
+    obj = storytracker.archive("http://www.cnn.com")
+    obj.write_overlay_to_directory("/home/ben/Desktop")
+
+The resulting image is sized at the same width and height of the real page.
+Images have a red stroke around them. Hyperlinks the system thinks link 
+to stories have a purple border. The rest of the links go blue.
+
+.. image:: _static/example/overlay.png
+    :width: 600px
+
+
+Abstract illustration
+~~~~~~~~~~~~~~~~~~~~~
+
+You can output an abstract image visualizing where headlines, stories and images are on
+the page using the ``ArchivedURL.write_illustration_to_directory`` method available on
+all :py:func:`ArchivedURL` objects. The following code will write a new image of the CNN homepage to my desktop.
+
+.. code-block:: python
+
+    obj = storytracker.archive("http://www.cnn.com")
+    obj.write_illustration_to_directory("/home/ben/Desktop")
+
+The resulting image is sized at the same width and height of the real page,
+with images colored red. Hyperlinks are colored in too. If our system
+thinks the link leads to a news story, it's filled in purple. Otherwise it's colored blue.
+
+.. image:: _static/example/illo.jpg
+    :width: 600px
+ 
+
+Animation that tracks hyperlink's movement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can create an animated GIF that shows how a particular hyperlink's position
+shifted across a series of pages with the following code. 
+
+.. code-block:: python
+
+    >>> urlset.write_href_gif_to_directory(
+    >>>    # First give it your hyperlink
+    >>>    "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
+    >>>    # Then give it the directory where you'd like the file to be saved
+    >>>    "./"
+    >>> )
+
+.. image:: _static/example/href.gif
+    :width: 600px
+
+
+Ingesting archived URLs from the Wayback Machine
+------------------------------------------------
 
 A page saved by the Internet Archive's excellent Wayback Machine can be integrated
 by passing its URL to :py:func:`storytracker.open_wayback_machine_url`.
@@ -212,77 +321,3 @@ So, if for instance you wanted to see all the images on the page you could do th
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
     http://a388.g.akamai.net/f/388/21/1d/www.cnn.com/images/hub2000/1.gif
-
-
-Creating an illustration that visualizes stories on the page
-------------------------------------------------------------
-
-You can output a static image visualizing where headlines, stories and images are on
-the page using the ``ArchivedURL.write_illustration_to_directory`` method available on
-all :py:func:`ArchivedURL` objects. The following code will write a new image of the CNN homepage to my desktop.
-
-.. code-block:: python
-
-    obj = storytracker.archive("http://www.cnn.com")
-    obj.write_illustration_to_directory("/home/ben/Desktop")
-
-The resulting image is sized at the same width and height of the real page,
-with images colored red. Hyperlinks are colored in too. If our system
-thinks the link leads to a news story, it's filled in purple. Otherwise it's colored blue.
-
-Here's a slimmed down version of the one I just made. Click on it to see it full sized.
-
-.. image:: _static/http!www.cnn.com!!!!@2014-08-25T02:28:44.549851+00:00.jpg
-    :width: 400px
-
-Analyzing how a hyperlink shifted across a set of pages
--------------------------------------------------------
-
-You can analyze how a particular hyperlink moved across a set of archived URLs
-like so:
-
-.. code-block:: python
-
-    >>> urlset = storytracker.ArchivedURLSet([
-    >>>     "http!www.nytimes.com!!!!@2014-08-25T01:15:02.464296+00:00.html"
-    >>>     "http!www.nytimes.com!!!!@2014-08-25T01:00:02.455702+00:00.html"
-    >>> ])
-    >>> urlset.sort()
-    >>> urlset.print_href_analysis("http://www.nytimes.com/2014/08/24/world/europe/russian-convoy-ukraine.html")
-    http://www.nytimes.com/2014/08/24/world/europe/russian-convoy-ukraine.html
-
-    | Statistic            | Value                            |
-    -----------------------------------------------------------
-    | Archived URL total   | 2                                |
-    | Observations of href | 2                                |
-    | First timestamp      | 2014-08-25 01:00:02.455702+00:00 |
-    | Last timestamp       | 2014-08-25 01:15:02.464296+00:00 |
-    | Timedelta            | 0:15:00.008594                   |
-    | Maximum y position   | 2568                             |
-    | Minimum y position   | 2546                             |
-    | Range of y positions | 22.0                             |
-    | Average y position   | 2557.0                           |
-    | Median y position    | 2557.0                           |
-
-    | Headline                                                           |
-    ----------------------------------------------------------------------
-    | Germany Pledges Aid for Ukraine as Russia Hails a Returning Convoy |
-
-
-Creating an animation that tracks a hyperlink's movement across a set of pages
-------------------------------------------------------------------------------
-
-You can create an animated GIF that shows how a particular hyperlink's position
-shifted across a series of pages with the following code. 
-
-.. code-block:: python
-
-    >>> urlset.write_href_gif_to_directory(
-    >>>    # First give it your hyperlink
-    >>>    "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
-    >>>    # Then give it the directory where you'd like the file to be saved
-    >>>    "./"
-    >>> )
-
-.. image:: _static/href.gif
-    :width: 400px
