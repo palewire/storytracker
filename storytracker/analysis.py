@@ -13,10 +13,8 @@ import images2gif
 import storytracker
 import storysniffer
 from six import BytesIO
-from jinja2 import Template
 from datetime import timedelta
 from selenium import webdriver
-import selenium.webdriver.support.ui as ui
 from jinja2 import Environment, PackageLoader
 from .toolbox import UnicodeMixin, indent
 from PIL import ImageOps
@@ -138,7 +136,6 @@ class ArchivedURL(UnicodeMixin):
         except socket.timeout:
             logger.debug("Browser timeout")
             self.browser.execute_script("window.stop()")
-        self.browser.execute_script("document.body.style.backgroundColor = 'white';")
 
     def close_browser(self):
         """
@@ -722,10 +719,10 @@ class ArchivedURLSet(list):
             # Find all the times it occurs
             url_hits, a_hits = [], []
             for url in self:
-                a = url.get_hyperlink_by_href(href)
-                if a:
+                this_a = url.get_hyperlink_by_href(href)
+                if this_a:
                     url_hits.append(url)
-                    a_hits.append(a)
+                    a_hits.append(this_a)
 
             # Some basic stats
             archived_url_count = len(self)
@@ -1005,8 +1002,8 @@ class ArchivedURLSet(list):
 
         img_list = []
         for jpg in jpg_paths:
-            i = PILImage.open(jpg)
-            img_list.append(i)
+            this_img = PILImage.open(jpg)
+            img_list.append(this_img)
 
         # Resize them so they fit together
         # and then thumbnail them down
@@ -1051,8 +1048,7 @@ class ArchivedURLSet(list):
 
         img_list = []
         for jpg in jpg_paths:
-            i = PILImage.open(jpg)
-            img_list.append(i)
+            img_list.append(PILImage.open(jpg))
 
         # Resize them so they fit together
         # and then thumbnail them down
@@ -1116,8 +1112,7 @@ class ArchivedURLSet(list):
 
         img_list = []
         for jpg in jpg_paths:
-            i = PILImage.open(jpg)
-            img_list.append(i)
+            img_list.append(PILImage.open(jpg))
 
         # Resize them so they fit together
         # and then thumbnail them down
