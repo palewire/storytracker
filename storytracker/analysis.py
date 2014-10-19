@@ -1067,13 +1067,23 @@ class ArchivedURLSet(list):
     def write_overlay_animation_to_directory(self, path, duration=1):
         """
         Writes out animation of the pages
-        as a GIF to the provided directory path
+        as a GIF to the provided directory.
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
+        gif_path = os.path.join(path, "urlset-overlay.gif")
+        self.write_overlay_animation_to_path(gif_path, duration=duration)
+        return gif_path
+
+    def write_overlay_animation_to_path(self, path, duration=1):
+        """
+        Writes out animation of the pages
+        as a GIF to the provided path.
+        """
         jpg_paths = []
+        tmpdir = tempfile.mkdtemp()
         for page in self:
-            jpg_path = page.write_overlay_to_directory(path)
+            jpg_path = page.write_overlay_to_directory(tmpdir)
             jpg_paths.append(jpg_path)
 
         img_list = []
@@ -1095,31 +1105,32 @@ class ArchivedURLSet(list):
             trim_list.append(i)
 
         # Create the GIF animation
-        gif_path = os.path.join(path, "urlset-overlay.gif")
-        if os.path.exists(gif_path):
-            os.remove(gif_path)
-        images2gif.writeGif(
-            gif_path,
-            trim_list,
-            duration=duration,
-        )
+        if os.path.exists(path):
+            os.remove(path)
+        images2gif.writeGif(path, trim_list, duration=duration)
 
         # Delete all the jpgs
         for jpg in jpg_paths:
             os.remove(jpg)
 
-        return gif_path
-
     def write_illustration_animation_to_directory(self, path, duration=1):
         """
-        Writes out animation of the pages
-        as a GIF to the provided directory path
+        Writes out animation of the pages as a GIF to the provided directory.
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
+        gif_path = os.path.join(path, "urlset-illustration.gif")
+        self.write_illustration_animation_to_path(gif_path, duration=duration)
+        return gif_path
+
+    def write_illustration_animation_to_path(self, path, duration=1):
+        """
+        Writes out animation of the pages as a GIF to the provided path.
+        """
         jpg_paths = []
+        tmpdir = tempfile.mkdtemp()
         for page in self:
-            jpg_path = page.write_illustration_to_directory(path)
+            jpg_path = page.write_illustration_to_directory(tmpdir)
             jpg_paths.append(jpg_path)
 
         img_list = []
@@ -1140,32 +1151,35 @@ class ArchivedURLSet(list):
             trim_list.append(i)
 
         # Create the GIF animation
-        gif_path = os.path.join(path, "urlset-illustration.gif")
-        if os.path.exists(gif_path):
-            os.remove(gif_path)
-        images2gif.writeGif(
-            gif_path,
-            trim_list,
-            duration=duration,
-        )
+        if os.path.exists(path):
+            os.remove(path)
+        images2gif.writeGif(path, trim_list, duration=duration)
 
         # Delete all the jpgs
         for jpg in jpg_paths:
             os.remove(jpg)
 
-        return gif_path
-
     def write_href_gif_to_directory(self, href, path, duration=1):
         """
         Writes out animation of a hyperlinks on the page
-        as a GIF to the provided directory path
+        as a GIF to the provided directory.
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
+        gif_path = os.path.join(path, "urlset-href-illustration.gif")
+        self.write_href_gif_to_path(href, gif_path, duration=duration)
+        return gif_path
+
+    def write_href_gif_to_path(self, href, path, duration=1):
+        """
+        Writes out animation of a hyperlinks on the page
+        as a GIF to the provided path.
+        """
         jpg_paths = []
+        tmpdir = tempfile.mkdtemp()
         for page in self:
             jpg_path = os.path.join(
-                path,
+                tmpdir,
                 "%s.jpg" % page.archive_filename
             )
             if os.path.exists(jpg_path):
@@ -1204,20 +1218,13 @@ class ArchivedURLSet(list):
             trim_list.append(i)
 
         # Create the GIF animation
-        gif_path = os.path.join(path, "href.gif")
-        if os.path.exists(gif_path):
-            os.remove(gif_path)
-        images2gif.writeGif(
-            gif_path,
-            trim_list,
-            duration=duration,
-        )
+        if os.path.exists(path):
+            os.remove(path)
+        images2gif.writeGif(path, trim_list, duration=duration)
 
         # Delete all the jpgs
         for jpg in jpg_paths:
             os.remove(jpg)
-
-        return gif_path
 
 
 class Hyperlink(UnicodeMixin):
