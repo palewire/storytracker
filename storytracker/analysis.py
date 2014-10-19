@@ -551,7 +551,7 @@ class ArchivedURL(UnicodeMixin):
     def write_illustration_to_directory(self, path):
         """
         Writes out a visualization of the hyperlinks and images on the page
-        as a JPG to the provided directory path.
+        as a JPG to the provided directory.
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
@@ -559,8 +559,16 @@ class ArchivedURL(UnicodeMixin):
             path,
             "illustration-%s.jpg" % self.archive_filename
         )
-        if os.path.exists(img_path):
-            os.remove(img_path)
+        self.write_illustration_to_path(img_path)
+        return img_path
+
+    def write_illustration_to_path(self, path):
+        """
+        Writes out a visualization of the hyperlinks and images on the page
+        as a JPG to the provided path.
+        """
+        if os.path.exists(path):
+            os.remove(path)
         im = PILImage.new(
             "RGBA",
             (self.width, self.height),
@@ -575,8 +583,7 @@ class ArchivedURL(UnicodeMixin):
             draw.rectangle(a.bounding_box, fill=fill)
         for i in self.images:
             draw.rectangle(i.bounding_box, fill="red")
-        im.save(img_path, 'JPEG')
-        return img_path
+        im.save(path, 'JPEG')
 
     def write_overlay_to_directory(
         self,
@@ -587,7 +594,7 @@ class ArchivedURL(UnicodeMixin):
         """
         Writes out a screenshot of the page with overlays that emphasize
         the location of hyperlinks on the page as a JPG to the provided
-        directory path.
+        directory.
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
@@ -601,8 +608,25 @@ class ArchivedURL(UnicodeMixin):
             path,
             "overlay-%s.png" % self.archive_filename
         )
-        if os.path.exists(overlay_path):
-            os.remove(overlay_path)
+        self.write_overlay_to_path(
+            overlay_path,
+            stroke_width=stroke_width,
+            stroke_padding=stroke_padding
+        )
+        return overlay_path
+
+    def write_overlay_to_path(
+        self,
+        path,
+        stroke_width=4,
+        stroke_padding=2
+    ):
+        """
+        Writes out a screenshot of the page with overlays that emphasize
+        the location of hyperlinks on the page as a JPG to the provided path.
+        """
+        if os.path.exists(path):
+            os.remove(path)
 
         # Take a screenshot
         if not self._screenshot:
@@ -692,9 +716,8 @@ class ArchivedURL(UnicodeMixin):
                 )
 
         # Save the image and pass out the path
-        im.save(overlay_path, 'PNG')
+        im.save(path, 'PNG')
         self._screenshot.seek(0)
-        return overlay_path
 
 
 class ArchivedURLSet(list):
