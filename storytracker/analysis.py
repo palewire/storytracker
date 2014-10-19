@@ -500,6 +500,13 @@ class ArchivedURL(UnicodeMixin):
         f = open(path, "wb")
         self.write_hyperlinks_csv_to_file(f)
 
+    def write_gzip_to_file(self, file):
+        """
+        Writes gzipped HTML data to provided file object.
+        """
+        with gzip.GzipFile(fileobj=file, mode="wb") as f:
+            f.write(self.html.encode("utf-8"))
+
     def write_gzip_to_directory(self, path):
         """
         Writes gzipped HTML data to a file in the provided directory path
@@ -511,9 +518,15 @@ class ArchivedURL(UnicodeMixin):
             "%s.gz" % self.archive_filename
         )
         fileobj = open(self.gzip_archive_path, 'wb')
-        with gzip.GzipFile(fileobj=fileobj, mode="wb") as f:
-            f.write(self.html.encode("utf-8"))
+        self.write_gzip_to_file(fileobj)
         return self.gzip_archive_path
+
+    def write_gzip_to_path(self, path):
+        """
+        Writes gzipped HTML data to the provided path.
+        """
+        fileobj = open(path, 'wb')
+        self.write_gzip_to_file(fileobj)
 
     def write_html_to_directory(self, path):
         """
@@ -525,9 +538,15 @@ class ArchivedURL(UnicodeMixin):
             path,
             "%s.html" % self.archive_filename
         )
-        with open(self.html_archive_path, 'wb') as f:
-            f.write(self.html.encode("utf-8"))
+        self.write_html_to_path(self.html_archive_path)
         return self.html_archive_path
+
+    def write_html_to_path(self, path):
+        """
+        Writes HTML data to the provided path.
+        """
+        with open(path, 'wb') as f:
+            f.write(self.html.encode("utf-8"))
 
     def write_illustration_to_directory(self, path):
         """
