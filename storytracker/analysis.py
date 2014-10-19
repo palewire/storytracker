@@ -422,7 +422,7 @@ class ArchivedURL(UnicodeMixin):
         # Write out hyperlinks csv
         hyperlinks_csv_name = "hyperlinks-%s.csv" % self.archive_filename
         hyperlinks_csv_path = os.path.join(output_path, hyperlinks_csv_name)
-        self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
+        self.write_hyperlinks_csv_to_path(hyperlinks_csv_path)
 
         # Render report template
         context = {
@@ -491,6 +491,14 @@ class ArchivedURL(UnicodeMixin):
         # Reboot the file and pass it back out
         file.seek(0)
         return file
+
+    def write_hyperlinks_csv_to_path(self, path):
+        """
+        Writes out a CSV of the hyperlinks extracted from the page to the
+        provided file path.
+        """
+        f = open(path, "wb")
+        self.write_hyperlinks_csv_to_file(f)
 
     def write_gzip_to_directory(self, path):
         """
@@ -917,6 +925,14 @@ class ArchivedURLSet(list):
         file.seek(0)
         return file
 
+    def write_hyperlinks_csv_to_path(self, path):
+        """
+        Writes out a CSV of the hyperlinks extracted from the page to the
+        provided file path.
+        """
+        f = open(path, "wb")
+        self.write_hyperlinks_csv_to_file(f)
+
     def write_analysis_report_to_directory(self, path):
         """
         Create an analysis report that summarizes our outputs
@@ -940,7 +956,7 @@ class ArchivedURLSet(list):
 
         # Write out hyperlinks csv
         hyperlinks_csv_path = os.path.join(output_path, "hyperlinks.csv")
-        self.write_hyperlinks_csv_to_file(open(hyperlinks_csv_path, "wb"))
+        self.write_hyperlinks_csv_to_path(hyperlinks_csv_path)
 
         # Render report template
         context = {
