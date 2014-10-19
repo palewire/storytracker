@@ -40,9 +40,12 @@ class ArchivedURL(UnicodeMixin):
     def __init__(
         self,
         url, timestamp, html,
-        html_archive_path=None, gzip_archive_path=None,
-        browser_width=1024, browser_height=768,
-        browser_driver="PhantomJS"
+        html_archive_path=None,
+        gzip_archive_path=None,
+        browser_width=1366,
+        browser_height=768,
+        browser_driver="PhantomJS",
+        browser_timeout=15,
     ):
         self.url = url
         self.timestamp = timestamp
@@ -61,6 +64,7 @@ class ArchivedURL(UnicodeMixin):
         self.browser_width = browser_width
         self.browser_height = browser_height
         self.browser_driver = browser_driver
+        self.browser_timeout = browser_timeout
 
     def __eq__(self, other):
         """
@@ -129,7 +133,7 @@ class ArchivedURL(UnicodeMixin):
             self.write_html_to_directory(tmpdir)
 
         # Open the file
-        socket.setdefaulttimeout(10)
+        socket.setdefaulttimeout(self.browser_timeout)
         try:
             logger.debug("Retrieving %s in browser" % self.html_archive_path)
             self.browser.get("file://%s" % self.html_archive_path)
@@ -547,8 +551,12 @@ class ArchivedURL(UnicodeMixin):
         im.save(img_path, 'JPEG')
         return img_path
 
-    def write_overlay_to_directory(self, path, stroke_width=2,
-        stroke_padding=2):
+    def write_overlay_to_directory(
+        self,
+        path,
+        stroke_width=4,
+        stroke_padding=2
+    ):
         """
         Writes out a screenshot of the page with overlays that emphasize
         the location of hyperlinks on the page as a JPG to the provided
@@ -597,36 +605,36 @@ class ArchivedURL(UnicodeMixin):
             else:
                 fill = "blue"
             box = a.bounding_box
-            for i in range(stroke_padding, (stroke_padding+stroke_width)+1):
-                stroke = (
-                    box[0][0] + (stroke_width - i),
-                    box[0][1] + (stroke_width - i),
-                    box[1][0] - (stroke_width - i),
-                    box[1][1] - (stroke_width - i)
-                )
-                stroke = map(int, stroke)
-                box_list.append(dict(
+            stroke = (
+                box[0][0] - stroke_padding,
+                box[0][1] - stroke_padding,
+                box[1][0] + stroke_padding,
+                box[1][1] + stroke_padding
+            )
+            stroke = map(int, stroke)
+            box_list.append(
+                dict(
                     region = im.crop(stroke),
                     stroke=stroke,
                     fill=None,
                     outline=fill
-                ))
+                )
+            )
         for i in self.images:
             box = i.bounding_box
-            for i in range(1, stroke_width+1):
-                stroke = (
-                    box[0][0] + (stroke_width - i),
-                    box[0][1] + (stroke_width - i),
-                    box[1][0] - (stroke_width - i),
-                    box[1][1] - (stroke_width - i)
-                )
-                stroke = map(int, stroke)
-                box_list.append(dict(
-                    region = im.crop(stroke),
-                    stroke=stroke,
-                    fill=None,
-                    outline="red"
-                ))
+            stroke = (
+                box[0][0],
+                box[0][1],
+                box[1][0],
+                box[1][1]
+            )
+            stroke = map(int, stroke)
+            box_list.append(dict(
+                region = im.crop(stroke),
+                stroke=stroke,
+                fill=None,
+                outline="red"
+            ))
 
         # Draw a transparent overlay and put it on the page
         overlay = PILImage.new(
@@ -639,12 +647,22 @@ class ArchivedURL(UnicodeMixin):
         # Now paste the story boxes back on top of the overlay
         draw = PILImageDraw.Draw(im)
         for box in box_list:
-            im.paste(box['region'], (box['stroke'][0], box['stroke'][1]))
-            draw.rectangle(
-                box['stroke'],
-                fill=box['fill'],
-                outline=box['outline']
+            im.paste(
+                box['region'],
+                (box['stroke'][0], box['stroke'][1])
             )
+            for i in range(0, stroke_width+1):
+                stroke = (
+                    box['stroke'][0] - i,
+                    box['stroke'][1] - i,
+                    box['stroke'][2] + i,
+                    box['stroke'][3] + i
+                )
+                draw.rectangle(
+                    stroke,
+                    fill=box['fill'],
+                    outline=box['outline']
+                )
 
         # Save the image and pass out the path
         im.save(overlay_path, 'PNG')

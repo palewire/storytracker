@@ -31,11 +31,11 @@ urlset = storytracker.ArchivedURLSet([
 ])
 
 # URL images
-#obj = storytracker.archive("http://www.cnn.com/")
-#illo_path = obj.write_illustration_to_directory("./docs/_static/example/")
-#overlay_path = obj.write_overlay_to_directory("./docs/_static/example/")
-#os.rename(illo_path, "./docs/_static/example/illo.jpg")
-#os.rename(overlay_path, "./docs/_static/example/overlay.png")
+obj = storytracker.archive("http://www.cnn.com/")
+illo_path = obj.write_illustration_to_directory("./docs/_static/example/")
+overlay_path = obj.write_overlay_to_directory("./docs/_static/example/")
+os.rename(illo_path, "./docs/_static/example/illo.jpg")
+os.rename(overlay_path, "./docs/_static/example/overlay.png")
 
 # URL images
 gif_path = urlset.write_href_gif_to_directory(
@@ -44,6 +44,6 @@ gif_path = urlset.write_href_gif_to_directory(
 )
 os.rename(gif_path, "./docs/_static/example/href.gif")
 
-#urlset[0].write_analysis_report_to_directory("./docs/_static/example/")
-#urlset.write_analysis_report_to_directory("./docs/_static/example/")
+urlset[0].write_analysis_report_to_directory("./docs/_static/example/")
+urlset.write_analysis_report_to_directory("./docs/_static/example/")
 
