@@ -29,7 +29,6 @@ class UnicodeMixin(object):
         return '<%s: %s>' % (self.__class__.__name__, self.__str__())
 
 
-
 def indent(rows, hasHeader=False, headerChar='-', delim=' | ', justify='left',
            separateRows=False, prefix='', postfix='', wrapfunc=lambda x: x):
     """Indents a table by column.

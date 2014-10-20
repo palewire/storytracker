@@ -375,7 +375,7 @@ class ArchivedURL(UnicodeMixin):
         # If we already have them, return them
         if self._summary_statistics and not force:
             return self._summary_statistics
- 
+
         # all the biz adding stuff to the dict here
         self._summary_statistics = {
             'hyperlink_count': len(self.hyperlinks),
@@ -666,7 +666,7 @@ class ArchivedURL(UnicodeMixin):
             stroke = map(int, stroke)
             box_list.append(
                 dict(
-                    region = im.crop(stroke),
+                    region=im.crop(stroke),
                     stroke=stroke,
                     fill=None,
                     outline=fill
@@ -682,7 +682,7 @@ class ArchivedURL(UnicodeMixin):
             )
             stroke = map(int, stroke)
             box_list.append(dict(
-                region = im.crop(stroke),
+                region=im.crop(stroke),
                 stroke=stroke,
                 fill=None,
                 outline="red"
@@ -764,10 +764,10 @@ class ArchivedURLSet(collections.MutableSequence):
         self._list.append(copy.copy(obj))
 
     def uniquify(self, seq):
-       keys = {}
-       for e in seq:
-           keys[e] = 1
-       return keys.keys()
+        keys = {}
+        for e in seq:
+            keys[e] = 1
+        return keys.keys()
 
     #
     # Analyzing all hyperlinks
@@ -1066,9 +1066,9 @@ class ArchivedURLSet(collections.MutableSequence):
         )
         print table
 
-        headline_table = [['Headline'],]
+        headline_table = [['Headline']]
         for hed in stats['headline_list']:
-            headline_table.append([hed,])
+            headline_table.append([hed])
         table = indent(
             headline_table,
             hasHeader=True,
