@@ -1253,6 +1253,147 @@ class ArchivedURLSet(collections.MutableSequence):
         for jpg in jpg_paths:
             os.remove(jpg)
 
+    def write_href_overlay_animation_to_directory(
+        self,
+        href,
+        path,
+        duration=1
+    ):
+        """
+        Writes out animation of a hyperlink's position on the page
+        as a GIF to the provided directory.
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        gif_path = os.path.join(path, "urlset-href-overlay.gif")
+        self.write_href_overlay_animation_to_path(
+            href,
+            gif_path,
+            duration=duration
+        )
+        return gif_path
+
+    def write_href_overlay_animation_to_path(
+        self,
+        href,
+        path,
+        duration=1,
+        stroke_width=4,
+        stroke_padding=2
+    ):
+        """
+        Writes out animation of a hyperlink's position on the page
+        as a GIF to the provided path.
+        """
+        if os.path.exists(path):
+            os.remove(path)
+
+        png_paths = []
+        tmpdir = tempfile.mkdtemp()
+        for page in self:
+            # Take a screenshot
+            if not page._screenshot:
+                if not page.browser:
+                    page.open_browser()
+                page._screenshot = BytesIO(
+                    base64.b64decode(
+                        page.browser.get_screenshot_as_base64()
+                    )
+                )
+
+            # Reopen it and paste it on a white background
+            sshot = PILImage.open(page._screenshot)
+            sshot_width, sshot_height = sshot.size
+            im = PILImage.new(
+                "RGBA",
+                (sshot_width, sshot_height),
+                (255, 255, 255, 255)
+            )
+            im.paste(sshot, sshot)
+
+            # Cut out the boxes we'll want to highlight in the final image
+            a = page.get_hyperlink_by_href(href)
+            if a.is_story:
+                fill = "purple"
+            else:
+                fill = "blue"
+            box = a.bounding_box
+            stroke = (
+                box[0][0] - stroke_padding,
+                box[0][1] - stroke_padding,
+                box[1][0] + stroke_padding,
+                box[1][1] + stroke_padding
+            )
+            stroke = map(int, stroke)
+            data = dict(
+                region=im.crop(stroke),
+                stroke=stroke,
+                fill=None,
+                outline=fill
+            )
+            # Draw a transparent overlay and put it on the page
+            overlay = PILImage.new(
+                "RGBA",
+                (sshot_width, sshot_height),
+                (0, 0, 0, 125)
+            )
+            im = PILImage.composite(overlay, im, overlay)
+
+            # Now paste the story boxes back on top of the overlay
+            draw = PILImageDraw.Draw(im)
+            im.paste(
+                data['region'],
+                (data['stroke'][0], data['stroke'][1])
+            )
+            for i in range(0, stroke_width+1):
+                stroke = (
+                    data['stroke'][0] - i,
+                    data['stroke'][1] - i,
+                    data['stroke'][2] + i,
+                    data['stroke'][3] + i
+                )
+                draw.rectangle(
+                    stroke,
+                    fill=data['fill'],
+                    outline=data['outline']
+                )
+
+            # Save the image and pass out the path
+            png_path = os.path.join(
+                tmpdir,
+                "%s.jpg" % page.archive_filename
+            )
+            im.save(png_path, 'PNG')
+            page._screenshot.seek(0)
+            png_paths.append(png_path)
+
+        img_list = []
+        for png in png_paths:
+            this_img = PILImage.open(png)
+            img_list.append(this_img)
+
+        # Resize them so they fit together
+        # and then thumbnail them down
+        min_width = min([i.size[0] for i in img_list])
+        min_height = min([i.size[1] for i in img_list])
+        max_width = max([i.size[0] for i in img_list])
+        max_height = max([i.size[1] for i in img_list])
+        trim_list = []
+        for x, i in enumerate(img_list):
+            if i.size != (min_width, min_height):
+                i = ImageOps.fit(i, (min_width, min_height))
+            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
+            trim_list.append(i)
+
+        # Create the GIF animation
+        if os.path.exists(path):
+            os.remove(path)
+        images2gif.writeGif(path, trim_list, duration=duration)
+
+        # Delete all the jpgs
+        for png in png_paths:
+            os.remove(png)
+
 
 class Hyperlink(UnicodeMixin):
     """
