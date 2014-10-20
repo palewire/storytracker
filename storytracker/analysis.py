@@ -725,24 +725,9 @@ class ArchivedURLSet(collections.MutableSequence):
     """
     A list of archived URLs
     """
-    def __init__(self, obj_list):
-        # Create a list to put objects after we've checked them out
-        safe_list = []
-        for obj in obj_list:
-
-            # Verify that the user is trying to add an ArchivedURL object
-            if not isinstance(obj, ArchivedURL):
-                raise TypeError("Only ArchivedURL objects can be added")
-
-            # Check if the object is already in the list
-            if obj in safe_list:
-                raise ValueError("This object is already in the list")
-
-            # Add to safe list
-            safe_list.append(obj)
-
-        # Do the normal list start up
-        self._list = list(obj_list)
+    def __init__(self, object_list):
+        self._list = list()
+        [self.append(o) for o in object_list]
 
     def __len__(self):
         """List length"""
@@ -760,9 +745,7 @@ class ArchivedURLSet(collections.MutableSequence):
         self._acl_check(val)
         return self._list[ii]
 
-    def insert(self, ii, obj):
-        self._acl_check(obj)
-
+    def _url_check(self, obj):
         # Verify that the user is trying to add an ArchivedURL object
         if not isinstance(obj, ArchivedURL):
             raise TypeError("Only ArchivedURL objects can be added")
@@ -771,19 +754,13 @@ class ArchivedURLSet(collections.MutableSequence):
         if obj in [o for o in list(self.__iter__())]:
             raise ValueError("This object is already in the list")
 
+    def insert(self, ii, obj):
+        self._url_check(obj)
         self._list.insert(ii, obj)
 
     def append(self, obj):
-        # Verify that the user is trying to add an ArchivedURL object
-        if not isinstance(obj, ArchivedURL):
-            raise TypeError("Only ArchivedURL objects can be added")
-
-        # Check if the object is already in the list
-        if obj in [o for o in list(self.__iter__())]:
-            raise ValueError("This object is already in the list")
-
-        # If it's all true, append it.
-        super(ArchivedURLSet, self).append(copy.copy(obj))
+        self._url_check(obj)
+        self._list.append(copy.copy(obj))
 
     def uniquify(self, seq):
        keys = {}
