@@ -10,6 +10,7 @@ import logging
 import tempfile
 import calculate
 import images2gif
+import collections
 import storytracker
 import storysniffer
 from six import BytesIO
@@ -720,7 +721,7 @@ class ArchivedURL(UnicodeMixin):
         self._screenshot.seek(0)
 
 
-class ArchivedURLSet(list):
+class ArchivedURLSet(collections.MutableSequence):
     """
     A list of archived URLs
     """
@@ -741,7 +742,36 @@ class ArchivedURLSet(list):
             safe_list.append(obj)
 
         # Do the normal list start up
-        super(ArchivedURLSet, self).__init__(obj_list)
+        self._list = list(obj_list)
+
+    def __len__(self):
+        """List length"""
+        return len(self._list)
+
+    def __getitem__(self, ii):
+        """Get a list item"""
+        return self._list[ii]
+
+    def __delitem__(self, ii):
+        """Delete an item"""
+        del self._list[ii]
+
+    def __setitem__(self, ii, val):
+        self._acl_check(val)
+        return self._list[ii]
+
+    def insert(self, ii, obj):
+        self._acl_check(obj)
+
+        # Verify that the user is trying to add an ArchivedURL object
+        if not isinstance(obj, ArchivedURL):
+            raise TypeError("Only ArchivedURL objects can be added")
+
+        # Check if the object is already in the list
+        if obj in [o for o in list(self.__iter__())]:
+            raise ValueError("This object is already in the list")
+
+        self._list.insert(ii, obj)
 
     def append(self, obj):
         # Verify that the user is trying to add an ArchivedURL object
