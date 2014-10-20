@@ -2,15 +2,15 @@ import sys
 from setuptools import setup
 
 install_requires = [
+    'six>=1.7.2',
     'python-dateutil>=2.2',
     'requests>=2.3.0',
     'htmlmin==0.1.5',
-    'six>=1.7.2',
     'pytz>=2014.4',
     'beautifulsoup4>=4.3.2',
     'storysniffer==0.0.3',
     'selenium>=2.42.1',
-    'PIL==1.1.7',
+    'PIL>=1.1.7',
     'latimes-calculate>=0.2.30',
 ]
 
