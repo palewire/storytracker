@@ -409,7 +409,7 @@ class GifWriter:
 
                 # Write
                 fp.write(header)
-                fp.write(globalPalette)
+                fp.write(globalPalette or '')
                 fp.write(appext)
 
                 # Next frame is not the first
@@ -434,7 +434,7 @@ class GifWriter:
                     # Use local color palette
                     fp.write(graphext)
                     fp.write(lid)  # write suitable image descriptor
-                    fp.write(palette)  # write local color table
+                    fp.write(palette or '')  # write local color table
                     fp.write('\x08')  # LZW minimum size code
                 else:
                     # Use global color palette

@@ -10,7 +10,7 @@ install_requires = [
     'beautifulsoup4>=4.3.2',
     'storysniffer==0.0.3',
     'selenium>=2.42.1',
-    'PIL==1.1.7',
+    'Pillow==2.6.0',
     'latimes-calculate>=0.3.0',
     'Jinja2>=2.7.3',
 ]
