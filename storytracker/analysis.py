@@ -602,15 +602,9 @@ class ArchivedURL(UnicodeMixin):
         """
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
-        sshot_path = os.path.join(
-            path,
-            "screenshot-%s.png" % self.archive_filename
-        )
-        if os.path.exists(sshot_path):
-            os.remove(sshot_path)
         overlay_path = os.path.join(
             path,
-            "overlay-%s.png" % self.archive_filename
+            "href-overlay-%s.png" % self.archive_filename
         )
         self.write_overlay_to_path(
             overlay_path,
@@ -717,6 +711,121 @@ class ArchivedURL(UnicodeMixin):
                     stroke,
                     fill=box['fill'],
                     outline=box['outline']
+                )
+
+        # Save the image and pass out the path
+        im.save(path, 'PNG')
+        self._screenshot.seek(0)
+
+    def write_href_overlay_to_directory(
+        self,
+        href,
+        path,
+        stroke_width=4,
+        stroke_padding=2
+    ):
+        """
+        Writes out a screenshot of the page with overlay that emphasize
+        the location of a provide hyperlink as a PNG to the provided
+        directory.
+        """
+        if not os.path.isdir(path):
+            raise ValueError("Path must be a directory")
+        overlay_path = os.path.join(
+            path,
+            "overlay-%s.png" % self.archive_filename
+        )
+        self.write_href_overlay_to_path(
+            href,
+            overlay_path,
+            stroke_width=stroke_width,
+            stroke_padding=stroke_padding
+        )
+        return overlay_path
+
+    def write_href_overlay_to_path(
+        self,
+        href,
+        path,
+        duration=1,
+        stroke_width=4,
+        stroke_padding=2
+    ):
+        """
+        Writes out overlay of a hyperlink's position on the page
+        to the provided path.
+        """
+        if os.path.exists(path):
+            os.remove(path)
+
+        # Take a screenshot
+        if not self._screenshot:
+            if not self.browser:
+                self.open_browser()
+            self._screenshot = BytesIO(
+                base64.b64decode(
+                    self.browser.get_screenshot_as_base64()
+                )
+            )
+
+        # Reopen it and paste it on a white background
+        sshot = PILImage.open(self._screenshot)
+        sshot_width, sshot_height = sshot.size
+        im = PILImage.new(
+            "RGBA",
+            (sshot_width, sshot_height),
+            (255, 255, 255, 255)
+        )
+        im.paste(sshot, sshot)
+
+        # Cut out the box we'll want to highlight in the final image
+        a = self.get_hyperlink_by_href(href)
+        if a:
+            if a.is_story:
+                fill = "purple"
+            else:
+                fill = "blue"
+            box = a.bounding_box
+            stroke = (
+                box[0][0] - stroke_padding,
+                box[0][1] - stroke_padding,
+                box[1][0] + stroke_padding,
+                box[1][1] + stroke_padding
+            )
+            stroke = map(int, stroke)
+            data = dict(
+                region=im.crop(stroke),
+                stroke=stroke,
+                fill=None,
+                outline=fill
+            )
+
+        # Draw a transparent overlay and put it on the page
+        overlay = PILImage.new(
+            "RGBA",
+            (sshot_width, sshot_height),
+            (0, 0, 0, 125)
+        )
+        im = PILImage.composite(overlay, im, overlay)
+
+        if a:
+            # Now paste the story boxes back on top of the overlay
+            draw = PILImageDraw.Draw(im)
+            im.paste(
+                data['region'],
+                (data['stroke'][0], data['stroke'][1])
+            )
+            for i in range(0, stroke_width+1):
+                stroke = (
+                    data['stroke'][0] - i,
+                    data['stroke'][1] - i,
+                    data['stroke'][2] + i,
+                    data['stroke'][3] + i
+                )
+                draw.rectangle(
+                    stroke,
+                    fill=data['fill'],
+                    outline=data['outline']
                 )
 
         # Save the image and pass out the path
@@ -1294,83 +1403,7 @@ class ArchivedURLSet(collections.MutableSequence):
         png_paths = []
         tmpdir = tempfile.mkdtemp()
         for page in self:
-            # Take a screenshot
-            if not page._screenshot:
-                if not page.browser:
-                    page.open_browser()
-                page._screenshot = BytesIO(
-                    base64.b64decode(
-                        page.browser.get_screenshot_as_base64()
-                    )
-                )
-
-            # Reopen it and paste it on a white background
-            sshot = PILImage.open(page._screenshot)
-            sshot_width, sshot_height = sshot.size
-            im = PILImage.new(
-                "RGBA",
-                (sshot_width, sshot_height),
-                (255, 255, 255, 255)
-            )
-            im.paste(sshot, sshot)
-
-            # Cut out the boxes we'll want to highlight in the final image
-            a = page.get_hyperlink_by_href(href)
-            if a:
-                if a.is_story:
-                    fill = "purple"
-                else:
-                    fill = "blue"
-                box = a.bounding_box
-                stroke = (
-                    box[0][0] - stroke_padding,
-                    box[0][1] - stroke_padding,
-                    box[1][0] + stroke_padding,
-                    box[1][1] + stroke_padding
-                )
-                stroke = map(int, stroke)
-                data = dict(
-                    region=im.crop(stroke),
-                    stroke=stroke,
-                    fill=None,
-                    outline=fill
-                )
-
-            # Draw a transparent overlay and put it on the page
-            overlay = PILImage.new(
-                "RGBA",
-                (sshot_width, sshot_height),
-                (0, 0, 0, 125)
-            )
-            im = PILImage.composite(overlay, im, overlay)
-
-            if a:
-                # Now paste the story boxes back on top of the overlay
-                draw = PILImageDraw.Draw(im)
-                im.paste(
-                    data['region'],
-                    (data['stroke'][0], data['stroke'][1])
-                )
-                for i in range(0, stroke_width+1):
-                    stroke = (
-                        data['stroke'][0] - i,
-                        data['stroke'][1] - i,
-                        data['stroke'][2] + i,
-                        data['stroke'][3] + i
-                    )
-                    draw.rectangle(
-                        stroke,
-                        fill=data['fill'],
-                        outline=data['outline']
-                    )
-
-            # Save the image and pass out the path
-            png_path = os.path.join(
-                tmpdir,
-                "%s.jpg" % page.archive_filename
-            )
-            im.save(png_path, 'PNG')
-            page._screenshot.seek(0)
+            png_path = page.write_href_overlay_to_directory(href, tmpdir)
             png_paths.append(png_path)
 
         img_list = []
