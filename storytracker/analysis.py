@@ -728,6 +728,7 @@ class ArchivedURLSet(collections.MutableSequence):
     def __init__(self, object_list):
         self._list = list()
         [self.append(o) for o in object_list]
+        self._hyperlinks = list()
 
     def __len__(self):
         """List length"""
@@ -772,13 +773,17 @@ class ArchivedURLSet(collections.MutableSequence):
     # Analyzing all hyperlinks
     #
 
-    def get_hyperlinks(self):
+    def get_hyperlinks(self, force=False):
         """
         Parses all of the hyperlinks from the HTML of all the archived URLs
         and returns a list of the distinct href hyperlinks with a series
         of statistics attached that describe how they are
         positioned.
         """
+        # If we already have the list, return it
+        if self._hyperlinks and not force:
+            return self._hyperlinks
+
         # Analyze hyperlinks for all of the URLs in the set
         [obj.analyze(force=False) for obj in self]
 
@@ -843,6 +848,7 @@ class ArchivedURLSet(collections.MutableSequence):
                 median_y=median_y,
             )
             analyzed_list.append(d)
+        self._hyperlinks = analyzed_list
         return analyzed_list
     hyperlinks = property(get_hyperlinks)
 
