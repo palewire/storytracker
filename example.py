@@ -42,7 +42,7 @@ urlset2 = storytracker.ArchivedURLSet([
     storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101005148/http://www.bbc.co.uk/news/"),
     storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101080323/http://www.bbc.co.uk/news/"),
     storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101094432/http://www.bbc.co.uk/news/"),
-    storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101225734/http://www.bbc.co.uk/news/"),
+    #storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101225734/http://www.bbc.co.uk/news/"),
 ])
 #urlset2[0].write_overlay_to_directory("./")
 gif_path = urlset2.write_href_overlay_animation_to_directory(
