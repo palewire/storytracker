@@ -173,11 +173,14 @@ class ArchivedURL(UnicodeMixin):
         Returns the grid cell where the provided x and y coordinates
         appear on the page.
         """
-        xgroup = int(math.floor(float(x) / cell_size))
-        # Convert the x value to a letter ala chess notation
-        xgroup = chr(xgroup + ord('a'))
-        ygroup = int(math.ceil(float(y) / cell_size))
-        return '%s%s' % (xgroup, ygroup)
+        try:
+            xgroup = int(math.floor(float(x) / cell_size))
+            # Convert the x value to a letter ala chess notation
+            xgroup = chr(xgroup + ord('a'))
+            ygroup = int(math.ceil(float(y) / cell_size))
+            return '%s%s' % (xgroup, ygroup)
+        except ValueError:
+            return ''
 
     def get_height(self, force=False):
         # If we already have it return it
@@ -1313,24 +1316,26 @@ class ArchivedURLSet(collections.MutableSequence):
 
             # Cut out the boxes we'll want to highlight in the final image
             a = page.get_hyperlink_by_href(href)
-            if a.is_story:
-                fill = "purple"
-            else:
-                fill = "blue"
-            box = a.bounding_box
-            stroke = (
-                box[0][0] - stroke_padding,
-                box[0][1] - stroke_padding,
-                box[1][0] + stroke_padding,
-                box[1][1] + stroke_padding
-            )
-            stroke = map(int, stroke)
-            data = dict(
-                region=im.crop(stroke),
-                stroke=stroke,
-                fill=None,
-                outline=fill
-            )
+            if a:
+                if a.is_story:
+                    fill = "purple"
+                else:
+                    fill = "blue"
+                box = a.bounding_box
+                stroke = (
+                    box[0][0] - stroke_padding,
+                    box[0][1] - stroke_padding,
+                    box[1][0] + stroke_padding,
+                    box[1][1] + stroke_padding
+                )
+                stroke = map(int, stroke)
+                data = dict(
+                    region=im.crop(stroke),
+                    stroke=stroke,
+                    fill=None,
+                    outline=fill
+                )
+
             # Draw a transparent overlay and put it on the page
             overlay = PILImage.new(
                 "RGBA",
@@ -1339,24 +1344,25 @@ class ArchivedURLSet(collections.MutableSequence):
             )
             im = PILImage.composite(overlay, im, overlay)
 
-            # Now paste the story boxes back on top of the overlay
-            draw = PILImageDraw.Draw(im)
-            im.paste(
-                data['region'],
-                (data['stroke'][0], data['stroke'][1])
-            )
-            for i in range(0, stroke_width+1):
-                stroke = (
-                    data['stroke'][0] - i,
-                    data['stroke'][1] - i,
-                    data['stroke'][2] + i,
-                    data['stroke'][3] + i
+            if a:
+                # Now paste the story boxes back on top of the overlay
+                draw = PILImageDraw.Draw(im)
+                im.paste(
+                    data['region'],
+                    (data['stroke'][0], data['stroke'][1])
                 )
-                draw.rectangle(
-                    stroke,
-                    fill=data['fill'],
-                    outline=data['outline']
-                )
+                for i in range(0, stroke_width+1):
+                    stroke = (
+                        data['stroke'][0] - i,
+                        data['stroke'][1] - i,
+                        data['stroke'][2] + i,
+                        data['stroke'][3] + i
+                    )
+                    draw.rectangle(
+                        stroke,
+                        fill=data['fill'],
+                        outline=data['outline']
+                    )
 
             # Save the image and pass out the path
             png_path = os.path.join(
