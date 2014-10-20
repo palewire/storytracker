@@ -38,7 +38,7 @@ os.rename(illo_path, "./docs/_static/example/illo.jpg")
 os.rename(overlay_path, "./docs/_static/example/overlay.png")
 
 # URL images
-gif_path = urlset.write_href_gif_to_directory(
+gif_path = urlset.write_href_illustration_animation_to_directory(
     "http://www.washingtonpost.com/investigations/us-intelligence-mining-data-from-nine-us-internet-companies-in-broad-secret-program/2013/06/06/3a0c0da8-cebf-11e2-8845-d970ccb04497_story.html",
     "./docs/_static/example/"
 )

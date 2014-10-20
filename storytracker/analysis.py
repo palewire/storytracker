@@ -1172,7 +1172,12 @@ class ArchivedURLSet(collections.MutableSequence):
         for jpg in jpg_paths:
             os.remove(jpg)
 
-    def write_href_gif_to_directory(self, href, path, duration=1):
+    def write_href_illustration_animation_to_directory(
+        self,
+        href,
+        path,
+        duration=1
+    ):
         """
         Writes out animation of a hyperlinks on the page
         as a GIF to the provided directory.
@@ -1180,10 +1185,19 @@ class ArchivedURLSet(collections.MutableSequence):
         if not os.path.isdir(path):
             raise ValueError("Path must be a directory")
         gif_path = os.path.join(path, "urlset-href-illustration.gif")
-        self.write_href_gif_to_path(href, gif_path, duration=duration)
+        self.write_href_illustration_animation_to_path(
+            href,
+            gif_path,
+            duration=duration
+        )
         return gif_path
 
-    def write_href_gif_to_path(self, href, path, duration=1):
+    def write_href_illustration_animation_to_path(
+        self,
+        href,
+        path,
+        duration=1
+    ):
         """
         Writes out animation of a hyperlinks on the page
         as a GIF to the provided path.
