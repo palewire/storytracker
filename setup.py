@@ -11,6 +11,7 @@ install_requires = [
     'storysniffer==0.0.3',
     'selenium>=2.42.1',
     'PIL==1.1.7',
+    'latimes-calculate>=0.2.30',
 ]
 
 if sys.version_info < (3,):
