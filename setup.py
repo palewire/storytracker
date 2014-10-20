@@ -10,8 +10,9 @@ install_requires = [
     'beautifulsoup4>=4.3.2',
     'storysniffer==0.0.3',
     'selenium>=2.42.1',
-    'PIL>=1.1.7',
-    'latimes-calculate>=0.2.30',
+    'PIL==1.1.7',
+    'latimes-calculate>=0.3.0',
+    'Jinja2>=2.7.3',
 ]
 
 if sys.version_info < (3,):
@@ -19,7 +20,7 @@ if sys.version_info < (3,):
 
 setup(
     name='storytracker',
-    version='0.0.9',
+    version='0.1.0',
     description='Tools for tracking stories for news homepages',
     author='Ben Welsh',
     author_email='ben.welsh@gmail.com',
