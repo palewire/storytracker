@@ -641,7 +641,7 @@ class ArchivedURL(UnicodeMixin):
             raise ValueError("Path must be a directory")
         overlay_path = os.path.join(
             path,
-            "href-overlay-%s.png" % self.archive_filename
+            "overlay-%s.png" % self.archive_filename
         )
         self.write_overlay_to_path(
             overlay_path,
