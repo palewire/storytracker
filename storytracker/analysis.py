@@ -165,6 +165,7 @@ class ArchivedURL(UnicodeMixin):
         self.get_hyperlinks(force=force)
         self.get_images(force=force)
         self.get_summary_statistics(force=force)
+        self.get_screenshot(force=force)
         self.close_browser()
 
     def get_cell(self, x, y, cell_size=256):
