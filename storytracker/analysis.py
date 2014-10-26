@@ -293,13 +293,47 @@ class ArchivedURL(UnicodeMixin):
         Returns the Hyperlink object that matches the submitted href,
         if it exists.
         """
-        for this_hyperlink in self.hyperlinks:
-            if this_hyperlink.href == href:
-                return this_hyperlink
-        if fails_silently:
-            return None
+        # If hyperlinks have already been harvested, just loop through
+        # those and see if you find a match.
+        if self._hyperlinks:
+            for this_hyperlink in self.hyperlinks:
+                if this_hyperlink.href == href:
+                    return this_hyperlink
+            if fails_silently:
+                return None
+            else:
+                raise ValueError("href could not be found")
+
+        # If the hyperlinks haven't been pulled use XPATH to fetch
+        # the ones we care about here a little more efficiently
         else:
-            raise ValueError("href could not be found")
+            # Open the browser if it's not already open
+            if not self.browser:
+                self.open_browser()
+            try:
+                a = self.browser.find_element_by_xpath(
+                    "//a[contains(@href,'%s')]" % href
+                )
+            except:
+                if fails_silently:
+                    return None
+                else:
+                    raise
+            # Create the Hyperlink object
+            alocation = a.location
+            asize = a.size
+            return Hyperlink(
+                a.get_attribute("href"),
+                a.text,
+                None,
+                images=None,
+                width=asize['width'],
+                height=asize['height'],
+                x=alocation['x'],
+                y=alocation['y'],
+                cell=self.get_cell(alocation['x'], alocation['y']),
+                font_size=a.value_of_css_property("font-size"),
+            )
 
     def get_images(self, force=False):
         """
@@ -641,7 +675,7 @@ class ArchivedURL(UnicodeMixin):
             raise ValueError("Path must be a directory")
         overlay_path = os.path.join(
             path,
-            "href-overlay-%s.png" % self.archive_filename
+            "overlay-%s.png" % self.archive_filename
         )
         self.write_overlay_to_path(
             overlay_path,
