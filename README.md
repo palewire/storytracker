@@ -12,4 +12,9 @@ Tools for tracking stories on news homepages
 * Packaging: [https://pypi.python.org/pypi/storytracker](https://pypi.python.org/pypi/storytracker)
 * Testing: [https://travis-ci.org/pastpages/storytracker](https://travis-ci.org/pastpages/storytracker)
 
-This is a joint project of [PastPages.org](http://pastpages.org), The Reynolds Journalism Institute and the University of Missouri.
+Sponsors
+--------
+
+[![Reynolds Journalism Institute](http://storytracker.readthedocs.org/en/latest/_static/rji-logo.jpg)](http://www.rjionline.org/)
+
+[![PastPAges](https://avatars1.githubusercontent.com/u/1757752?v=2&s=200)](http://www.pastpages.org)
