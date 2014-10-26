@@ -17,4 +17,4 @@ Sponsors
 
 [![Reynolds Journalism Institute](http://storytracker.readthedocs.org/en/latest/_static/rji-logo.jpg)](http://www.rjionline.org/)
 
-[![PastPAges](https://avatars1.githubusercontent.com/u/1757752?v=2&s=200)](http://www.pastpages.org)
+[![PastPages](https://avatars1.githubusercontent.com/u/1757752?v=2&s=200)](http://www.pastpages.org)
