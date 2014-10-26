@@ -308,7 +308,7 @@ class ArchivedURL(UnicodeMixin):
 
         The list is cached after it is first accessed.
 
-        Set the `force` kwargs to True to regenerate it from scratch.
+        Set the `force` kwarg to True to regenerate it from scratch.
         """
         # If we already have the list, return it
         if self._images and not force:
@@ -342,6 +342,44 @@ class ArchivedURL(UnicodeMixin):
         self._images = obj_list
         return obj_list
     images = property(get_images)
+
+    def get_screenshot(self, force=False):
+        """
+        Generate a screenshot of the page and return it as a PIL file object.
+
+        The object is cached after it is first accessed.
+
+        Set the `force` kwarg to True to regenerate it from scratch.
+        """
+        # If we already have it, return it
+        if self._screenshot and not force:
+            self._screenshot.seek(0)
+            return self._screenshot
+
+        # Take a screenshot and convert it to bytes
+        if not self.browser:
+            self.open_browser()
+
+        bytes = BytesIO(
+            base64.b64decode(
+                self.browser.get_screenshot_as_base64()
+            )
+        )
+
+        # Reopen it and paste it on a white background
+        sshot = PILImage.open(bytes)
+        sshot_width, sshot_height = sshot.size
+        im = PILImage.new(
+            "RGBA",
+            (sshot_width, sshot_height),
+            (255, 255, 255, 255)
+        )
+        im.paste(sshot, sshot)
+
+        # Set the variable and pass that out
+        self._screenshot = im
+        return im
+    screenshot = property(get_screenshot)
 
     @property
     def largest_headline(self):
@@ -625,25 +663,7 @@ class ArchivedURL(UnicodeMixin):
         if os.path.exists(path):
             os.remove(path)
 
-        # Take a screenshot
-        if not self._screenshot:
-            if not self.browser:
-                self.open_browser()
-            self._screenshot = BytesIO(
-                base64.b64decode(
-                    self.browser.get_screenshot_as_base64()
-                )
-            )
-
-        # Reopen it and paste it on a white background
-        sshot = PILImage.open(self._screenshot)
-        sshot_width, sshot_height = sshot.size
-        im = PILImage.new(
-            "RGBA",
-            (sshot_width, sshot_height),
-            (255, 255, 255, 255)
-        )
-        im.paste(sshot, sshot)
+        im = self.get_screenshot()
 
         # Cut out the boxes we'll want to highlight in the final image
         box_list = []
@@ -687,7 +707,7 @@ class ArchivedURL(UnicodeMixin):
         # Draw a transparent overlay and put it on the page
         overlay = PILImage.new(
             "RGBA",
-            (sshot_width, sshot_height),
+            (self.screenshot.size[0], self.screenshot.size[1]),
             (0, 0, 0, 125)
         )
         im = PILImage.composite(overlay, im, overlay)
@@ -714,7 +734,6 @@ class ArchivedURL(UnicodeMixin):
 
         # Save the image and pass out the path
         im.save(path, 'PNG')
-        self._screenshot.seek(0)
 
     def write_href_overlay_to_directory(
         self,
@@ -757,25 +776,7 @@ class ArchivedURL(UnicodeMixin):
         if os.path.exists(path):
             os.remove(path)
 
-        # Take a screenshot
-        if not self._screenshot:
-            if not self.browser:
-                self.open_browser()
-            self._screenshot = BytesIO(
-                base64.b64decode(
-                    self.browser.get_screenshot_as_base64()
-                )
-            )
-
-        # Reopen it and paste it on a white background
-        sshot = PILImage.open(self._screenshot)
-        sshot_width, sshot_height = sshot.size
-        im = PILImage.new(
-            "RGBA",
-            (sshot_width, sshot_height),
-            (255, 255, 255, 255)
-        )
-        im.paste(sshot, sshot)
+        im = self.get_screenshot()
 
         # Cut out the box we'll want to highlight in the final image
         a = self.get_hyperlink_by_href(href)
@@ -802,7 +803,7 @@ class ArchivedURL(UnicodeMixin):
         # Draw a transparent overlay and put it on the page
         overlay = PILImage.new(
             "RGBA",
-            (sshot_width, sshot_height),
+            (self.screenshot.size[0], self.screenshot.size[1]),
             (0, 0, 0, 125)
         )
         im = PILImage.composite(overlay, im, overlay)
@@ -829,7 +830,6 @@ class ArchivedURL(UnicodeMixin):
 
         # Save the image and pass out the path
         im.save(path, 'PNG')
-        self._screenshot.seek(0)
 
 
 class ArchivedURLSet(collections.MutableSequence):
