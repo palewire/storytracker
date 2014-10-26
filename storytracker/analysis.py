@@ -53,6 +53,7 @@ class ArchivedURL(UnicodeMixin):
         # Attributes that come in handy below
         self.html_archive_path = html_archive_path
         self.gzip_archive_path = gzip_archive_path
+        self._browser = None
         self._height = None
         self._width = None
         self._hyperlinks = []
@@ -60,7 +61,6 @@ class ArchivedURL(UnicodeMixin):
         self._summary_statistics = {}
         self._screenshot = None
         # Configuration for our web browser
-        self.browser = None
         self.browser_width = browser_width
         self.browser_height = browser_height
         self.browser_driver = browser_driver
@@ -113,53 +113,67 @@ class ArchivedURL(UnicodeMixin):
             f.write(self.html.encode("utf-8"))
         return out.getvalue()
 
+    def get_browser(self, force=False):
+        """
+        Returns a Selenium web browser ready to use.
+
+        Cached when it is opened the first time so we can avoid repeating
+        outselves.
+        """
+        if self._browser and not force:
+            return self._browser
+        b = self.open_browser()
+        self._browser = b
+        return b
+    browser = property(get_browser)
+
     def open_browser(self):
         """
         Open the web browser we will use to simulate the website for analysis.
         """
-        # Just stop now if it already exists
-        if self.browser:
-            return
-
         # Open the browser
         logger.debug("Opening browser")
-        self.browser = getattr(webdriver, self.browser_driver)()
+        browser = getattr(webdriver, self.browser_driver)()
 
         # Size the browser
-        self.browser.set_window_size(self.browser_width, self.browser_height)
+        browser.set_window_size(self.browser_width, self.browser_height)
 
+        # If there is no HTML file to read in, make it now
         if not self.html_archive_path:
             tmpdir = tempfile.mkdtemp()
             self.write_html_to_directory(tmpdir)
 
-        # Open the file
+        # Open the HTML file in the driver
         socket.setdefaulttimeout(self.browser_timeout)
         try:
             logger.debug("Retrieving %s in browser" % self.html_archive_path)
-            self.browser.get("file://%s" % self.html_archive_path)
+            browser.get("file://%s" % self.html_archive_path)
         except socket.timeout:
             logger.debug("Browser timeout")
-            self.browser.execute_script("window.stop()")
+            browser.execute_script("window.stop()")
+
+        # Pass it back
+        return browser
 
     def close_browser(self):
         """
         Close the web browser we use to simulate the website.
         """
         # Just stop now if it doesn't exist
-        if not self.browser:
+        if not self._browser:
             return
         # Close it
         logger.debug("Closing browser")
-        self.browser.close()
+        self._browser.close()
         # Null out the value
-        self.browser = None
+        self._browser = None
 
     def analyze(self, force=False):
         """
         Force all of the normally lazy-loading analysis methods to run
         and cache the results.
         """
-        self.open_browser()
+        self.get_browser()
         self.get_height(force=force)
         self.get_width(force=force)
         self.get_hyperlinks(force=force)
@@ -187,10 +201,6 @@ class ArchivedURL(UnicodeMixin):
         if self._height and not force:
             return self._height
 
-        # Open the browser if it's not already open
-        if not self.browser:
-            self.open_browser()
-
         # Stuff that list in our cache and then pass it out
         self._height = self.browser.execute_script(
             "return document.body.scrollHeight"
@@ -202,10 +212,6 @@ class ArchivedURL(UnicodeMixin):
         # If we already have it return it
         if self._width and not force:
             return self._width
-
-        # Open the browser if it's not already open
-        if not self.browser:
-            self.open_browser()
 
         # Stuff that list in our cache and then pass it out
         self._width = self.browser.execute_script(
@@ -226,10 +232,6 @@ class ArchivedURL(UnicodeMixin):
         # If we already have the list, return it
         if self._hyperlinks and not force:
             return self._hyperlinks
-
-        # Open the browser if it's not already open
-        if not self.browser:
-            self.open_browser()
 
         # Loop through all <a> tags with href attributes
         # and convert them to Hyperlink objects
@@ -308,9 +310,6 @@ class ArchivedURL(UnicodeMixin):
         # If the hyperlinks haven't been pulled use XPATH to fetch
         # the ones we care about here a little more efficiently
         else:
-            # Open the browser if it's not already open
-            if not self.browser:
-                self.open_browser()
             try:
                 a = self.browser.find_element_by_xpath(
                     "//a[contains(@href,'%s')]" % href
@@ -348,10 +347,6 @@ class ArchivedURL(UnicodeMixin):
         # If we already have the list, return it
         if self._images and not force:
             return self._images
-
-        # Open the browser if it's not already open
-        if not self.browser:
-            self.open_browser()
 
         # Loop through all <img> tags with src attributes
         # and convert them to Image objects
@@ -392,9 +387,6 @@ class ArchivedURL(UnicodeMixin):
             return self._screenshot
 
         # Take a screenshot and convert it to bytes
-        if not self.browser:
-            self.open_browser()
-
         bytes = BytesIO(
             base64.b64decode(
                 self.browser.get_screenshot_as_base64()
@@ -914,6 +906,13 @@ class ArchivedURLSet(collections.MutableSequence):
         for e in seq:
             keys[e] = 1
         return keys.keys()
+
+    def analyze(self, force=False):
+        """
+        Force all of the normally lazy-loading analysis methods to run
+        and cache the results.
+        """
+        [u.analyze(force=force) for u in self]
 
     #
     # Extract and analyze hyperlinks

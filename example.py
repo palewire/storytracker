@@ -30,6 +30,9 @@ urlset = storytracker.ArchivedURLSet([
     ),
 ])
 
+# Run through all the pages
+urlset.analyze()
+
 ## URL images
 obj = storytracker.archive("http://www.cnn.com/")
 illo_path = obj.write_illustration_to_directory("./docs/_static/example/")
