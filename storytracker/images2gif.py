@@ -65,7 +65,7 @@ Usefull links
 """
 # todo: This module should be part of imageio (or at least based on)
 
-import os, time
+import os
 
 def encode(x):
   if False:
@@ -327,7 +327,6 @@ class GifWriter:
         # Prepare
         ims2 = [ims[0]]
         xy = [(0,0)]
-        t0 = time.time()
 
         # Iterate over images
         prev = ims[0]

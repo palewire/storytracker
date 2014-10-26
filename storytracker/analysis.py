@@ -16,11 +16,10 @@ import storysniffer
 from six import BytesIO
 from datetime import timedelta
 from selenium import webdriver
-from jinja2 import Environment, PackageLoader
-from .toolbox import UnicodeMixin, indent
-from PIL import ImageOps
 from PIL import Image as PILImage
 from PIL import ImageDraw as PILImageDraw
+from .toolbox import UnicodeMixin, indent
+from jinja2 import Environment, PackageLoader
 if six.PY2:
     import unicodecsv as csv
 else:
@@ -882,7 +881,7 @@ class ArchivedURLSet(collections.MutableSequence):
         return keys.keys()
 
     #
-    # Analyzing all hyperlinks
+    # Extract and analyze hyperlinks
     #
 
     def get_hyperlinks(self, force=False):
@@ -1137,10 +1136,6 @@ class ArchivedURLSet(collections.MutableSequence):
         file.write(html)
         file.close()
 
-    #
-    # Analyze individual hyperlinks
-    #
-
     def print_href_analysis(self, href):
         """
         Outputs a human-readable analysis of the submitted href's position
@@ -1189,6 +1184,37 @@ class ArchivedURLSet(collections.MutableSequence):
         )
         print table
 
+    #
+    # Overlays and illustractions
+    #
+
+    def fit_image_list(self, img_list):
+        """
+        Accepts a list of PIL image objects and pastes them
+        onto a backgrounds of an identical size.
+
+        Intended to prep images to be combined into an animated GIF.
+        """
+        # Figure out the biggest one
+        max_width = max([i.size[0] for i in img_list])
+        max_height = max([i.size[1] for i in img_list])
+
+        # Loop through the images
+        paste_list = []
+        for img in img_list:
+            # Paste them onto a background of the same size as the largest
+            # one in the set
+            paste = PILImage.new(
+                "RGBA",
+                (max_width, max_height),
+                (255, 255, 255, 255)
+            )
+            paste.paste(img, (0, 0))
+            paste_list.append(paste)
+
+        # Pass the list back
+        return paste_list
+
     def write_overlay_animation_to_directory(self, path, duration=1):
         """
         Writes out animation of the pages
@@ -1216,23 +1242,12 @@ class ArchivedURLSet(collections.MutableSequence):
             this_img = PILImage.open(jpg)
             img_list.append(this_img)
 
-        # Resize them so they fit together
-        # and then thumbnail them down
-        min_width = min([i.size[0] for i in img_list])
-        min_height = min([i.size[1] for i in img_list])
-        max_width = max([i.size[0] for i in img_list])
-        max_height = max([i.size[1] for i in img_list])
-        trim_list = []
-        for x, i in enumerate(img_list):
-            if i.size != (min_width, min_height):
-                i = ImageOps.fit(i, (min_width, min_height))
-            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
-            trim_list.append(i)
+        img_list = self.fit_image_list(img_list)
 
         # Create the GIF animation
         if os.path.exists(path):
             os.remove(path)
-        images2gif.writeGif(path, trim_list, duration=duration)
+        images2gif.writeGif(path, img_list, duration=duration)
 
         # Delete all the jpgs
         for jpg in jpg_paths:
@@ -1262,23 +1277,12 @@ class ArchivedURLSet(collections.MutableSequence):
         for jpg in jpg_paths:
             img_list.append(PILImage.open(jpg))
 
-        # Resize them so they fit together
-        # and then thumbnail them down
-        min_width = min([i.size[0] for i in img_list])
-        min_height = min([i.size[1] for i in img_list])
-        max_width = max([i.size[0] for i in img_list])
-        max_height = max([i.size[1] for i in img_list])
-        trim_list = []
-        for x, i in enumerate(img_list):
-            if i.size != (min_width, min_height):
-                i = ImageOps.fit(i, (min_width, min_height))
-            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
-            trim_list.append(i)
+        img_list = self.fit_image_list(img_list)
 
         # Create the GIF animation
         if os.path.exists(path):
             os.remove(path)
-        images2gif.writeGif(path, trim_list, duration=duration)
+        images2gif.writeGif(path, img_list, duration=duration)
 
         # Delete all the jpgs
         for jpg in jpg_paths:
@@ -1343,23 +1347,12 @@ class ArchivedURLSet(collections.MutableSequence):
         for jpg in jpg_paths:
             img_list.append(PILImage.open(jpg))
 
-        # Resize them so they fit together
-        # and then thumbnail them down
-        min_width = min([i.size[0] for i in img_list])
-        min_height = min([i.size[1] for i in img_list])
-        max_width = max([i.size[0] for i in img_list])
-        max_height = max([i.size[1] for i in img_list])
-        trim_list = []
-        for x, i in enumerate(img_list):
-            if i.size != (min_width, min_height):
-                i = ImageOps.fit(i, (min_width, min_height))
-            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
-            trim_list.append(i)
+        img_list = self.fit_image_list(img_list)
 
         # Create the GIF animation
         if os.path.exists(path):
             os.remove(path)
-        images2gif.writeGif(path, trim_list, duration=duration)
+        images2gif.writeGif(path, img_list, duration=duration)
 
         # Delete all the jpgs
         for jpg in jpg_paths:
@@ -1411,23 +1404,13 @@ class ArchivedURLSet(collections.MutableSequence):
             this_img = PILImage.open(png)
             img_list.append(this_img)
 
-        # Resize them so they fit together
-        # and then thumbnail them down
-        min_width = min([i.size[0] for i in img_list])
-        min_height = min([i.size[1] for i in img_list])
-        max_width = max([i.size[0] for i in img_list])
-        max_height = max([i.size[1] for i in img_list])
-        trim_list = []
-        for x, i in enumerate(img_list):
-            if i.size != (min_width, min_height):
-                i = ImageOps.fit(i, (min_width, min_height))
-            i.thumbnail((max_width, max_height), PILImage.ANTIALIAS)
-            trim_list.append(i)
+        # Fit them all onto backgrounds of the same size
+        img_list = self.fit_image_list(img_list)
 
         # Create the GIF animation
         if os.path.exists(path):
             os.remove(path)
-        images2gif.writeGif(path, trim_list, duration=duration)
+        images2gif.writeGif(path, img_list, duration=duration)
 
         # Delete all the jpgs
         for png in png_paths:

@@ -31,11 +31,11 @@ urlset = storytracker.ArchivedURLSet([
 ])
 
 ## URL images
-#obj = storytracker.archive("http://www.cnn.com/")
-#illo_path = obj.write_illustration_to_directory("./docs/_static/example/")
-#overlay_path = obj.write_overlay_to_directory("./docs/_static/example/")
-#os.rename(illo_path, "./docs/_static/example/illo.jpg")
-#os.rename(overlay_path, "./docs/_static/example/overlay.png")
+obj = storytracker.archive("http://www.cnn.com/")
+illo_path = obj.write_illustration_to_directory("./docs/_static/example/")
+overlay_path = obj.write_overlay_to_directory("./docs/_static/example/")
+os.rename(illo_path, "./docs/_static/example/illo.jpg")
+os.rename(overlay_path, "./docs/_static/example/overlay.png")
 
 # URL images
 urlset2 = storytracker.ArchivedURLSet([
@@ -43,13 +43,12 @@ urlset2 = storytracker.ArchivedURLSet([
     storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101080323/http://www.bbc.co.uk/news/"),
     storytracker.open_wayback_machine_url("https://web.archive.org/web/20140101094432/http://www.bbc.co.uk/news/"),
 ])
-#urlset2[0].write_overlay_to_directory("./")
+urlset2[0].write_overlay_to_directory("./")
 gif_path = urlset2.write_href_overlay_animation_to_directory(
     "https://web.archive.org/news/world-africa-25561753",
     "./docs/_static/example/"
 )
 os.rename(gif_path, "./docs/_static/example/href.gif")
 
-#urlset[0].write_analysis_report_to_directory("./docs/_static/example/")
-#urlset.write_analysis_report_to_directory("./docs/_static/example/")
-
+urlset[0].write_analysis_report_to_directory("./docs/_static/example/")
+urlset.write_analysis_report_to_directory("./docs/_static/example/")
