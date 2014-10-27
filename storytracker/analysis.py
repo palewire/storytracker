@@ -17,6 +17,7 @@ from six import BytesIO
 from datetime import timedelta
 from selenium import webdriver
 from PIL import Image as PILImage
+from PIL import ImageFont as PILImageFont
 from PIL import ImageDraw as PILImageDraw
 from .toolbox import UnicodeMixin, indent
 from jinja2 import Environment, PackageLoader
@@ -60,6 +61,11 @@ class ArchivedURL(UnicodeMixin):
         self._images = []
         self._summary_statistics = {}
         self._screenshot = None
+        self.this_directory = os.path.dirname(os.path.realpath(__file__))
+        self.font = PILImageFont.truetype(
+            os.path.join(self.this_directory, "fonts/OpenSans-Regular.ttf"),
+            22
+        )
         # Configuration for our web browser
         self.browser_width = browser_width
         self.browser_height = browser_height
@@ -616,6 +622,26 @@ class ArchivedURL(UnicodeMixin):
         with open(path, 'wb') as f:
             f.write(self.html.encode("utf-8"))
 
+    def timestamp_image(self, image):
+        textlayer = PILImage.new(
+            "RGBA",
+            (250, 30),
+            (255,255,255,255)
+        )
+        textdraw = PILImageDraw.Draw(textlayer)
+        textsize = textdraw.textsize(
+            str(self.timestamp),
+            font=self.font
+        )
+        textdraw.text(
+            (5, 0),
+            str(self.timestamp),
+            font=self.font,
+            fill=(0,0,0)
+        )
+        image.paste(textlayer, (image.size[0]-250, 0))
+        return image
+
     def write_illustration_to_directory(self, path):
         """
         Writes out a visualization of the hyperlinks and images on the page
@@ -651,6 +677,7 @@ class ArchivedURL(UnicodeMixin):
             draw.rectangle(a.bounding_box, fill=fill)
         for i in self.images:
             draw.rectangle(i.bounding_box, fill="red")
+        im = self.timestamp_image(im)
         im.save(path, 'JPEG')
 
     def write_overlay_to_directory(
@@ -759,6 +786,9 @@ class ArchivedURL(UnicodeMixin):
                     outline=box['outline']
                 )
 
+        # Timestamp
+        im = self.timestamp_image(im)
+
         # Save the image and pass out the path
         im.save(path, 'PNG')
 
@@ -854,6 +884,9 @@ class ArchivedURL(UnicodeMixin):
                     fill=data['fill'],
                     outline=data['outline']
                 )
+
+        # Timestamp
+        im = self.timestamp_image(im)
 
         # Save the image and pass out the path
         im.save(path, 'PNG')
