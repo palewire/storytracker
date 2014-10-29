@@ -9,6 +9,7 @@ from .files import open_archive_directory
 from .files import open_archive_filepath
 from .files import reverse_archive_filename
 from .get import get
+from .pastpages import open_pastpages_url
 from .waybackmachine import open_wayback_machine_url
 from .waybackmachine import reverse_wayback_machine_url
 
@@ -24,7 +25,8 @@ __all__ = [
     'Image',
     'open_archive_directory',
     'open_archive_filepath',
-    'reverse_archive_filename',
+    'open_pastpages_url',
     'open_wayback_machine_url',
+    'reverse_archive_filename',
     'reverse_wayback_machine_url',
 ]
