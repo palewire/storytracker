@@ -3,8 +3,6 @@ storytracker
 
 Tools for tracking stories on news homepages
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
