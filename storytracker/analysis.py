@@ -629,10 +629,6 @@ class ArchivedURL(UnicodeMixin):
             (255, 255, 255, 255)
         )
         textdraw = PILImageDraw.Draw(textlayer)
-        textsize = textdraw.textsize(
-            self.timestamp.isoformat(),
-            font=self.font
-        )
         textdraw.text(
             (5, 0),
             self.timestamp.isoformat(),
