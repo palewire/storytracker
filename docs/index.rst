@@ -8,7 +8,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   howtouseit
+   gettingstarted
+   archivingurls
+   analyzingarchivedurls
+   visualizingarchivedurls
+   accessingexistingarchives
    pythoninterfaces
    commandlineinterfaces
    changelog
