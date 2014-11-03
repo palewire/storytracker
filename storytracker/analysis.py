@@ -633,7 +633,7 @@ class ArchivedURL(UnicodeMixin):
             (5, 0),
             self.timestamp.isoformat(),
             font=self.font,
-            fill=(0,0,0)
+            fill=(0, 0, 0)
         )
         image.paste(textlayer, (image.size[0]-width, 0))
         return image
