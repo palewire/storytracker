@@ -64,7 +64,7 @@ class ArchivedURL(UnicodeMixin):
         self.this_directory = os.path.dirname(os.path.realpath(__file__))
         self.font = PILImageFont.truetype(
             os.path.join(self.this_directory, "fonts/OpenSans-Regular.ttf"),
-            22
+            35
         )
         # Configuration for our web browser
         self.browser_width = browser_width
@@ -622,24 +622,24 @@ class ArchivedURL(UnicodeMixin):
         with open(path, 'wb') as f:
             f.write(self.html.encode("utf-8"))
 
-    def timestamp_image(self, image):
+    def timestamp_image(self, image, width=460, height=50):
         textlayer = PILImage.new(
             "RGBA",
-            (250, 30),
-            (255,255,255,255)
+            (width, height),
+            (255, 255, 255, 255)
         )
         textdraw = PILImageDraw.Draw(textlayer)
         textsize = textdraw.textsize(
-            str(self.timestamp),
+            self.timestamp.isoformat(),
             font=self.font
         )
         textdraw.text(
             (5, 0),
-            str(self.timestamp),
+            self.timestamp.isoformat(),
             font=self.font,
             fill=(0,0,0)
         )
-        image.paste(textlayer, (image.size[0]-250, 0))
+        image.paste(textlayer, (image.size[0]-width, 0))
         return image
 
     def write_illustration_to_directory(self, path):
