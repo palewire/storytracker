@@ -18,7 +18,7 @@ Images have a red stroke around them. Hyperlinks the system thinks link
 to stories have a purple border. The rest of the links go blue.
 
 .. image:: _static/example/overlay.png
-    :width: 600px
+    :width: 696px
 
 
 Abstract illustration
@@ -38,7 +38,7 @@ with images colored red. Hyperlinks are colored in too. If our system
 thinks the link leads to a news story, it's filled in purple. Otherwise it's colored blue.
 
 .. image:: _static/example/illo.jpg
-    :width: 600px
+    :width: 696px
  
 
 Animation that tracks hyperlink's movement
@@ -54,4 +54,4 @@ shifted across a series of pages with the following code.
     >> urlset.write_href_overlay_animation_to_directory(href_to_track, output_dir)
 
 .. image:: _static/example/href.gif
-    :width: 600px
+    :width: 696px
