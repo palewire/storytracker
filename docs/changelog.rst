@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.2.0
+-----
+
+* Full screenshots of pages as they appear in the browser with overlays highlighting hyperlinks
+* Timestamps in the corner of visualizations
+* Access archives from PastPages.org
+* Numerous bug fixes and optimizations
+
 0.0.9
 -----
 
