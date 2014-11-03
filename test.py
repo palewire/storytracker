@@ -196,12 +196,11 @@ class AnalysisTest(MutedTest):
         obj.__repr__()
 
         # Browser
-        self.assertEqual(self.archive.browser, None)
-        self.archive.open_browser()
-        self.assertTrue(isinstance(self.archive.browser, webdriver.PhantomJS))
-        self.archive.open_browser()
+        self.assertEqual(self.archive._browser, None)
+        self.archive.get_browser()
+        self.assertTrue(isinstance(self.archive._browser, webdriver.PhantomJS))
         self.archive.close_browser()
-        self.assertEqual(self.archive.browser, None)
+        self.assertEqual(self.archive._browser, None)
         self.archive.close_browser()
 
         # Gzip
