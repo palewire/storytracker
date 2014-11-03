@@ -14,7 +14,6 @@ Tools for tracking stories on news homepages
    pythoninterfaces
    commandlineinterfaces
    changelog
-   credits
 
 Contributing
 ------------
