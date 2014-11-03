@@ -3,8 +3,10 @@ Generate example materials for the documentation in ./docs/
 """
 import os
 import storytracker
+from PIL import Image
 from pprint import pprint
 from datetime import datetime
+from storytracker import images2gif
 
 
 urlset = storytracker.ArchivedURLSet([
@@ -55,3 +57,18 @@ os.rename(gif_path, "./docs/_static/example/href.gif")
 
 urlset[0].write_analysis_report_to_directory("./docs/_static/example/")
 urlset.write_analysis_report_to_directory("./docs/_static/example/")
+
+img_list = [
+    Image.open("./docs/_static/example/href.gif"),
+    Image.open("./docs/_static/example/overlay.png"),
+    Image.open("./docs/_static/example/illo.jpg"),
+]
+crop_list = []
+for img in img_list:
+    crop_list.append(img.crop((0, 0, img.size[0], 400)))
+crop_list = storytracker.ArchivedURLSet([]).fit_image_list(crop_list)
+images2gif.writeGif(
+    "./docs/_static/example/href-crop.gif",
+    crop_list,
+    duration=1
+)

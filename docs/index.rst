@@ -3,6 +3,12 @@ storytracker
 
 Tools for tracking stories on news homepages
 
+.. image:: _static/example/href-crop.gif
+    :width: 696px
+
+Documentation
+-------------
+
 .. toctree::
    :maxdepth: 2
 
