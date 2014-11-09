@@ -244,19 +244,22 @@ class ArchivedURL(UnicodeMixin):
         logger.debug("Extracting hyperlinks from HTML")
         obj_list = []
         link_list = self.browser.find_elements_by_tag_name("a")
-        link_list = [
-            a for a in link_list if a.get_attribute("href") and a.text
-        ]
         for i, a in enumerate(link_list):
+            href = a.get_attribute("href")
+            text = a.text
+            if not href and not text:
+                continue
             # Search out any images
             image_obj_list = []
             img_list = a.find_elements_by_tag_name("img")
-            img_list = [o for o in img_list if o.get_attribute("src")]
             for img in img_list:
+                src = img.get_attribute("src")
+                if not src:
+                    continue
                 ilocation = img.location
                 isize = img.size
                 image_obj = Image(
-                    img.get_attribute("src"),
+                    src,
                     width=isize['width'],
                     height=isize['height'],
                     x=ilocation['x'],
@@ -271,8 +274,8 @@ class ArchivedURL(UnicodeMixin):
             alocation = a.location
             asize = a.size
             hyperlink_obj = Hyperlink(
-                a.get_attribute("href"),
-                a.text,
+                href,
+                text,
                 i,
                 images=image_obj_list,
                 width=asize['width'],
