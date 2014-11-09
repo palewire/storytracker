@@ -1493,7 +1493,10 @@ class Hyperlink(UnicodeMixin):
         self.href = href
         self.string = string
         self.index = index
-        self.domain = urlparse(href).netloc
+        try:
+            self.domain = urlparse(href).netloc
+        except:
+            self.domain = ''
         self.images = images
         self.width = width
         self.height = height
@@ -1573,7 +1576,7 @@ class Hyperlink(UnicodeMixin):
         """
         try:
             return storysniffer.guess(self.href)
-        except ValueError:
+        except (ValueError, TypeError):
             return False
 
     @property
