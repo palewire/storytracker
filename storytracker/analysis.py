@@ -46,7 +46,7 @@ class ArchivedURL(UnicodeMixin):
         browser_width=1366,
         browser_height=768,
         browser_driver="PhantomJS",
-        browser_timeout=15,
+        browser_timeout=45,
     ):
         self.url = url
         self.timestamp = timestamp
