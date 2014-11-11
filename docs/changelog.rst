@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.0.0
+-----
+
+* Expanded examples for documentation
+* Numerous bug fixes and optimizations
+
 0.2.0
 -----
 
