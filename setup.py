@@ -20,13 +20,15 @@ if sys.version_info < (3,):
 
 setup(
     name='storytracker',
-    version='1.0.0',
+    version='1.0.1',
     description='Tools for tracking stories for news homepages',
     author='Ben Welsh',
     author_email='ben.welsh@gmail.com',
     url='https://github.com/pastpages/storytracker',
     license='MIT',
     packages=('storytracker',),
+    include_package_data=True,
+    zip_safe=False,
     scripts=(
         'bin/storytracker-archive',
         'bin/storytracker-get',
